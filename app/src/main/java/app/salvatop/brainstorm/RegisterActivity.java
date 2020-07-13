@@ -110,21 +110,21 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             case R.id.buttonRegister:
                 System.out.println(rEmail.getText().toString().trim());
                 register(firebaseAuth, rEmail.getText().toString().trim(),rPassword.getText().toString().trim());
-//                    done.setEnabled(false);
-//                    rEmail.setAlpha(0);
-//                    rEmail.setEnabled(false);
-//                    rEmail.setFocusable(false);
-//                    emailLbl.setAlpha(0);
-//                    passLbl.setAlpha(0);
-//                    rPassword.setAlpha(0);
-//                    rPassword.setEnabled(false);
-//                    rPassword.setFocusable(false);
-//                    usernameLbl.setAlpha(1);
-//                    rUsername.setAlpha(1);
-//                    messageLbl.setAlpha(1);
-//                    register.setAlpha(0);
-//                    done.setEnabled(true);
-//                    done.setAlpha(1);
+                    done.setEnabled(false);
+                    rEmail.setAlpha(0);
+                    rEmail.setEnabled(false);
+                    rEmail.setFocusable(false);
+                    emailLbl.setAlpha(0);
+                    passLbl.setAlpha(0);
+                    rPassword.setAlpha(0);
+                    rPassword.setEnabled(false);
+                    rPassword.setFocusable(false);
+                    usernameLbl.setAlpha(1);
+                    rUsername.setAlpha(1);
+                    messageLbl.setAlpha(1);
+                    register.setAlpha(0);
+                    done.setEnabled(true);
+                    done.setAlpha(1);
                     System.out.println(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
                     break;
             case R.id.buttonRegisterDone:
