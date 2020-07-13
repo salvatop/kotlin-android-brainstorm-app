@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Brainstorm</string>
+    <string name="not_registred_yet_create_an_account">not registred yet? create an account!</string>
+    <string name="login">login</string>
+    <string name="password">password</string>
+    <string name="your_email_address">your email address</string>
+    <string name="todo">TODO</string>
+    <string name="grown_your_ideas">grown your ideas</string>
+    <string name="brain">Brain</string>
+    <string name="email">email:</string>
+    <string name="username">username</string>
+    <string name="enter_your_username_and_click_on_done">enter your username and click on done</string>
+    <string name="register">register</string>
+    <string name="done">done</string>
+</resources>
