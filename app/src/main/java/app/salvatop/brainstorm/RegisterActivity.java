@@ -41,9 +41,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
+        ///setup test profile
+        //String imageUrl = "https://firebasestorage.googleapis.com/v0/b/brainstorm-f3b48.appspot.com/o/royalty-free-transparent-images-9.png?alt=media&token=2a8913ab-4506-4f11-9a14-df560951b1f4";
+        //setupProfile(firebaseAuth,"I'm Mike the user number 1",imageUrl);
         firebaseAuth = FirebaseAuth.getInstance();
-
 
         rEmail = findViewById(R.id.editTextTextRegisterEmailAddress);
         rEmail.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
@@ -82,7 +83,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         return Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName();
     }
 
-    public String register(FirebaseAuth mAuth, String password, String email){
+    public void register(FirebaseAuth mAuth, String password, String email){
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -99,7 +100,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         }
                     }
                 });
-        return Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+        System.out.println(Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
     }
 
     @SuppressLint("SetTextI18n")
@@ -108,24 +109,24 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         switch (view.getId()){
             case R.id.buttonRegister:
                 System.out.println(rEmail.getText().toString().trim());
-                if (register(firebaseAuth, rEmail.getText().toString().trim(),rPassword.getText().toString().trim()).contains("@")) {
-                    done.setEnabled(false);
-                    rEmail.setAlpha(0);
-                    rEmail.setEnabled(false);
-                    rEmail.setFocusable(false);
-                    emailLbl.setAlpha(0);
-                    passLbl.setAlpha(0);
-                    rPassword.setAlpha(0);
-                    rPassword.setEnabled(false);
-                    rPassword.setFocusable(false);
-                    usernameLbl.setAlpha(1);
-                    rUsername.setAlpha(1);
-                    messageLbl.setAlpha(1);
-                    register.setAlpha(0);
-                    done.setEnabled(true);
-                    done.setAlpha(1);
+                register(firebaseAuth, rEmail.getText().toString().trim(),rPassword.getText().toString().trim());
+//                    done.setEnabled(false);
+//                    rEmail.setAlpha(0);
+//                    rEmail.setEnabled(false);
+//                    rEmail.setFocusable(false);
+//                    emailLbl.setAlpha(0);
+//                    passLbl.setAlpha(0);
+//                    rPassword.setAlpha(0);
+//                    rPassword.setEnabled(false);
+//                    rPassword.setFocusable(false);
+//                    usernameLbl.setAlpha(1);
+//                    rUsername.setAlpha(1);
+//                    messageLbl.setAlpha(1);
+//                    register.setAlpha(0);
+//                    done.setEnabled(true);
+//                    done.setAlpha(1);
                     System.out.println(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
-                } //else {System.out.println("error");}
+                    break;
             case R.id.buttonRegisterDone:
                 register.setEnabled(false);
                 if(!setupProfile(firebaseAuth,rUsername.getText().toString(),"").isEmpty()) {
@@ -147,6 +148,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     myRef.child(id).setValue(profile);
                     Intent mainActivity = new Intent(this, MainActivity.class);
                     startActivity(mainActivity);
+                    break;
                 } else {System.out.println("error");}
         }
     }

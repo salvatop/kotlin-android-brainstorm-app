@@ -1,14 +1,23 @@
 package app.salvatop.brainstorm;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import app.salvatop.brainstorm.model.Idea;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,14 +31,26 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "FIREBASE";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        TextView t = findViewById(R.id.textView2);
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        t.setText(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getDisplayName());
+        String imageUrl = "https://firebasestorage.googleapis.com/v0/b/brainstorm-f3b48.appspot.com/o/royalty-free-transparent-images-9.png?alt=media&token=2a8913ab-4506-4f11-9a14-df560951b1f4";
+
+        ImageView avatar = findViewById(R.id.imageViewAvatar);
+        Glide.with(getApplicationContext())
+                .load(imageUrl)
+                .into(avatar);
+        avatar.setImageURI(Objects.requireNonNull(firebaseAuth.getCurrentUser().getPhotoUrl()));
+
+        TextView email = findViewById(R.id.textViewEmail);
+        email.setText(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
+
+        TextView username = findViewById(R.id.textViewDisplayName);
+        username.setText(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getDisplayName());
+
 
         //test search feature
         getUser("username1");
@@ -52,12 +73,12 @@ public class MainActivity extends AppCompatActivity {
         DatabaseReference myRef = database.getReference("users").child(username);
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again whenever data at this location is updated.
                 Log.d(TAG, "Value is: " + dataSnapshot.getValue());
             }
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
@@ -73,12 +94,12 @@ public class MainActivity extends AppCompatActivity {
         ////....
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again whenever data at this location is updated.
                 Log.d(TAG, "Value is: " + dataSnapshot.getValue());
             }
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
@@ -94,12 +115,12 @@ public class MainActivity extends AppCompatActivity {
         ////....
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again whenever data at this location is updated.
                 Log.d(TAG, "Value is: " + dataSnapshot.getValue());
             }
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
@@ -112,15 +133,17 @@ public class MainActivity extends AppCompatActivity {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("users").child(author).child("ideas");
         //TODO add the idea into the database
-        ////....
+        ////....get the actual records
+        ////....add the new one
+        ////....set the child value .setValue()
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again whenever data at this location is updated.
                 Log.d(TAG, "Value is: " + dataSnapshot.getValue());
             }
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
