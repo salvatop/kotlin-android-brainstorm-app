@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -52,12 +55,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             assert user != null;
-                            System.out.println(user.getDisplayName());
-                            redirect();
-
+                            if(user.isEmailVerified()) {
+                                redirect();
+                            }
                         } else {
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                            Toast.makeText(LoginActivity.this, "Authentication failed." + Objects.requireNonNull(task.getException()).getMessage(),
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -73,7 +76,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         switch (view.getId()) {
             case R.id.buttonLogin:
-                login(email.getText().toString(),password.getText().toString(),firebaseAuth);
+                if (validateForm()) {
+                    login(email.getText().toString(),password.getText().toString(),firebaseAuth);
+                    break;
+                }
                 break;
             case R.id.buttonRegister:
                 Intent registration = new Intent(this, RegisterActivity.class);
@@ -81,6 +87,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
             default: System.out.println("error");
         }
+    }
+
+    private boolean validateForm() {
+        boolean valid = true;
+
+        String email2 = email.getText().toString();
+        if (TextUtils.isEmpty(email2)) {
+            email.setError("Required.");
+            valid = false;
+        } else {
+            email.setError(null);
+        }
+
+        String password2 = password.getText().toString();
+        if (TextUtils.isEmpty(password2)) {
+            password.setError("Required.");
+            valid = false;
+        } else {
+           password.setError(null);
+        }
+
+        return valid;
     }
 }
 

@@ -12,4 +12,6 @@
     <string name="register">register</string>
     <string name="done">done</string>
     <string name="username">username</string>
+    <string name="go_to_login_page">go to login page</string>
+    <string name="brainstorm">brainstorm</string>
 </resources>

@@ -142,4 +142,8 @@ public class MainActivity extends AppCompatActivity {
 
         return idea;
     }
+
+    private void signOut(FirebaseAuth auth) {
+        auth.signOut();
+    }
 }

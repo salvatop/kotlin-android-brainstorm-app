@@ -11,9 +11,9 @@ public class Idea {
     private Boolean isPublic;
     private ArrayList<String> forks;
 
-    public Idea(String author, String contex, String content, String title, Boolean isPublic, ArrayList<String> forks) {
+    public Idea(String author, String context, String content, String title, Boolean isPublic, ArrayList<String> forks) {
         this.author = author;
-        this.context = contex;
+        this.context = context;
         this.content = content;
         this.title = title;
         this.isPublic = isPublic;

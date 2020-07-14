@@ -1,5 +1,6 @@
 package app.salvatop.brainstorm;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,10 +32,10 @@ public class RegisterActivity extends AppCompatActivity {
 
     private final String TAG = "FIREBASE";
     FirebaseAuth firebaseAuth;
-    private String useraname;
+    private String username;
 
     private EditText rEmail, rPassword, rUsername;
-    private Button register, done;
+    private Button register, done, goTologin;
     private TextView emailLbl, passLbl, messageLbl;
 
     @Override
@@ -46,6 +48,9 @@ public class RegisterActivity extends AppCompatActivity {
         rEmail = findViewById(R.id.editTextTextRegisterEmailAddress);
         rPassword = findViewById(R.id.editTextTextRegisterPassword);
         rUsername = findViewById(R.id.editTextTextUsername);
+        emailLbl = findViewById(R.id.emailLabelRegister);
+        passLbl = findViewById(R.id.passwordLabelRegister);
+        messageLbl = findViewById(R.id.messageLabelRegister);
 
         register = findViewById(R.id.buttonRegister);
         register.setOnClickListener(new View.OnClickListener() {
@@ -56,7 +61,6 @@ public class RegisterActivity extends AppCompatActivity {
                 createAccount(firebaseAuth, email, pass);
             }
         });
-
          done = findViewById(R.id.buttonRegisterDone);
          done.setOnClickListener(new View.OnClickListener() {
              @Override
@@ -66,9 +70,14 @@ public class RegisterActivity extends AppCompatActivity {
              }
          });
 
-        emailLbl = findViewById(R.id.emailLabelRegister);
-        passLbl = findViewById(R.id.passwordLabelRegister);
-        messageLbl = findViewById(R.id.messageLabelRegister);
+        goTologin = findViewById(R.id.buttonGoToLogin);
+        goTologin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RegisterActivity.this.startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                RegisterActivity.this.finish();
+            }
+        });
     }
 
     public void setupProfile(FirebaseAuth mAuth, String displayName, String photoUrl) {
@@ -85,8 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "User profile updated.");
-                            Log.d(TAG, Objects.requireNonNull(user.getDisplayName()));
-                            useraname = user.getDisplayName();
+                            username = user.getDisplayName(); // TODO promise and future
                         }
                     }
                 });
@@ -121,20 +129,24 @@ public class RegisterActivity extends AppCompatActivity {
         ArrayList<Idea> ideas = new ArrayList<>();
         ArrayList<String> forks = new ArrayList<>();
         forks.add("");
-        ideas.add(new Idea("author","contex", "content","title", true, forks));
+        ideas.add(new Idea("author","context", "content","title", true, forks));
 
         Profile profile = new Profile(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getDisplayName(),
                 followed, following, teams, ideas, bookmarks);
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("users");
-        myRef.child("gino").setValue(profile);
+        myRef.child("gino").setValue(profile); //TODO replace with username
+
+        sendEmailVerification();
 
         RegisterActivity.this.startActivity(new Intent(RegisterActivity.this, MainActivity.class));
         RegisterActivity.this.finish();
     }
 
     public void hideAndDisplayUIElements() {
+        goTologin.setAlpha(0);
+        goTologin.setEnabled(false);
         rEmail.setAlpha(0);
         rEmail.setEnabled(false);
         rEmail.setFocusable(false);
@@ -150,9 +162,34 @@ public class RegisterActivity extends AppCompatActivity {
         register.setEnabled(false);
     }
 
-    public int getNbOfRecords() {
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("users");
-        return Integer.parseInt(Objects.requireNonNull(myRef.getKey()));
+
+    private void sendEmailVerification() {
+        // Disable button
+        done.setEnabled(false);
+        done.setAlpha(0);
+        rUsername.setAlpha(0);
+        rUsername.setEnabled(false);
+        final FirebaseUser user = firebaseAuth.getCurrentUser();
+        assert user != null;
+        user.sendEmailVerification()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        messageLbl.setText("email sent to: " + user.getEmail() + ". Please verify your email then go back login.");
+                        goTologin.setAlpha(1);
+                        goTologin.setEnabled(true);
+                        if (task.isSuccessful()) {
+                            Toast.makeText(RegisterActivity.this,
+                                    "Verification email sent to " + user.getEmail(),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e(TAG, "sendEmailVerification", task.getException());
+                            Toast.makeText(RegisterActivity.this,
+                                    "Failed to send verification email.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }
