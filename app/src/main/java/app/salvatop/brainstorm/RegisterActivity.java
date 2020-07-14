@@ -102,7 +102,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void createAccount(FirebaseAuth auth, String email, String password) {
         Log.d(TAG, "createAccount:" + email);
-
         //register user
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
@@ -136,12 +135,9 @@ public class RegisterActivity extends AppCompatActivity {
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("users");
-        myRef.child("gino").setValue(profile); //TODO replace with username
+        myRef.child("gino2").setValue(profile); //TODO replace with username
 
         sendEmailVerification();
-
-        RegisterActivity.this.startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-        RegisterActivity.this.finish();
     }
 
     public void hideAndDisplayUIElements() {
@@ -162,13 +158,13 @@ public class RegisterActivity extends AppCompatActivity {
         register.setEnabled(false);
     }
 
-
     private void sendEmailVerification() {
-        // Disable button
-        done.setEnabled(false);
+        // Disable buttons
         done.setAlpha(0);
         rUsername.setAlpha(0);
+        messageLbl.setAlpha(0);
         rUsername.setEnabled(false);
+        done.setEnabled(false);
         final FirebaseUser user = firebaseAuth.getCurrentUser();
         assert user != null;
         user.sendEmailVerification()
@@ -176,7 +172,6 @@ public class RegisterActivity extends AppCompatActivity {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        messageLbl.setText("email sent to: " + user.getEmail() + ". Please verify your email then go back login.");
                         goTologin.setAlpha(1);
                         goTologin.setEnabled(true);
                         if (task.isSuccessful()) {
