@@ -30,6 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private final String TAG = "FIREBASE";
     FirebaseAuth firebaseAuth;
+    private String useraname;
 
     private EditText rEmail, rPassword, rUsername;
     private Button register, done;
@@ -60,7 +61,8 @@ public class RegisterActivity extends AppCompatActivity {
          done.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View view) {
-
+                 setupProfile(firebaseAuth, rUsername.getText().toString().trim(), "");
+                 addProfile();
              }
          });
 
@@ -69,7 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
         messageLbl = findViewById(R.id.messageLabelRegister);
     }
 
-    public String setupProfile(FirebaseAuth mAuth, String displayName, String photoUrl) {
+    public void setupProfile(FirebaseAuth mAuth, String displayName, String photoUrl) {
         FirebaseUser user = mAuth.getCurrentUser();
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(displayName)
@@ -84,11 +86,10 @@ public class RegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "User profile updated.");
                             Log.d(TAG, Objects.requireNonNull(user.getDisplayName()));
+                            useraname = user.getDisplayName();
                         }
                     }
                 });
-
-        return Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName();
     }
 
     private void createAccount(FirebaseAuth auth, String email, String password) {
@@ -108,10 +109,7 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-
-    public void prepareProfile() {
-        setupProfile(firebaseAuth, rUsername.getText().toString().trim(), "");
-
+    public void addProfile() {
         ArrayList<String> followed = new ArrayList<>();
         followed.add("");
         ArrayList<String> following = new ArrayList<>();
@@ -121,20 +119,20 @@ public class RegisterActivity extends AppCompatActivity {
         ArrayList<String> bookmarks = new ArrayList<>();
         bookmarks.add("");
         ArrayList<Idea> ideas = new ArrayList<>();
-        ideas.add(new Idea());
+        ArrayList<String> forks = new ArrayList<>();
+        forks.add("");
+        ideas.add(new Idea("author","contex", "content","title", true, forks));
 
         Profile profile = new Profile(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getDisplayName(),
                 followed, following, teams, ideas, bookmarks);
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        String id = String.valueOf(getNbOfRecords() + 1);
         DatabaseReference myRef = database.getReference("users");
-        myRef.child(id).setValue(profile);
+        myRef.child("gino").setValue(profile);
 
         RegisterActivity.this.startActivity(new Intent(RegisterActivity.this, MainActivity.class));
         RegisterActivity.this.finish();
     }
-
 
     public void hideAndDisplayUIElements() {
         rEmail.setAlpha(0);
@@ -151,7 +149,6 @@ public class RegisterActivity extends AppCompatActivity {
         register.setAlpha(0);
         register.setEnabled(false);
     }
-
 
     public int getNbOfRecords() {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
