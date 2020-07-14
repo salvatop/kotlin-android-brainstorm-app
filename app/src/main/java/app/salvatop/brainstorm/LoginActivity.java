@@ -57,6 +57,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             assert user != null;
                             if(user.isEmailVerified()) {
                                 redirect();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Verify your email.", Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -76,7 +78,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         switch (view.getId()) {
             case R.id.buttonLogin:
-                if (validateForm()) {
+                if (validateEmailPassword()) {
                     login(email.getText().toString(),password.getText().toString(),firebaseAuth);
                     break;
                 }
@@ -89,7 +91,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private boolean validateForm() {
+    private boolean validateEmailPassword() {
         boolean valid = true;
 
         String email2 = email.getText().toString();

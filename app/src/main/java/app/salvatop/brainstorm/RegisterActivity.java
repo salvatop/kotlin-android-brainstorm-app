@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -38,6 +39,41 @@ public class RegisterActivity extends AppCompatActivity {
     private Button register, done, goTologin;
     private TextView emailLbl, passLbl, messageLbl;
 
+    private boolean validateEmailPassword() {
+        boolean valid = true;
+
+        String email = rEmail.getText().toString();
+        if (TextUtils.isEmpty(email)) {
+            rEmail.setError("Required.");
+            valid = false;
+        } else {
+            rEmail.setError(null);
+        }
+
+        String password = rPassword.getText().toString();
+        if (TextUtils.isEmpty(password)) {
+            rPassword.setError("Required.");
+            valid = false;
+        } else {
+            rPassword.setError(null);
+        }
+
+        return valid;
+    }
+
+    private boolean validateUsername() {
+        boolean valid = true;
+
+        String username = rUsername.getText().toString();
+        if (TextUtils.isEmpty(username)) {
+            rUsername.setError("Required.");
+            valid = false;
+        } else {
+            rUsername.setError(null);
+        }
+        return valid;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,15 +94,19 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String email = rEmail.getText().toString().trim();
                 String pass = rPassword.getText().toString().trim();
-                createAccount(firebaseAuth, email, pass);
+                if (validateEmailPassword()) {
+                    createAccount(firebaseAuth, email, pass);
+                }
             }
         });
          done = findViewById(R.id.buttonRegisterDone);
          done.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View view) {
-                 setupProfile(firebaseAuth, rUsername.getText().toString().trim(), "");
-                 addProfile();
+                 if (validateUsername()) {
+                     setupProfile(firebaseAuth, rUsername.getText().toString().trim(), "");
+                     addProfile();
+                 }
              }
          });
 
