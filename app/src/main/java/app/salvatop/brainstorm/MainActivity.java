@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         Glide.with(getApplicationContext())
                 .load(imageUrl)
                 .into(avatar);
-        avatar.setImageURI(Objects.requireNonNull(firebaseAuth.getCurrentUser().getPhotoUrl()));
+        //avatar.setImageURI(Objects.requireNonNull(firebaseAuth.getCurrentUser().getPhotoUrl()));
 
         TextView email = findViewById(R.id.textViewEmail);
         email.setText(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
