@@ -1,13 +1,10 @@
 package app.salvatop.brainstorm;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import app.salvatop.brainstorm.model.Idea;
-
-import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,12 +38,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ///initialization
         firebaseAuth = FirebaseAuth.getInstance();
 
         recyclerView = findViewById(R.id.recycleView);
+        ///end of initialization
 
+        ////Checking user session
+        fireAuthListener = firebaseAuth1 -> {
+            FirebaseUser user1 = firebaseAuth1.getCurrentUser();
+            if (user1 == null) {
+                //user not login
+                MainActivity.this.startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                MainActivity.this.finish();
+            }
+        };
+
+        /// set the avatar image if exists in the user profile or set the default from drawable
         ImageView avatar = findViewById(R.id.imageViewAvatar);
-
         try {
             if(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getPhotoUrl() != null) {
                 Glide.with(getApplicationContext())
@@ -59,15 +69,12 @@ public class MainActivity extends AppCompatActivity {
            Log.d(TAG, Objects.requireNonNull(e.getMessage()));
         }
 
+        ///set user profile info in the UI
         TextView email = findViewById(R.id.textViewEmail);
         email.setText(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
 
         TextView username = findViewById(R.id.textViewDisplayName);
         username.setText(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getDisplayName());
-
-
-        //test search feature
-        //getUser("username1");
 
         // Sets the Toolbar to act as the ActionBar for this Activity window.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -75,20 +82,15 @@ public class MainActivity extends AppCompatActivity {
         //toolbar.setLogo(R.drawable.logo);
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white,null));
 
-        ////Checking user session
-        fireAuthListener = firebaseAuth1 -> {
-            FirebaseUser user1 = firebaseAuth1.getCurrentUser();
-            if (user1 == null) {
-                //user not login
-                MainActivity.this.startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                MainActivity.this.finish();
-            }
-        };
+        /////TODO testing code
+        //test search feature
+        //getUser("username1");
+        /////TODO end of testing code
     }
 
+    // Handle toolbar item selection
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle toolbar item selection
         switch (item.getItemId()) {
             case R.id.bookmarks:
                 System.out.println("bookmarks");
@@ -117,11 +119,10 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
+    // Menu icons are inflated just as they were with actionbar
+    // Inflate the menu; this adds items to the action bar if it is present.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Menu icons are inflated just as they were with actionbar
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
@@ -130,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         firebaseAuth.addAuthStateListener(fireAuthListener);
     }
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //feature to search users by username
+    //feature to get a users by username from the database
     public void getUser(String username){
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("users").child(username);
