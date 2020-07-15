@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity {
 
     private final String TAG = "FIREBASE";
     private FirebaseAuth firebaseAuth;
@@ -41,8 +41,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        login.setOnClickListener(this);
-        register.setOnClickListener(this);
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (validateEmailPasswordFields()) {
+                    login(email.getText().toString(),password.getText().toString(),firebaseAuth);
+                }
+            }
+        });
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent registration = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(registration);
+            }
+        });
     }
 
     public void login(String username, String password, FirebaseAuth mAuth){
@@ -56,7 +69,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             FirebaseUser user = mAuth.getCurrentUser();
                             assert user != null;
                             if(user.isEmailVerified()) {
-                                redirect();
+                                Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(mainActivity);
                             } else {
                                 Toast.makeText(LoginActivity.this, "Verify your email.", Toast.LENGTH_SHORT).show();
                             }
@@ -69,41 +83,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 });
     }
 
-    public void redirect(){
-        Intent mainActivity = new Intent(this, MainActivity.class);
-        startActivity(mainActivity);
-    }
-    @Override
-    public void onClick(View view) {
-
-        switch (view.getId()) {
-            case R.id.buttonLogin:
-                if (validateEmailPassword()) {
-                    login(email.getText().toString(),password.getText().toString(),firebaseAuth);
-                    break;
-                }
-                break;
-            case R.id.buttonRegister:
-                Intent registration = new Intent(this, RegisterActivity.class);
-                startActivity(registration);
-                break;
-            default: System.out.println("error");
-        }
-    }
-
-    private boolean validateEmailPassword() {
+    private boolean validateEmailPasswordFields() {
         boolean valid = true;
 
-        String email2 = email.getText().toString();
-        if (TextUtils.isEmpty(email2)) {
+        String emailToVerify = email.getText().toString();
+        if (TextUtils.isEmpty(emailToVerify)) {
             email.setError("Required.");
             valid = false;
         } else {
             email.setError(null);
         }
 
-        String password2 = password.getText().toString();
-        if (TextUtils.isEmpty(password2)) {
+        String passwordToVerify = password.getText().toString();
+        if (TextUtils.isEmpty(passwordToVerify)) {
             password.setError("Required.");
             valid = false;
         } else {
@@ -111,6 +103,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         return valid;
+    }
+
+    private void passwordChange(FirebaseAuth auth, String email){
+        auth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(LoginActivity.this, "We have sent you instructions to reset your password!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Failed to send reset email!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }
 
