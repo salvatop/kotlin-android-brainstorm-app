@@ -1,10 +1,13 @@
 package app.salvatop.brainstorm;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
 import app.salvatop.brainstorm.model.Idea;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "FIREBASE";
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener fireAuthListener;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +43,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         firebaseAuth = FirebaseAuth.getInstance();
 
-        String imageUrl = "https://firebasestorage.googleapis.com/v0/b/brainstorm-f3b48.appspot.com/o/royalty-free-transparent-images-9.png?alt=media&token=2a8913ab-4506-4f11-9a14-df560951b1f4";
+        recyclerView = findViewById(R.id.recycleView);
 
         ImageView avatar = findViewById(R.id.imageViewAvatar);
-        Glide.with(getApplicationContext())
-                .load(imageUrl)
-                .into(avatar);
-        //avatar.setImageURI(Objects.requireNonNull(firebaseAuth.getCurrentUser().getPhotoUrl()));
+
+        try {
+            if(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getPhotoUrl() != null) {
+                Glide.with(getApplicationContext())
+                        .load(firebaseAuth.getCurrentUser().getPhotoUrl())
+                        .into(avatar);
+            } else {
+                avatar.setImageDrawable(getDrawable(R.drawable.avatar));
+            }
+        } catch (Exception e) {
+           Log.d(TAG, Objects.requireNonNull(e.getMessage()));
+        }
 
         TextView email = findViewById(R.id.textViewEmail);
         email.setText(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
@@ -55,12 +67,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         //test search feature
-        getUser("username1");
+        //getUser("username1");
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         // Sets the Toolbar to act as the ActionBar for this Activity window.
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        //toolbar.setLogo(R.drawable.logo);
+        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white,null));
 
         ////Checking user session
         fireAuthListener = firebaseAuth1 -> {
@@ -77,11 +90,28 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle toolbar item selection
         switch (item.getItemId()) {
-            case R.id.app_bar_search:
-                System.out.println("search");
+            case R.id.bookmarks:
+                System.out.println("bookmarks");
                 return true;
             case R.id.add_idea:
                 System.out.println("add idea");
+                return true;
+            case R.id.menu_settings:
+                Intent registration = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(registration);
+                return true;
+            case R.id.menu_logoff:
+                signOut(firebaseAuth);
+                return true;
+            case R.id.app_bar_search:
+                // Get the intent, verify the action and get the query
+//                Intent intent = getIntent();
+//                if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+//                    String query = intent.getStringExtra(SearchManager.QUERY);
+//                    System.out.println(query);
+//                    getUser(query);
+//                }
+                System.out.println("query");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

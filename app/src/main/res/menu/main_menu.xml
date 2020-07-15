@@ -5,21 +5,33 @@
 
     <item
         android:id="@+id/app_bar_search"
-        android:icon="@drawable/ic_search_black_24dp"
-        android:title="Search"
-        app:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="search"
+        app:showAsAction="always"
         app:actionViewClass="android.widget.SearchView" />
 
     <item
         android:id="@+id/add_idea"
         android:icon="@android:drawable/ic_menu_add"
         android:title="add_idea"
-        app:showAsAction="ifRoom">
+        app:showAsAction="always">
+    </item>
 
+    <item
+        android:id="@+id/bookmarks"
+        android:icon="@android:drawable/ic_input_get"
+        android:title="bookmarks"
+        app:showAsAction="always">
     </item>
 
     <item
         android:id="@+id/menu_settings"
         android:title="settings">
     </item>
+
+    <item
+    android:id="@+id/menu_logoff"
+    android:title="logout">
+    </item>
+
 </menu>
