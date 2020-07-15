@@ -4,8 +4,8 @@
         <!-- Customize your theme here. -->
 
         <item name="colorPrimary">@android:color/holo_green_dark</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimaryDark">@android:color/primary_text_light_nodisable</item>
+        <item name="colorAccent">@android:color/holo_green_light</item>
 
         <!-- android:textColorPrimary is the color of the title text in the Toolbar  -->
 

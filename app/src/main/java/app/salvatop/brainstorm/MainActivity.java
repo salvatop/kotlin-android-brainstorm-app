@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 import app.salvatop.brainstorm.model.Idea;
+
+import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -79,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
         // Sets the Toolbar to act as the ActionBar for this Activity window.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //toolbar.setLogo(R.drawable.logo);
-        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white,null));
 
         /////TODO testing code
         //test search feature
@@ -95,9 +95,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.bookmarks:
                 System.out.println("bookmarks");
                 return true;
-            case R.id.add_idea:
-                System.out.println("add idea");
-                return true;
             case R.id.menu_settings:
                 Intent registration = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(registration);
@@ -107,12 +104,12 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.app_bar_search:
                 // Get the intent, verify the action and get the query
-//                Intent intent = getIntent();
-//                if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-//                    String query = intent.getStringExtra(SearchManager.QUERY);
-//                    System.out.println(query);
-//                    getUser(query);
-//                }
+                Intent intent = getIntent();
+                if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+                    String query = intent.getStringExtra(SearchManager.QUERY);
+                    System.out.println(query);
+                    getUser(query);
+                }
                 System.out.println("query");
                 return true;
             default:

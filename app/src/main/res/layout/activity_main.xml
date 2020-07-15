@@ -6,14 +6,28 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            style="@style/Widget.MaterialComponents.Toolbar.Primary"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="65dp"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        android:titleTextColor="@android:color/white" />
+        android:titleTextColor="@android:color/white"
+        app:title="@string/brainstorm"
+        app:titleMargins="8dp"
+        app:titleMarginStart="20dp"
+        app:titleTextColor="@android:color/white"
+        app:logo="@drawable/logo_toolbar"
+        app:subtitle="@string/grown_your_ideas"
+        app:subtitleTextColor="@android:color/white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -24,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/email"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="35dp"
             android:layout_marginStart="25dp"
             app:layout_constraintStart_toEndOf="@+id/imageViewAvatar"
             app:layout_constraintTop_toTopOf="@+id/imageViewAvatar" />
@@ -41,11 +55,11 @@
 
         <ImageView
             android:id="@+id/imageViewAvatar"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:src="@drawable/avatar"
             android:layout_marginTop="60dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -54,6 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
             android:text="Ideas"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageViewAvatar" />

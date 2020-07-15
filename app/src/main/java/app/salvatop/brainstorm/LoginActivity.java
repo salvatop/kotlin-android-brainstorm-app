@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,25 +26,24 @@ public class LoginActivity extends AppCompatActivity {
     private final String TAG = "FIREBASE";
     private FirebaseAuth firebaseAuth;
 
-    private EditText email;
-    private EditText password;
+    private EditText  email, password;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         firebaseAuth = FirebaseAuth.getInstance();
 
-        /////TODO testing
-        //login("salvatop78@gmail.com", "123456", firebaseAuth);
+        /////TODO testing code
+        login("salvatop78@gmail.com", "123456", firebaseAuth);
+        /////TODO end of testing code
 
         Button login = findViewById(R.id.buttonLogin);
         Button register = findViewById(R.id.buttonRegister);
         email = findViewById(R.id.editTextTextEmailAddress);
         password = findViewById(R.id.editTextTextPassword);
-
-
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
