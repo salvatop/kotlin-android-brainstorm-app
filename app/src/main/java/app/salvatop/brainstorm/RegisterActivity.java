@@ -8,12 +8,12 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,14 +35,14 @@ public class RegisterActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     private String username;
 
-    private EditText rEmail, rPassword, rUsername;
+    private TextInputLayout rEmail, rPassword, rUsername;
     private Button register, done, goTologin;
     private TextView emailLbl, passLbl, messageLbl;
 
     private boolean validateEmailPassword() {
         boolean valid = true;
 
-        String email = rEmail.getText().toString();
+        String email = rEmail.getEditText().getText().toString();
         if (TextUtils.isEmpty(email)) {
             rEmail.setError("Required.");
             valid = false;
@@ -50,7 +50,7 @@ public class RegisterActivity extends AppCompatActivity {
             rEmail.setError(null);
         }
 
-        String password = rPassword.getText().toString();
+        String password = rPassword.getEditText().toString();
         if (TextUtils.isEmpty(password)) {
             rPassword.setError("Required.");
             valid = false;
@@ -64,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean validateUsername() {
         boolean valid = true;
 
-        String username = rUsername.getText().toString();
+        String username = rUsername.getEditText().toString();
         if (TextUtils.isEmpty(username)) {
             rUsername.setError("Required.");
             valid = false;
@@ -84,16 +84,14 @@ public class RegisterActivity extends AppCompatActivity {
         rEmail = findViewById(R.id.editTextTextRegisterEmailAddress);
         rPassword = findViewById(R.id.editTextTextRegisterPassword);
         rUsername = findViewById(R.id.editTextTextUsername);
-        emailLbl = findViewById(R.id.emailLabelRegister);
-        passLbl = findViewById(R.id.passwordLabelRegister);
         messageLbl = findViewById(R.id.messageLabelRegister);
 
         register = findViewById(R.id.buttonRegister);
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = rEmail.getText().toString().trim();
-                String pass = rPassword.getText().toString().trim();
+                String email = rEmail.getEditText().toString().trim();
+                String pass = rPassword.getEditText().toString().trim();
                 if (validateEmailPassword()) {
                     createAccount(firebaseAuth, email, pass);
                 }
@@ -104,7 +102,7 @@ public class RegisterActivity extends AppCompatActivity {
              @Override
              public void onClick(View view) {
                  if (validateUsername()) {
-                     setupProfile(firebaseAuth, rUsername.getText().toString().trim(), "");
+                     setupProfile(firebaseAuth, rUsername.getEditText().toString().trim(), "");
                      addProfile();
                  }
              }
@@ -186,8 +184,6 @@ public class RegisterActivity extends AppCompatActivity {
         rEmail.setAlpha(0);
         rEmail.setEnabled(false);
         rEmail.setFocusable(false);
-        emailLbl.setAlpha(0);
-        passLbl.setAlpha(0);
         rPassword.setAlpha(0);
         rPassword.setEnabled(false);
         rPassword.setFocusable(false);

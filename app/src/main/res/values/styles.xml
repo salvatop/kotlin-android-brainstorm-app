@@ -7,8 +7,6 @@
         <item name="colorPrimaryDark">@android:color/primary_text_light_nodisable</item>
         <item name="colorAccent">@android:color/holo_green_light</item>
 
-        <!-- android:textColorPrimary is the color of the title text in the Toolbar  -->
-
         <!-- actionMenuTextColor is the color of the text of action (menu) items  -->
         <item name="actionMenuTextColor">@android:color/black</item>
         <!-- Enable these below if you want clicking icons to trigger a ripple effect -->
