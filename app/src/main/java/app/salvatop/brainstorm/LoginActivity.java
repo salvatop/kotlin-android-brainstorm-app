@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         /////TODO testing
-        login("salvatop78@gmail.com", "123456", firebaseAuth);
+        //login("salvatop78@gmail.com", "123456", firebaseAuth);
 
         Button login = findViewById(R.id.buttonLogin);
         Button register = findViewById(R.id.buttonRegister);
