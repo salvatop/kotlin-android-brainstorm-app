@@ -1,10 +1,12 @@
 package app.salvatop.brainstorm;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -104,8 +106,11 @@ public class RegisterActivity extends AppCompatActivity {
 
         goTologin = findViewById(R.id.buttonGoToLogin);
         goTologin.setOnClickListener(view -> {
-            RegisterActivity.this.startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-            RegisterActivity.this.finish();
+            // set an exit transition
+            getWindow().setExitTransition(new Explode());
+            Intent gotoLogin = new Intent(RegisterActivity.this, LoginActivity.class);
+            startActivity(gotoLogin,
+                    ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
         });
     }
 

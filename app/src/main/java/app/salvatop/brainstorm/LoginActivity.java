@@ -2,10 +2,14 @@ package app.salvatop.brainstorm;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.transition.Explode;
+import android.transition.Fade;
 import android.util.Log;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -31,7 +35,6 @@ public class LoginActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-
         /////TODO testing code
         //login("salvatop78@gmail.com", "123456", firebaseAuth);
         /////TODO end of testing code
@@ -49,7 +52,10 @@ public class LoginActivity extends AppCompatActivity {
         });
         register.setOnClickListener(view -> {
             Intent registration = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(registration);
+            // set an exit transition
+            getWindow().setExitTransition(new Explode());
+            startActivity(registration,
+                    ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
         });
     }
 
