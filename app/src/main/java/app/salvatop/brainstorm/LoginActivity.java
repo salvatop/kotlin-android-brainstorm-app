@@ -1,13 +1,18 @@
 package app.salvatop.brainstorm;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ActivityOptions;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.transition.Explode;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
@@ -21,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private final String TAG = "FIREBASE";
     private FirebaseAuth firebaseAuth;
-
+    private int attempts = 0;
 
     private TextInputLayout email, password;
 
@@ -42,7 +47,33 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.editTextTextPassword);
 
         login.setOnClickListener(view -> {
-            if (validateEmailPasswordFields()) {
+            attempts++;
+            if (attempts > 3) {
+                attempts = 0;
+                // Build an AlertDialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                LayoutInflater inflater = getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.reset_password_dialog,null);
+                // Specify alert dialog is not cancelable/not ignorable
+                builder.setCancelable(false);
+                // Set the custom layout as alert dialog view
+                builder.setView(dialogView);
+                builder.setTitle("Reset Password");
+                builder.setNegativeButton("close", (dialog, arg1) -> dialog.cancel());
+                final AlertDialog dialog = builder.create();
+
+                // Get the custom alert dialog view widgets reference
+                Button send = dialogView.findViewById(R.id.resetPasswordButton);
+                EditText emailResetPassword = dialogView.findViewById(R.id.resetPasswordTextField);
+                send.setOnClickListener(view1 -> {
+                    String emailToReset = emailResetPassword.getText().toString().trim();
+                    if (validateEmailPasswordResetFields(emailResetPassword)) {
+                        passwordChange(firebaseAuth, emailToReset);
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+            } else if (validateEmailPasswordFields()) {
                 login(Objects.requireNonNull(email.getEditText()).getText().toString().trim(),
                         Objects.requireNonNull(password.getEditText()).getText().toString().trim(),firebaseAuth);
             }
@@ -100,15 +131,27 @@ public class LoginActivity extends AppCompatActivity {
         return valid;
     }
 
+    private boolean validateEmailPasswordResetFields(EditText email) {
+        boolean valid = true;
+
+        String emailToVerify = Objects.requireNonNull(email.getText().toString().trim());
+        if (TextUtils.isEmpty(emailToVerify)) {
+            email.setError("Required.");
+            valid = false;
+        } else {
+            email.setError(null);
+        }
+
+        return valid;
+    }
     private void passwordChange(FirebaseAuth auth, String email){
         auth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(LoginActivity.this, "We have sent you instructions to reset your password!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Failed to send reset email!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "sent instructions to " + email + " if exist.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
 }
 
