@@ -3,7 +3,6 @@ package app.salvatop.brainstorm;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.ActivityOptions;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -26,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private final String TAG = "FIREBASE";
     private FirebaseAuth firebaseAuth;
-    private int attempts = 0;
+    private int loginAttempts = 0;
 
     private TextInputLayout email, password;
 
@@ -38,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         /////TODO testing code
-        //login("salvatop78@gmail.com", "123456", firebaseAuth);
+        login("salvatop78@gmail.com", "123456", firebaseAuth);
         /////TODO end of testing code
 
         MaterialButton login = findViewById(R.id.buttonLogin);
@@ -47,17 +46,18 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.editTextTextPassword);
 
         login.setOnClickListener(view -> {
-            attempts++;
-            if (attempts > 3) {
-                attempts = 0;
+            //if failed three attempt to login, load the alert to reset password
+            loginAttempts++;
+            if (loginAttempts > 3) {
+                loginAttempts = 0;
                 // Build an AlertDialog
                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+
+                // Set the custom layout as alert dialog view
                 LayoutInflater inflater = getLayoutInflater();
                 View dialogView = inflater.inflate(R.layout.reset_password_dialog,null);
-                // Specify alert dialog is not cancelable/not ignorable
-                builder.setCancelable(false);
-                // Set the custom layout as alert dialog view
                 builder.setView(dialogView);
+
                 builder.setTitle("Reset Password");
                 builder.setNegativeButton("close", (dialog, arg1) -> dialog.cancel());
                 final AlertDialog dialog = builder.create();
