@@ -99,7 +99,10 @@ public class MainActivity extends AppCompatActivity {
                 Intent registration = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(registration);
                 return true;
-            case R.id.menu_logoff:
+            case R.id.news_feeds:
+                System.out.println("news about last ideas");
+                return true;
+                case R.id.menu_logoff:
                 signOut(firebaseAuth);
                 return true;
             case R.id.app_bar_search:

@@ -37,12 +37,12 @@ public class RegisterActivity extends AppCompatActivity {
 
     private TextInputLayout rEmail, rPassword, rUsername;
     private Button register, done, goTologin;
-    private TextView emailLbl, passLbl, messageLbl;
+    private TextView messageLbl;
 
     private boolean validateEmailPassword() {
         boolean valid = true;
 
-        String email = rEmail.getEditText().getText().toString();
+        String email = rEmail.getEditText().getText().toString().trim();
         if (TextUtils.isEmpty(email)) {
             rEmail.setError("Required.");
             valid = false;
@@ -50,7 +50,7 @@ public class RegisterActivity extends AppCompatActivity {
             rEmail.setError(null);
         }
 
-        String password = rPassword.getEditText().toString();
+        String password = rPassword.getEditText().getText().toString().trim();
         if (TextUtils.isEmpty(password)) {
             rPassword.setError("Required.");
             valid = false;
@@ -64,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean validateUsername() {
         boolean valid = true;
 
-        String username = rUsername.getEditText().toString();
+        String username = rUsername.getEditText().getText().toString().trim();
         if (TextUtils.isEmpty(username)) {
             rUsername.setError("Required.");
             valid = false;
@@ -87,34 +87,25 @@ public class RegisterActivity extends AppCompatActivity {
         messageLbl = findViewById(R.id.messageLabelRegister);
 
         register = findViewById(R.id.buttonRegister);
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String email = rEmail.getEditText().toString().trim();
-                String pass = rPassword.getEditText().toString().trim();
-                if (validateEmailPassword()) {
-                    createAccount(firebaseAuth, email, pass);
-                }
+        register.setOnClickListener(view -> {
+            String email = rEmail.getEditText().getText().toString().trim();
+            String pass = rPassword.getEditText().getText().toString().trim();
+            if (validateEmailPassword()) {
+                createAccount(firebaseAuth, email, pass);
             }
         });
          done = findViewById(R.id.buttonRegisterDone);
-         done.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View view) {
-                 if (validateUsername()) {
-                     setupProfile(firebaseAuth, rUsername.getEditText().toString().trim(), "");
-                     addProfile();
-                 }
+         done.setOnClickListener(view -> {
+             if (validateUsername()) {
+                 setupProfile(firebaseAuth, rUsername.getEditText().getText().toString().trim(), "");
+                 addProfile();
              }
          });
 
         goTologin = findViewById(R.id.buttonGoToLogin);
-        goTologin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RegisterActivity.this.startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                RegisterActivity.this.finish();
-            }
+        goTologin.setOnClickListener(view -> {
+            RegisterActivity.this.startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            RegisterActivity.this.finish();
         });
     }
 
@@ -127,13 +118,10 @@ public class RegisterActivity extends AppCompatActivity {
 
         assert user != null;
         user.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "User profile updated.");
-                            username = user.getDisplayName(); // TODO promise and future
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "User profile updated.");
+                        username = user.getDisplayName(); // TODO promise and future
                     }
                 });
     }
@@ -142,14 +130,11 @@ public class RegisterActivity extends AppCompatActivity {
         Log.d(TAG, "createAccount:" + email);
         //register user
         auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "New user registration: " + task.isSuccessful());
-                        hideAndDisplayUIElements();
-                        if (!task.isSuccessful()) {
-                            System.out.println("Authentication failed. " + task.getException());
-                        }
+                .addOnCompleteListener(RegisterActivity.this, task -> {
+                    Log.d(TAG, "New user registration: " + task.isSuccessful());
+                    hideAndDisplayUIElements();
+                    if (!task.isSuccessful()) {
+                        System.out.println("Authentication failed. " + task.getException());
                     }
                 });
     }
@@ -204,22 +189,18 @@ public class RegisterActivity extends AppCompatActivity {
         final FirebaseUser user = firebaseAuth.getCurrentUser();
         assert user != null;
         user.sendEmailVerification()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        goTologin.setAlpha(1);
-                        goTologin.setEnabled(true);
-                        if (task.isSuccessful()) {
-                            Toast.makeText(RegisterActivity.this,
-                                    "Verification email sent to " + user.getEmail(),
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.e(TAG, "sendEmailVerification", task.getException());
-                            Toast.makeText(RegisterActivity.this,
-                                    "Failed to send verification email.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    goTologin.setAlpha(1);
+                    goTologin.setEnabled(true);
+                    if (task.isSuccessful()) {
+                        Toast.makeText(RegisterActivity.this,
+                                "Verification email sent to " + user.getEmail(),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e(TAG, "sendEmailVerification", task.getException());
+                        Toast.makeText(RegisterActivity.this,
+                                "Failed to send verification email.",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }

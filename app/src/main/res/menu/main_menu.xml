@@ -14,16 +14,26 @@
         android:id="@+id/bookmarks"
         android:icon="@drawable/bookmark"
         android:title="bookmarks"
-        app:showAsAction="ifRoom"></item>
+        app:showAsAction="ifRoom">
+
+    </item>
+
+    <item
+        android:id="@+id/news_feeds"
+        android:title="news feed"
+        app:showAsAction="never">
+    </item>
 
     <item
         android:id="@+id/menu_settings"
-        android:title="settings">
+        android:title="settings"
+        app:showAsAction="never">
     </item>
 
     <item
     android:id="@+id/menu_logoff"
-    android:title="logout">
+    android:title="logout"
+    app:showAsAction="never">
     </item>
 
 </menu>

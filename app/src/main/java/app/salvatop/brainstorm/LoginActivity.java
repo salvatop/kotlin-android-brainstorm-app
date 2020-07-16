@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,6 +21,7 @@ public class LoginActivity extends AppCompatActivity {
     private final String TAG = "FIREBASE";
     private FirebaseAuth firebaseAuth;
 
+
     private TextInputLayout email, password;
 
     @Override
@@ -29,19 +31,20 @@ public class LoginActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
+
         /////TODO testing code
-        login("salvatop78@gmail.com", "123456", firebaseAuth);
+        //login("salvatop78@gmail.com", "123456", firebaseAuth);
         /////TODO end of testing code
 
-        Button login = findViewById(R.id.buttonLogin);
+        MaterialButton login = findViewById(R.id.buttonLogin);
         Button register = findViewById(R.id.buttonRegister);
         email = findViewById(R.id.editTextTextEmailAddress);
         password = findViewById(R.id.editTextTextPassword);
 
-
         login.setOnClickListener(view -> {
             if (validateEmailPasswordFields()) {
-                login(email.getEditText().getText().toString(),password.getEditText().getText().toString(),firebaseAuth);
+                login(Objects.requireNonNull(email.getEditText()).getText().toString().trim(),
+                        Objects.requireNonNull(password.getEditText()).getText().toString().trim(),firebaseAuth);
             }
         });
         register.setOnClickListener(view -> {
@@ -75,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean validateEmailPasswordFields() {
         boolean valid = true;
 
-        String emailToVerify = email.getEditText().getText().toString();
+        String emailToVerify = Objects.requireNonNull(email.getEditText()).getText().toString().trim();
         if (TextUtils.isEmpty(emailToVerify)) {
             email.setError("Required.");
             valid = false;
@@ -83,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
             email.setError(null);
         }
 
-        String passwordToVerify = password.getEditText().getText().toString();
+        String passwordToVerify = Objects.requireNonNull(password.getEditText()).getText().toString().trim();
         if (TextUtils.isEmpty(passwordToVerify)) {
             password.setError("Required.");
             valid = false;
