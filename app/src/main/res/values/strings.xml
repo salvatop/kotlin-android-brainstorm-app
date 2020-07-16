@@ -14,4 +14,6 @@
     <string name="username">username</string>
     <string name="go_to_login_page">go to login page</string>
     <string name="brainstorm">brainstorm</string>
+    <string name="create_an_account_now">create an account now</string>
+    <string name="enter_your_username_to_complete_the_registration">enter your username to complete the registration</string>
 </resources>

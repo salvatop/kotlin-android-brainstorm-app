@@ -7,10 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.transition.Explode;
-import android.transition.Fade;
 import android.util.Log;
-import android.view.Window;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
@@ -40,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         /////TODO end of testing code
 
         MaterialButton login = findViewById(R.id.buttonLogin);
-        Button register = findViewById(R.id.buttonRegister);
+        MaterialButton register = findViewById(R.id.buttonRegister);
         email = findViewById(R.id.editTextTextEmailAddress);
         password = findViewById(R.id.editTextTextPassword);
 

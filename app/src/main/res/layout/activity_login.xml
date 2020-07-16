@@ -93,14 +93,14 @@
         app:layout_constraintStart_toEndOf="@+id/editTextTextPassword"
         app:layout_constraintTop_toTopOf="@+id/editTextTextEmailAddress" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonRegister"
         android:shadowRadius="7"
         style="?attr/materialButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="create an account now!"
+        android:text="@string/create_an_account_now"
         android:background="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
