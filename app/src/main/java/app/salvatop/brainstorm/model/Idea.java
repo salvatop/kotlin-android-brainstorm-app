@@ -2,25 +2,27 @@ package app.salvatop.brainstorm.model;
 
 import java.util.ArrayList;
 
-public class Idea {
+import androidx.recyclerview.widget.RecyclerView;
+
+public class Idea  {
 
     private String author;
-    private String context;
+    private String ideaContext;
     private String content;
     private String title;
     private Boolean isPublic;
     private ArrayList<String> forks;
 
-    public Idea(String author, String context, String content, String title, Boolean isPublic, ArrayList<String> forks) {
+    public Idea(String author, String ideaContext, String content, String title, Boolean isPublic, ArrayList<String> forks) {
         this.author = author;
-        this.context = context;
+        this.ideaContext = ideaContext;
         this.content = content;
         this.title = title;
         this.isPublic = isPublic;
         this.forks = forks;
     }
 
-    public Idea(){};
+    public Idea(){ }
 
     public String getAuthor() {
         return author;
@@ -30,12 +32,12 @@ public class Idea {
         this.author = author;
     }
 
-    public String getContext() {
-        return context;
+    public String getIdeaContext() {
+        return ideaContext;
     }
 
-    public void setContext(String context) {
-        this.context = context;
+    public void setIdeaContext(String ideaContext) {
+        this.ideaContext = ideaContext;
     }
 
     public String getContent() {
@@ -74,7 +76,7 @@ public class Idea {
     public String toString() {
         return "Idea{" +
                 "author='" + author + '\'' +
-                ", contex='" + context + '\'' +
+                ", contex='" + ideaContext + '\'' +
                 ", content='" + content + '\'' +
                 ", title='" + title + '\'' +
                 ", isPublic=" + isPublic +

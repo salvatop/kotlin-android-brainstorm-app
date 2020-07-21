@@ -11,6 +11,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONObject;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static android.content.ContentValues.TAG;
@@ -21,23 +22,26 @@ import static org.junit.Assert.*;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-public class ExampleUnitTest extends Application {
+public class UnitTest extends Application {
 
-    FirebaseDatabase database;
+    private static FirebaseApp firebaseApp;
+    private static FirebaseDatabase database;
+
+    @BeforeClass
+    public void setup(){
+        firebaseApp.initializeApp(this);
+        database = FirebaseDatabase.getInstance();
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        FirebaseApp.initializeApp(this);
     }
 
     @Test
-    public void addition_isCorrect() {
+    public void testFirebase(FirebaseDatabase database) {
 
-        FirebaseApp.initializeApp(this);
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("users");
+        final DatabaseReference myRef = database.getReference("users");
 
         // Read from the database
         final ValueEventListener valueEventListener = myRef.addValueEventListener(new ValueEventListener() {

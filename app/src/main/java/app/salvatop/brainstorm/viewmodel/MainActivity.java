@@ -1,11 +1,16 @@
-package app.salvatop.brainstorm;
+package app.salvatop.brainstorm.viewmodel;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import app.salvatop.brainstorm.LoginActivity;
+import app.salvatop.brainstorm.R;
+import app.salvatop.brainstorm.SettingsActivity;
+import app.salvatop.brainstorm.adapter.CardAdapter;
+import app.salvatop.brainstorm.adapter.IdeaAdapter;
 import app.salvatop.brainstorm.model.Idea;
-
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,11 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,7 +35,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "FIREBASE";
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener fireAuthListener;
-    private RecyclerView recyclerView;
+
+    private CardAdapter adapter;
+    private ArrayList<Idea> ideaArrayList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +48,13 @@ public class MainActivity extends AppCompatActivity {
         ///initialization
         firebaseAuth = FirebaseAuth.getInstance();
 
-        recyclerView = findViewById(R.id.recycleView);
+
+        RecyclerView recyclerView = findViewById(R.id.recycleView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        ideaArrayList = new ArrayList<>();
+        adapter = new CardAdapter(this, ideaArrayList);
+        recyclerView.setAdapter(adapter);
+
         ///end of initialization
 
         ////Checking user session
@@ -85,9 +95,19 @@ public class MainActivity extends AppCompatActivity {
         /////TODO testing code
         //test search feature
         //getUser("username1");
+        createData();
         /////TODO end of testing code
     }
 
+    private void createData() {
+        ArrayList<String> forks = new ArrayList<>();
+        forks.add("2");
+        Idea idea = new Idea("Gino Malli", "android app", "un app per brainstoirming", "brainstorm", false, forks);
+        ideaArrayList.add(idea);
+        Idea idea2 = new Idea("Gino Malli", "android app", "un app per brainstoirming", "brainstorm2", false, forks);
+        ideaArrayList.add(idea2);
+        adapter.notifyDataSetChanged();
+    }
     // Handle toolbar item selection
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -226,23 +246,5 @@ public class MainActivity extends AppCompatActivity {
 
     private void signOut(FirebaseAuth auth) {
         auth.signOut();
-    }
-
-    public void removeUser(FirebaseAuth auth){
-        FirebaseUser user =  auth.getCurrentUser();
-        assert user != null;
-        user.delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this, "Your profile is deleted:( Create a account now!", Toast.LENGTH_SHORT).show();
-                            MainActivity.this.startActivity(new Intent(MainActivity.this, RegisterActivity.class));
-                            MainActivity.this.finish();
-                        } else {
-                            Toast.makeText(MainActivity.this, "Failed to delete your account!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
     }
 }
