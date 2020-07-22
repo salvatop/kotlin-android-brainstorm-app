@@ -107,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         ideaArrayList.add(idea);
         Idea idea2 = new Idea("Gino Malli", "android app", "un app per brainstoirming", "brainstorm2", false, forks);
         ideaArrayList.add(idea2);
+        Idea idea3 = new Idea("Gino Malli", "android app", "un app per brainstoirming", "brainstorm2", false, forks);
+        ideaArrayList.add(idea3);
         adapter.notifyDataSetChanged();
 
     }
