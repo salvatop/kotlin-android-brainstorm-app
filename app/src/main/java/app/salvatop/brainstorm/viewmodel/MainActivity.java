@@ -36,7 +36,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "FIREBASE";
     private FirebaseAuth firebaseAuth;
@@ -98,10 +98,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        ///Tune the menu bottom bar
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setElevation(1);
         bottomNavigationView.setItemIconSize(70);
 
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
 
         /////TODO testing code
@@ -119,27 +121,34 @@ public class MainActivity extends AppCompatActivity {
         Idea idea2 = new Idea("Gino Malli", "android app", "un app per brainstoirming", "brainstorm2", false, forks);
         ideaArrayList.add(idea2);
         adapter.notifyDataSetChanged();
+
     }
 
-
+    // Handle bottom menu item selection
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.bookmarks:
+                System.out.println("bookmarks");
+                return true;
+            case R.id.home:
+                System.out.println("home");
+                return true;
+            case R.id.settings:
+                Intent registration = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(registration);
+                return true;
+            case R.id.idea_feeds:
+                System.out.println("news about last ideas");
+                return true;
+            default: return false;
+        }
+    }
     // Handle toolbar item selection
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-//            case R.id.bookmarks:
-//                System.out.println("bookmarks");
-//                return true;
-//            case R.id.home:
-//                System.out.println("home");
-//                return true;
-//            case R.id.settings:
-//                Intent registration = new Intent(MainActivity.this, SettingsActivity.class);
-//                startActivity(registration);
-//                return true;
-//            case R.id.idea_feeds:
-//                System.out.println("news about last ideas");
-//                return true;
-                case R.id.menu_logoff:
+            case R.id.menu_logoff:
                 signOut(firebaseAuth);
                 return true;
             case R.id.app_bar_search:
