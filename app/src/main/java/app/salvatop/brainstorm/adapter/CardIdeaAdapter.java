@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,11 +17,11 @@ import app.salvatop.brainstorm.model.Idea;
 
 
 
-public class CardAdapter extends RecyclerView.Adapter<CardAdapter.IdeaHolder> {
+public class CardIdeaAdapter extends RecyclerView.Adapter<CardIdeaAdapter.IdeaHolder> {
     private Context context;
     private ArrayList<Idea> ideas;
 
-    public CardAdapter(Context context, ArrayList<Idea> ideas) {
+    public CardIdeaAdapter(Context context, ArrayList<Idea> ideas) {
         this.context = context;
         this.ideas = ideas;
     }
@@ -62,6 +65,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.IdeaHolder> {
             title.setText(idea.getTitle());
             content.setText(idea.getContent());
             ideaContext.setText(idea.getIdeaContext());
+            Glide.with(context.getApplicationContext())
+                    .load(R.drawable.idea)
+                    .into(cover);
             //forks.setText(idea.getForks().size());
 
         }

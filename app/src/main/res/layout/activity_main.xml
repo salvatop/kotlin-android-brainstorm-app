@@ -79,9 +79,14 @@
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewIdeasLabel">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycleView"
@@ -90,16 +95,8 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-<!--            <com.google.android.material.card.MaterialCardView-->
-<!--                android:id="@+id/card"-->
-<!--                android:layout_width="150dp"-->
-<!--                android:layout_height="150dp"-->
-<!--                android:layout_gravity="center"-->
-<!--                app:cardCornerRadius="4dp">-->
-<!--                &lt;!&ndash; Card contents &ndash;&gt;-->
-<!--            </com.google.android.material.card.MaterialCardView>-->
+                android:layout_height="wrap_content" />
+            </LinearLayout>
 
         </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

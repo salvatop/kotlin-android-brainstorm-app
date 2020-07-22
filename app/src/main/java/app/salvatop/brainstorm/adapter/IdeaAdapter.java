@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,6 +65,9 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.IdeaHolder> {
             title.setText(idea.getTitle());
             content.setText(idea.getContent());
             ideaContext.setText(idea.getIdeaContext());
+            Glide.with(context.getApplicationContext())
+                    .load(R.drawable.idea)
+                    .into(cover);
             //forks.setText(idea.getForks().size());
 
         }

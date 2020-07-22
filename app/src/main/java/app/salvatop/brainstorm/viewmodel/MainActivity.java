@@ -8,8 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import app.salvatop.brainstorm.LoginActivity;
 import app.salvatop.brainstorm.R;
 import app.salvatop.brainstorm.SettingsActivity;
-import app.salvatop.brainstorm.adapter.CardAdapter;
-import app.salvatop.brainstorm.adapter.IdeaAdapter;
+import app.salvatop.brainstorm.adapter.CardIdeaAdapter;
 import app.salvatop.brainstorm.model.Idea;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -36,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener fireAuthListener;
 
-    private CardAdapter adapter;
+    private CardIdeaAdapter adapter;
     private ArrayList<Idea> ideaArrayList;
 
 
@@ -52,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recycleView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ideaArrayList = new ArrayList<>();
-        adapter = new CardAdapter(this, ideaArrayList);
+
+        adapter = new CardIdeaAdapter(this, ideaArrayList);
         recyclerView.setAdapter(adapter);
 
         ///end of initialization
@@ -115,11 +115,14 @@ public class MainActivity extends AppCompatActivity {
             case R.id.bookmarks:
                 System.out.println("bookmarks");
                 return true;
+            case R.id.home:
+                System.out.println("home");
+                return true;
             case R.id.menu_settings:
                 Intent registration = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(registration);
                 return true;
-            case R.id.news_feeds:
+            case R.id.idea_feeds:
                 System.out.println("news about last ideas");
                 return true;
                 case R.id.menu_logoff:

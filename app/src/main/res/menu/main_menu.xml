@@ -14,13 +14,21 @@
         android:id="@+id/bookmarks"
         android:icon="@drawable/bookmark"
         android:title="bookmarks"
+        app:showAsAction="always">
+
+    </item>
+
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/home"
+        android:title="home"
         app:showAsAction="ifRoom">
 
     </item>
 
     <item
-        android:id="@+id/news_feeds"
-        android:title="news feed"
+        android:id="@+id/idea_feeds"
+        android:title="idea feed"
         app:showAsAction="never">
     </item>
 
