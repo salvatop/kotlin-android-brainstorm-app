@@ -29,7 +29,7 @@ public class CardIdeaAdapter extends RecyclerView.Adapter<CardIdeaAdapter.IdeaHo
     @NonNull
     @Override
     public IdeaHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View view = LayoutInflater.from(context).inflate(R.layout.idea_layout, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.card_layout, parent, false);
         return new IdeaHolder(view);
     }
 

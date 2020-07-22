@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         ///initialization
         firebaseAuth = FirebaseAuth.getInstance();
 
-
         RecyclerView recyclerView = findViewById(R.id.recycleView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ideaArrayList = new ArrayList<>();
