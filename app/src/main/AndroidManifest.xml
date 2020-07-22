@@ -16,9 +16,8 @@
             android:name="com.google.android.actions"
             android:resource="@transition/explode" />
 
-        <activity android:name=".SettingsActivity" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".viewmodel.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>

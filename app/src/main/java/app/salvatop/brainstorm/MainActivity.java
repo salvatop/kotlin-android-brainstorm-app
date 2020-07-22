@@ -1,15 +1,12 @@
-package app.salvatop.brainstorm.viewmodel;
+package app.salvatop.brainstorm;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import app.salvatop.brainstorm.LoginActivity;
-import app.salvatop.brainstorm.R;
-import app.salvatop.brainstorm.SettingsActivity;
 import app.salvatop.brainstorm.adapter.CardIdeaAdapter;
+import app.salvatop.brainstorm.fragment.SettingsFragment;
 import app.salvatop.brainstorm.model.Idea;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -19,12 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
-import com.google.android.material.bottomappbar.BottomAppBar;
-import com.google.android.material.bottomnavigation.BottomNavigationMenu;
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -60,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         adapter = new CardIdeaAdapter(this, ideaArrayList);
         recyclerView.setAdapter(adapter);
-
         ///end of initialization
 
         ////Checking user session
@@ -102,9 +93,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setElevation(1);
         bottomNavigationView.setItemIconSize(70);
-
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-
 
         /////TODO testing code
         //test search feature
@@ -127,16 +116,22 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     // Handle bottom menu item selection
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        RecyclerView recyclerView = findViewById(R.id.recycleView);
+        SettingsFragment settingsFragment = new SettingsFragment();
         switch (item.getItemId()) {
+            case R.id.home:
+                recyclerView.setAlpha(1);
+                recyclerView.setEnabled(true);
+                adapter.notifyDataSetChanged();
+                getSupportFragmentManager().popBackStack();
+                return true;
             case R.id.bookmarks:
                 System.out.println("bookmarks");
                 return true;
-            case R.id.home:
-                System.out.println("home");
-                return true;
             case R.id.settings:
-                Intent registration = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(registration);
+                recyclerView.setAlpha(0);
+                recyclerView.setEnabled(false);
+                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,settingsFragment).addToBackStack(null).commit();
                 return true;
             case R.id.idea_feeds:
                 System.out.println("news about last ideas");

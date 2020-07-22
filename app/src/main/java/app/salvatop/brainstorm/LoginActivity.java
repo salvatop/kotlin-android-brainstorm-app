@@ -2,7 +2,6 @@ package app.salvatop.brainstorm;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import app.salvatop.brainstorm.viewmodel.MainActivity;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
