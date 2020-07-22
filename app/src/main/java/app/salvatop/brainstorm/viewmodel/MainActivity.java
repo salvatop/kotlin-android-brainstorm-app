@@ -2,6 +2,7 @@ package app.salvatop.brainstorm.viewmodel;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,7 +19,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
+import com.google.android.material.bottomappbar.BottomAppBar;
+import com.google.android.material.bottomnavigation.BottomNavigationMenu;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -91,6 +98,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setElevation(1);
+        bottomNavigationView.setItemIconSize(70);
+
+
+
         /////TODO testing code
         //test search feature
         //getUser("username1");
@@ -107,23 +120,25 @@ public class MainActivity extends AppCompatActivity {
         ideaArrayList.add(idea2);
         adapter.notifyDataSetChanged();
     }
+
+
     // Handle toolbar item selection
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.bookmarks:
-                System.out.println("bookmarks");
-                return true;
-            case R.id.home:
-                System.out.println("home");
-                return true;
-            case R.id.menu_settings:
-                Intent registration = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(registration);
-                return true;
-            case R.id.idea_feeds:
-                System.out.println("news about last ideas");
-                return true;
+//            case R.id.bookmarks:
+//                System.out.println("bookmarks");
+//                return true;
+//            case R.id.home:
+//                System.out.println("home");
+//                return true;
+//            case R.id.settings:
+//                Intent registration = new Intent(MainActivity.this, SettingsActivity.class);
+//                startActivity(registration);
+//                return true;
+//            case R.id.idea_feeds:
+//                System.out.println("news about last ideas");
+//                return true;
                 case R.id.menu_logoff:
                 signOut(firebaseAuth);
                 return true;

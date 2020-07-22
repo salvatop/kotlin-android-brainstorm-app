@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Set the custom layout as alert dialog view
                 LayoutInflater inflater = getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.reset_password_dialog,null);
+                View dialogView = inflater.inflate(R.layout.reset_password_dialog_layout,null);
                 builder.setView(dialogView);
 
                 builder.setTitle("Reset Password");
