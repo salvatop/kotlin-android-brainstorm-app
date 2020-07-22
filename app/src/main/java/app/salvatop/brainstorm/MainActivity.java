@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         /// set the avatar image if exists in the user profile or set the default from drawable
         ImageView avatar = findViewById(R.id.imageViewAvatar);
+
         try {
             if(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getPhotoUrl() != null) {
                 Glide.with(getApplicationContext())
@@ -79,9 +80,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
 
         ///set user profile info in the UI
-        TextView email = findViewById(R.id.textViewEmail);
-        email.setText(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
-
         TextView username = findViewById(R.id.textViewDisplayName);
         username.setText(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getDisplayName());
 
@@ -131,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.settings:
                 recyclerView.setAlpha(0);
                 recyclerView.setEnabled(false);
-                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,settingsFragment).addToBackStack(null).commit();
+                getSupportFragmentManager().beginTransaction().add(R.id.frameLayout,settingsFragment).addToBackStack(null).commit();
                 return true;
             case R.id.idea_feeds:
                 System.out.println("news about last ideas");

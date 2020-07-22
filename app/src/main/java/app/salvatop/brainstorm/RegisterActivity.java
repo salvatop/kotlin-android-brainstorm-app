@@ -38,7 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean validateEmailPassword() {
         boolean valid = true;
 
-        String email = rEmail.getEditText().getText().toString().trim();
+        String email = Objects.requireNonNull(rEmail.getEditText()).getText().toString().trim();
         if (TextUtils.isEmpty(email)) {
             rEmail.setError("Required.");
             valid = false;
@@ -46,7 +46,7 @@ public class RegisterActivity extends AppCompatActivity {
             rEmail.setError(null);
         }
 
-        String password = rPassword.getEditText().getText().toString().trim();
+        String password = Objects.requireNonNull(rPassword.getEditText()).getText().toString().trim();
         if (TextUtils.isEmpty(password)) {
             rPassword.setError("Required.");
             valid = false;
@@ -60,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean validateUsername() {
         boolean valid = true;
 
-        String username = rUsername.getEditText().getText().toString().trim();
+        String username = Objects.requireNonNull(rUsername.getEditText()).getText().toString().trim();
         if (TextUtils.isEmpty(username)) {
             rUsername.setError("Required.");
             valid = false;
@@ -84,8 +84,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         register = findViewById(R.id.buttonRegister);
         register.setOnClickListener(view -> {
-            String email = rEmail.getEditText().getText().toString().trim();
-            String pass = rPassword.getEditText().getText().toString().trim();
+            String email = Objects.requireNonNull(rEmail.getEditText()).getText().toString().trim();
+            String pass = Objects.requireNonNull(rPassword.getEditText()).getText().toString().trim();
             if (validateEmailPassword()) {
                 createAccount(firebaseAuth, email, pass);
             }
@@ -93,7 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
          done = findViewById(R.id.buttonRegisterDone);
          done.setOnClickListener(view -> {
              if (validateUsername()) {
-                 setupProfile(firebaseAuth, rUsername.getEditText().getText().toString().trim(), "");
+                 setupProfile(firebaseAuth, Objects.requireNonNull(rUsername.getEditText()).getText().toString().trim(), "");
                  addProfile();
              }
          });

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@null"
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -11,67 +12,159 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        android:titleTextColor="@android:color/white"
-        app:title="@string/brainstorm"
-        app:titleMargins="8dp"
-        app:titleMarginStart="20dp"
-        app:titleTextColor="@android:color/white"
-        app:logo="@drawable/logo_toolbar"
-        app:subtitle="@string/grown_your_ideas"
-        app:subtitleTextColor="@android:color/white" />
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            android:titleTextColor="@android:color/white"
+            app:logo="@drawable/logo_toolbar"
+            app:subtitle="@string/grown_your_ideas"
+            app:subtitleTextColor="@android:color/white"
+            app:title="@string/brainstorm"
+            app:titleMarginStart="20dp"
+            app:titleMargins="8dp"
+            app:titleTextColor="@android:color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/textViewEmail"
+            android:id="@+id/textViewOccupation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/email"
-            android:layout_marginTop="35dp"
-            android:layout_marginStart="25dp"
-            app:layout_constraintStart_toEndOf="@+id/imageViewAvatar"
-            app:layout_constraintTop_toTopOf="@+id/imageViewAvatar" />
+            android:layout_marginTop="10dp"
+            android:text="software developer"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/textViewDisplayName"
+            app:layout_constraintTop_toBottomOf="@+id/textViewDisplayName" />
 
         <TextView
             android:id="@+id/textViewDisplayName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
             android:text="@string/username"
-            app:layout_constraintEnd_toEndOf="@+id/textViewEmail"
-            app:layout_constraintStart_toStartOf="@+id/textViewEmail"
-            app:layout_constraintTop_toBottomOf="@+id/textViewEmail" />
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/avatarClipsToBound"
+            app:layout_constraintTop_toTopOf="@+id/avatarClipsToBound" />
 
-        <ImageView
-            android:id="@+id/imageViewAvatar"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/avatar"
-            android:layout_marginTop="60dp"
-            android:layout_marginStart="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/textViewMotto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text='my motto is: "i like fixing things"'
+            android:textSize="12sp"
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="@+id/textViewOccupation"
+            app:layout_constraintTop_toBottomOf="@+id/textViewOccupation" />
+
+        <TextView
+            android:id="@+id/textViewCity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Montreal, QC"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewDisplayName"
+            app:layout_constraintStart_toEndOf="@+id/textViewDisplayName"
+            app:layout_constraintTop_toTopOf="@+id/textViewDisplayName" />
+
+        <TextView
+            android:id="@+id/textViewFollowed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:text="followed [1]"
+            android:textColor="#2962FF"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toTopOf="@+id/textViewCity"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textViewCity" />
+
+        <TextView
+            android:id="@+id/textViewFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:text="followers [12]"
+            android:textColor="#2962FF"
+            android:textSize="10sp"
+            app:layout_constraintEnd_toEndOf="@+id/textViewFollowed"
+            app:layout_constraintStart_toStartOf="@+id/textViewFollowed"
+            app:layout_constraintTop_toBottomOf="@+id/textViewFollowed" />
+
+        <TextView
+            android:id="@+id/textViewTeams"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="teams [3]"
+            android:textColor="#C51162"
+            android:textSize="10sp"
+            app:layout_constraintEnd_toEndOf="@+id/textViewFollowers"
+            app:layout_constraintStart_toStartOf="@+id/textViewFollowers"
+            app:layout_constraintTop_toBottomOf="@+id/textViewFollowers" />
 
         <TextView
             android:id="@+id/textViewIdeasLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="5dp"
-            android:text="Ideas"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="17dp"
+            android:fontFamily="cursive"
+            android:text="My ideas"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageViewAvatar" />
+            app:layout_constraintTop_toBottomOf="@+id/avatarClipsToBound" />
+
+        <Button
+            android:id="@+id/buttonAddIdea"
+            style="@style/Widget.AppCompat.Button.Small"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:alpha=".6"
+            android:elevation="4dp"
+            android:textColor="#000000"
+            android:textSize="8sp"
+            android:textStyle="bold"
+            app:cornerRadius="14dp"
+            app:icon="@android:drawable/ic_input_add"
+            app:iconPadding="0dp"
+            app:iconTint="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewIdeasLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textViewIdeasLabel" />
+
+        <FrameLayout
+            android:id="@+id/avatarClipsToBound"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="80dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageViewAvatar"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="67dp"
+                android:background="@drawable/avatar_stroke"
+                android:elevation="4dp"
+                android:scaleType="fitXY"
+                tools:src="@tools:sample/avatars" />
+        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/frameLayout"
@@ -91,7 +184,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginBottom="25dp" >
+                android:layout_marginBottom="25dp">
 
             </androidx.recyclerview.widget.RecyclerView>
 
@@ -101,16 +194,18 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_anchor="@+id/constraintLayout"
+        app:layout_anchorGravity="center">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             style="@style/Widget.MaterialComponents.BottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?android:attr/windowBackground"
             app:itemIconTint="@android:color/black"
             app:itemTextColor="@android:color/black"
-            android:background="?android:attr/windowBackground"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
