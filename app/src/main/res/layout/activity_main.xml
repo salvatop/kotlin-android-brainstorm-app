@@ -35,9 +35,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <EditText
+            android:id="@+id/EditTextOccupation"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="software developer"
+            android:textSize="12sp"
+            android:enabled="false"
+            android:visibility="invisible"
+            android:focusableInTouchMode="true"
+            app:layout_constraintStart_toStartOf="@+id/textViewDisplayName"
+            app:layout_constraintTop_toBottomOf="@+id/textViewDisplayName"
+            android:autofillHints="occupation"
+            android:inputType="text" />
+
         <TextView
             android:id="@+id/textViewOccupation"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="software developer"
@@ -55,73 +70,71 @@
             app:layout_constraintStart_toEndOf="@+id/avatarClipsToBound"
             app:layout_constraintTop_toTopOf="@+id/avatarClipsToBound" />
 
-        <TextView
-            android:id="@+id/textViewMotto"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/EditTextMotto"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:text='my motto is: "i like fixing things"'
             android:textSize="12sp"
             android:textStyle="italic"
+            android:enabled="false"
+            android:visibility="invisible"
+            android:focusableInTouchMode="true"
             app:layout_constraintStart_toStartOf="@+id/textViewOccupation"
             app:layout_constraintTop_toBottomOf="@+id/textViewOccupation" />
 
         <TextView
+            android:id="@+id/textViewMotto"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text='my motto is: "i like fixing things"'
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="@+id/textViewOccupation"
+            app:layout_constraintTop_toBottomOf="@+id/textViewOccupation" />
+
+        <EditText
+        android:id="@+id/EditTextCity"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:autofillHints=""
+        android:hint="city"
+        android:text="Montreal, QC"
+        android:textSize="12sp"
+        android:enabled="false"
+        android:visibility="invisible"
+        android:focusableInTouchMode="true"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewDisplayName"
+        app:layout_constraintStart_toEndOf="@+id/textViewDisplayName"
+        app:layout_constraintTop_toTopOf="@+id/textViewDisplayName" />
+
+        <TextView
             android:id="@+id/textViewCity"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:autofillHints=""
+            android:hint="city"
             android:text="Montreal, QC"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@+id/textViewDisplayName"
             app:layout_constraintStart_toEndOf="@+id/textViewDisplayName"
             app:layout_constraintTop_toTopOf="@+id/textViewDisplayName" />
 
-        <TextView
-            android:id="@+id/textViewFollowed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:text="followed [1]"
-            android:textColor="#2962FF"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toTopOf="@+id/textViewCity"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textViewCity" />
 
         <TextView
-            android:id="@+id/textViewFollowers"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:text="followers [12]"
-            android:textColor="#2962FF"
-            android:textSize="10sp"
-            app:layout_constraintEnd_toEndOf="@+id/textViewFollowed"
-            app:layout_constraintStart_toStartOf="@+id/textViewFollowed"
-            app:layout_constraintTop_toBottomOf="@+id/textViewFollowed" />
-
-        <TextView
-            android:id="@+id/textViewTeams"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="teams [3]"
-            android:textColor="#C51162"
-            android:textSize="10sp"
-            app:layout_constraintEnd_toEndOf="@+id/textViewFollowers"
-            app:layout_constraintStart_toStartOf="@+id/textViewFollowers"
-            app:layout_constraintTop_toBottomOf="@+id/textViewFollowers" />
-
-        <TextView
-            android:id="@+id/textViewIdeasLabel"
+            android:id="@+id/textViewDisplayLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="17dp"
             android:fontFamily="cursive"
             android:text="My ideas"
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/avatarClipsToBound" />
@@ -134,15 +147,14 @@
             android:alpha=".6"
             android:elevation="4dp"
             android:textColor="#000000"
-            android:textSize="8sp"
             android:textStyle="bold"
             app:cornerRadius="14dp"
             app:icon="@android:drawable/ic_input_add"
             app:iconPadding="0dp"
             app:iconTint="#FFFFFF"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewIdeasLabel"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewDisplayLabel"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textViewIdeasLabel" />
+            app:layout_constraintTop_toTopOf="@+id/textViewDisplayLabel" />
 
         <FrameLayout
             android:id="@+id/avatarClipsToBound"
@@ -174,7 +186,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewIdeasLabel"
+            app:layout_constraintTop_toBottomOf="@+id/textViewDisplayLabel"
             app:layout_constraintVertical_bias="0.0">
 
             <androidx.recyclerview.widget.RecyclerView
