@@ -1,5 +1,6 @@
 package app.salvatop.brainstorm
 
+import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
@@ -32,7 +33,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener, View.OnClickListener, View.OnLongClickListener {
     private var firebaseAuth: FirebaseAuth? = null
     private var fireAuthListener: AuthStateListener? = null
@@ -40,7 +40,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private var ideaArrayList: ArrayList<Idea>? = null
     private var label: TextView? = null
 
-            private fun initializeButtonsTextEditAndView() {
+    @SuppressLint("SetTextI18n")
+    private fun initializeButtonsTextEditAndView() {
         val database = FirebaseDatabase.getInstance()
 
         val user: String = firebaseAuth?.currentUser?.displayName.toString()
@@ -57,9 +58,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        ///fetch ideas for the profile from db TODO write a coroutine
         ideaArrayList = ArrayList()
         adapter = CardIdeaAdapter(this, ideaArrayList!!)
         recyclerView.adapter = adapter
+        ideaArrayList = loadIdeasFromDB(ideaArrayList!!, adapter!!, user)
         adapter!!.notifyDataSetChanged()
 
         //button to add idea to the profile
@@ -203,30 +206,31 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         bottomNavigationView.elevation = 1f
         bottomNavigationView.itemIconSize = 70
         bottomNavigationView.setOnNavigationItemSelectedListener(this)
-
-        /////TODO testing code
-        //test search feature
-        //getUser("username1");
-        createData()
-        /////TODO end of testing code
     }
 
-    private fun createData() {
-        val forks = ArrayList<String>()
-        forks.add("2")
-        val idea = Idea("Gino Malli", "android app", "un app per brainstoirming", "brainstorm", false, forks)
-        ideaArrayList!!.add(idea)
-        val idea2 = Idea("Gino Malli", "android app", "un app per brainstoirming", "brainstorm2", false, forks)
-        ideaArrayList!!.add(idea2)
-        val idea3 = Idea("Gino Malli", "android app", "un app per brainstoirming", "brainstorm2", false, forks)
-        ideaArrayList!!.add(idea3)
-        adapter!!.notifyDataSetChanged()
+    private fun loadIdeasFromDB(listOdIdeas: ArrayList<Idea>, dataAdapter: CardIdeaAdapter, username: String) : ArrayList<Idea> {
+        FirebaseDatabase.getInstance().reference.child("users").child(username).child("ideas")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (snapshot in dataSnapshot.children) {
+                            val idea: Idea? = snapshot.getValue(Idea::class.java)
+                            if (idea != null) {
+                                listOdIdeas.add(idea)
+                            }
+                        }
+                    }
+                    override fun onCancelled(databaseError: DatabaseError) {}
+                })
+
+        dataAdapter.notifyDataSetChanged()
+        return listOdIdeas
     }
 
     // Handle bottom menu item selection
+    @SuppressLint("SetTextI18n")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
-        val settingsFragment = TeamFragment()
+        val teamFragment = TeamFragment()
         return when (item.itemId) {
             R.id.home -> {
                 recyclerView.alpha = 1f
@@ -246,7 +250,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 supportFragmentManager.popBackStack()
                 recyclerView.alpha = 0f
                 recyclerView.isEnabled = false
-                val teamFragment = TeamFragment()
                 supportFragmentManager.beginTransaction().add(R.id.frameLayout, teamFragment).addToBackStack(null).commit()
                 true
             }
@@ -279,9 +282,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-    // Menu icons are inflated just as they were with actionbar
-    // Inflate the menu; this adds items to the action bar if it is present.
+    //toolbar menu
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
