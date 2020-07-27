@@ -18,12 +18,12 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class AddIdeaFragment : Fragment(), View.OnClickListener {
+class AddIdeaFragment : Fragment() {
     private var authorName: String = ""
     private var title: EditText? = null
     private var ideaContext: EditText? = null
     private var contents: EditText? = null
-    private var forks: ArrayList<String>? = null
+    private var forks: ArrayList<String> = ArrayList()
     private var save: Button? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -36,12 +36,11 @@ class AddIdeaFragment : Fragment(), View.OnClickListener {
         title = view.findViewById(R.id.editTextIdeaTitle)
         ideaContext = view.findViewById(R.id.editTextContext)
         contents = view.findViewById(R.id.editTextContents)
-        forks?.add("")
+        forks.add(authorName + "_" + title?.text.toString() + "_" + "newTitle")
 
         save = view.findViewById(R.id.buttonSaveIdea)
-        save?.setOnClickListener(this)
         save?.setOnClickListener {
-            val newIdea = Idea(authorName,ideaContext?.text.toString(),contents?.text.toString(),title?.text.toString(),true,forks)
+            val newIdea = Idea(authorName, ideaContext?.text.toString(), contents?.text.toString(), title?.text.toString(),"true", forks)
             val titleText = title!!.text.toString()
             val myRef = database.getReference("users").child(authorName).child("ideas").child(titleText)
 
@@ -64,7 +63,5 @@ class AddIdeaFragment : Fragment(), View.OnClickListener {
 
         return view
     }
-
-    override fun onClick(p0: View?) {}
 }
 

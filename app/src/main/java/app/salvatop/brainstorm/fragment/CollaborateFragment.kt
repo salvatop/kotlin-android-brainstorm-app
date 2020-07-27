@@ -15,7 +15,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 
-class TeamFragment : Fragment() {
+class CollaborateFragment : Fragment() {
     var firebaseAuth: FirebaseAuth? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         firebaseAuth = FirebaseAuth.getInstance()
@@ -23,7 +23,7 @@ class TeamFragment : Fragment() {
         /////TODO testing code
         //setupProfile(firebaseAuth!!,"Gigi la Trottola","https://firebasestorage.googleapis.com/v0/b/brainstorm-f3b48.appspot.com/o/eiffel-tower.jpg?alt=media&token=1c3332ec-6a44-4ef0-83bf-40a12fff86a0");
         ////TODO end of testing code
-        return inflater.inflate(R.layout.fragment_team, container, false)
+        return inflater.inflate(R.layout.fragment_collaborate, container, false)
     }
 
     fun setupProfile(mAuth: FirebaseAuth, displayName: String?, photoUrl: String?) {

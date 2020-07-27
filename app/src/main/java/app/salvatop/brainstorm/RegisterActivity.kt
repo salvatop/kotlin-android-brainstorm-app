@@ -59,7 +59,7 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         }
         done?.setOnClickListener {
             if (validateUsername()) {
-                setupProfile(firebaseAuth!!, rUsername!!.editText?.text.toString(), "")
+                setupProfile(firebaseAuth!!, rUsername!!.editText?.text.toString(), "upload_your_photo")
                 addProfile()
             }
         }
@@ -141,19 +141,20 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         teams.add("")
         val bookmarks = ArrayList<String>()
         bookmarks.add("")
-        val ideas = ArrayList<Idea>()
+        val ideas = HashMap<String, Idea>()
         val forks = ArrayList<String>()
         forks.add("")
-        ideas.add(Idea("author", "context", "content", "title", true, forks))
-        val profile = Profile(firebaseAuth!!.currentUser?.displayName,"city","motto","occupation",
-                followed, following, teams, ideas, bookmarks)
+
+        val username = rUsername!!.editText?.text.toString()
+
+        ideas["title"] = Idea("author", "context", "content", "title", "true", forks)
+
+        val profile = Profile("add your city","add your motto","add your occupation", username, followed, following, teams, ideas, bookmarks)
+
         val database = FirebaseDatabase.getInstance()
         val myRef = database.getReference("users")
-
-        val user = rUsername!!.editText?.text.toString()
-        myRef.child(user).setValue(profile)
+        myRef.child(username).setValue(profile)
         sendEmailVerification()
-
     }
 
     private fun hideAndDisplayUIElements() {

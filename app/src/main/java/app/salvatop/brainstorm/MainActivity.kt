@@ -2,6 +2,7 @@ package app.salvatop.brainstorm
 
 import android.annotation.SuppressLint
 import android.app.SearchManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -12,18 +13,20 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
+
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.salvatop.brainstorm.adapter.CardIdeaAdapter
 import app.salvatop.brainstorm.fragment.AddIdeaFragment
-import app.salvatop.brainstorm.fragment.TeamFragment
+import app.salvatop.brainstorm.fragment.CollaborateFragment
+import app.salvatop.brainstorm.fragment.PublicProfileFragment
 import app.salvatop.brainstorm.model.Idea
+import app.salvatop.brainstorm.model.Profile
+import app.salvatop.brainstorm.repository.FirebaseRepository
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -33,25 +36,26 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener, View.OnClickListener, View.OnLongClickListener {
+class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private var firebaseAuth: FirebaseAuth? = null
     private var fireAuthListener: AuthStateListener? = null
     private var adapter: CardIdeaAdapter? = null
     private var ideaArrayList: ArrayList<Idea>? = null
+    private var usersArrayList: ArrayList<Profile>? = null
     private var label: TextView? = null
+
 
     @SuppressLint("SetTextI18n")
     private fun initializeButtonsTextEditAndView() {
         val database = FirebaseDatabase.getInstance()
-
         val user: String = firebaseAuth?.currentUser?.displayName.toString()
 
         val mottoEdit: EditText = findViewById(R.id.EditTextMotto)
         val occupationEdit: EditText = findViewById(R.id.EditTextOccupation)
         val cityEdit: EditText = findViewById(R.id.EditTextCity)
-        val city: TextView = findViewById(R.id.textViewCity)
-        val motto: TextView = findViewById(R.id.textViewMotto)
-        val occupation: TextView = findViewById(R.id.textViewOccupation)
+        val city: TextView = findViewById(R.id.textViewPublicProfileCity)
+        val motto: TextView = findViewById(R.id.textViewPublicProfileMotto)
+        val occupation: TextView = findViewById(R.id.textViewPublicProfileOccupation)
 
         label = findViewById(R.id.textViewDisplayLabel)
 
@@ -59,15 +63,20 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         ///fetch ideas for the profile from db TODO write a coroutine
+
         ideaArrayList = ArrayList()
         adapter = CardIdeaAdapter(this, ideaArrayList!!)
         recyclerView.adapter = adapter
         ideaArrayList = loadIdeasFromDB(ideaArrayList!!, adapter!!, user)
         adapter!!.notifyDataSetChanged()
 
+
+        usersArrayList = ArrayList()
+        usersArrayList = loadAllUserFromDB()
+        print(getUser("Augusto I"))
+
         //button to add idea to the profile
         val addIdea: Button = findViewById(R.id.buttonAddIdea)
-        addIdea.setOnClickListener(this)
         addIdea.setOnClickListener {
             val addIdeaFragment = AddIdeaFragment()
             supportFragmentManager.popBackStack()
@@ -91,8 +100,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
-
-        motto.setOnLongClickListener(this)
         motto.setOnLongClickListener {
             mottoEdit.visibility = VISIBLE
             mottoEdit.isEnabled = true
@@ -101,12 +108,18 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             cityEdit.visibility = INVISIBLE
             cityEdit.isEnabled = false
 
-            mottoEdit.requestFocus()
+            //mottoEdit.requestFocus()
             motto.visibility = INVISIBLE
             city.visibility = VISIBLE
             occupation.visibility = VISIBLE
             true
         }
+        mottoEdit.setOnClickListener {
+            mottoEdit.visibility = INVISIBLE
+            mottoEdit.isEnabled = false
+            motto.visibility = VISIBLE
+        }
+
         occupationEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 occupation.text = occupationEdit.text
@@ -117,7 +130,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
-        occupation.setOnLongClickListener(this)
         occupation.setOnLongClickListener {
             occupationEdit.visibility = VISIBLE
             occupationEdit.isEnabled = true
@@ -143,7 +155,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
-        city.setOnLongClickListener(this)
         city.setOnLongClickListener {
             cityEdit.visibility = VISIBLE
             cityEdit.isEnabled = true
@@ -179,7 +190,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
 
         /// set the avatar image if exists in the user profile or set the default from drawable
-        val avatar = findViewById<ImageView>(R.id.imageViewAvatar)
+        val avatar = findViewById<ImageView>(R.id.imagePublicProfileViewAvatar)
         try {
             if (firebaseAuth!!.currentUser?.photoUrl != null) {
                 Glide.with(applicationContext)
@@ -226,11 +237,28 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         return listOdIdeas
     }
 
-    // Handle bottom menu item selection
+    private fun loadAllUserFromDB() : ArrayList<Profile> {
+        val listOUsers: ArrayList<Profile> = ArrayList()
+        FirebaseDatabase.getInstance().reference.child("users")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (snapshot in dataSnapshot.children) {
+                            val profile: Profile? = snapshot.getValue(Profile::class.java)
+                            if (profile != null) {
+                                listOUsers.add(profile)
+                            }
+                        }
+                    }
+                    override fun onCancelled(databaseError: DatabaseError) {}
+                })
+        return listOUsers
+    }
+
+    // Handle bottom bar menu item selection
     @SuppressLint("SetTextI18n")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
-        val teamFragment = TeamFragment()
+        val collaborateFragment = CollaborateFragment()
         return when (item.itemId) {
             R.id.home -> {
                 recyclerView.alpha = 1f
@@ -246,11 +274,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 true
             }
             R.id.settings -> {
-                label?.text = "Social"
+                label?.text = "Collaborate"
                 supportFragmentManager.popBackStack()
                 recyclerView.alpha = 0f
                 recyclerView.isEnabled = false
-                supportFragmentManager.beginTransaction().add(R.id.frameLayout, teamFragment).addToBackStack(null).commit()
+                supportFragmentManager.beginTransaction().add(R.id.frameLayout, collaborateFragment).addToBackStack(null).commit()
                 true
             }
             R.id.idea_feeds -> {
@@ -260,32 +288,82 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             else -> false
         }
     }
-
-    // Handle toolbar item selection
+    // Handle toolbar menu item selection
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_logoff -> {
                 signOut(firebaseAuth)
                 true
             }
-            R.id.app_bar_search -> {
-                // Get the intent, verify the action and get the query
-                val intent = intent
-                if (Intent.ACTION_SEARCH == intent.action) {
-                    val query = intent.getStringExtra(SearchManager.QUERY)
-
-                    getUser(query)
-                }
-
-                true
-            }
             else -> super.onOptionsItemSelected(item)
         }
     }
-    //toolbar menu
+
+    //Handle  toolbar menu search
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return true
+        val inflater = menuInflater
+        inflater.inflate(R.menu.main_menu, menu)
+
+        val manager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+
+        val searchItem = menu.findItem(R.id.app_bar_search)
+        val searchView = searchItem.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object:  SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    searchView.clearFocus()
+                    searchView.setQuery("",  false)
+                    searchItem.collapseActionView()
+                    val userSearch = "$query"
+                    Log.d("QUERY", "looking for $query")
+                    usersArrayList?.forEach { user ->
+                        //Log.d("USERS LIST", user.displayName)
+                        if (user.displayName == userSearch) {
+                            val publicProfileFragment = PublicProfileFragment()
+                            val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
+                            recyclerView.alpha = 0f
+                            recyclerView.isEnabled = false
+                            label?.text = user.displayName
+
+                            val bundle = Bundle()
+                            bundle.putSerializable("profile",user)
+                            publicProfileFragment.arguments = bundle
+
+                            supportFragmentManager.popBackStack()
+                            supportFragmentManager.beginTransaction().add(R.id.frameLayout, publicProfileFragment).addToBackStack("publicProfileFragment").commit()
+                            return true
+                        }
+                    }
+                    Toast.makeText(this@MainActivity, "This user: $query does not exist", Toast.LENGTH_SHORT).show()
+                    return false
+                }
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    return false
+                }
+            })
+        return false
+    }
+
+    //feature to get a users by username from the database
+    private fun getUser(username: String?) : Profile? {
+        var profile: Profile? = null
+        val database = FirebaseDatabase.getInstance()
+        val myRef = database.getReference("users").child(username!!)
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
+                val userProfile: Profile? = dataSnapshot.getValue(Profile::class.java)
+                if (userProfile != null) {
+                    profile = userProfile
+                } else {
+                    profile = null
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+                Log.w("FIREBASE", "Failed to read value.", error.toException())
+            }
+        })
+        return profile
     }
 
     override fun onStart() {
@@ -300,31 +378,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
     }
 
-    //feature to get a users by username from the database
-    private fun getUser(username: String?) {
-        val database = FirebaseDatabase.getInstance()
-        val myRef = database.getReference("users").child(username!!)
-        myRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // This method is called once with the initial value and again whenever data at this location is updated.
-                Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
-                Log.w("FIREBASE", "Failed to read value.", error.toException())
-            }
-        })
-    }
-
-
     private fun signOut(auth: FirebaseAuth?) {
         auth!!.signOut()
-    }
-
-    override fun onClick(p0: View?) {}
-
-    override fun onLongClick(p0: View?): Boolean {
-        return false
     }
 }

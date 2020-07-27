@@ -21,7 +21,7 @@
             android:theme="?attr/actionBarTheme"
             android:titleTextColor="@android:color/white"
             app:logo="@drawable/logo_toolbar"
-            app:subtitle="@string/grown_your_ideas"
+            app:subtitle="grow your ideas"
             app:subtitleTextColor="@android:color/white"
             app:title="@string/brainstorm"
             app:titleMarginStart="20dp"
@@ -51,7 +51,7 @@
             android:inputType="text" />
 
         <TextView
-            android:id="@+id/textViewOccupation"
+            android:id="@+id/textViewPublicProfileOccupation"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -81,11 +81,11 @@
             android:enabled="false"
             android:visibility="invisible"
             android:focusableInTouchMode="true"
-            app:layout_constraintStart_toStartOf="@+id/textViewOccupation"
-            app:layout_constraintTop_toBottomOf="@+id/textViewOccupation" />
+            app:layout_constraintStart_toStartOf="@+id/textViewPublicProfileOccupation"
+            app:layout_constraintTop_toBottomOf="@+id/textViewPublicProfileOccupation" />
 
         <TextView
-            android:id="@+id/textViewMotto"
+            android:id="@+id/textViewPublicProfileMotto"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -93,8 +93,8 @@
             android:textSize="12sp"
             android:textStyle="italic"
             android:visibility="visible"
-            app:layout_constraintStart_toStartOf="@+id/textViewOccupation"
-            app:layout_constraintTop_toBottomOf="@+id/textViewOccupation" />
+            app:layout_constraintStart_toStartOf="@+id/textViewPublicProfileOccupation"
+            app:layout_constraintTop_toBottomOf="@+id/textViewPublicProfileOccupation" />
 
         <EditText
         android:id="@+id/EditTextCity"
@@ -113,7 +113,7 @@
         app:layout_constraintTop_toTopOf="@+id/textViewDisplayName" />
 
         <TextView
-            android:id="@+id/textViewCity"
+            android:id="@+id/textViewPublicProfileCity"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -166,7 +166,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/imageViewAvatar"
+                android:id="@+id/imagePublicProfileViewAvatar"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_gravity="bottom"
