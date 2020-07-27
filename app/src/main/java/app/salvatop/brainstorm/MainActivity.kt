@@ -108,18 +108,12 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             cityEdit.visibility = INVISIBLE
             cityEdit.isEnabled = false
 
-            //mottoEdit.requestFocus()
+            mottoEdit.requestFocus()
             motto.visibility = INVISIBLE
             city.visibility = VISIBLE
             occupation.visibility = VISIBLE
             true
         }
-        mottoEdit.setOnClickListener {
-            mottoEdit.visibility = INVISIBLE
-            mottoEdit.isEnabled = false
-            motto.visibility = VISIBLE
-        }
-
         occupationEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 occupation.text = occupationEdit.text
@@ -341,7 +335,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                     return false
                 }
             })
-        return false
+        return true
     }
 
     //feature to get a users by username from the database
