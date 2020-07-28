@@ -38,17 +38,20 @@ class PublicProfileFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        profile = arguments!!.getSerializable("profile") as Profile
+        Log.d("PROFILE", profile.displayName)
+        ideaArrayList = getIdeasFromSerializable(profile)
+
         firebaseAuth = FirebaseAuth.getInstance()
         val view = inflater.inflate(R.layout.fragment_public_profile, container,false) as ViewGroup
 
-        val recyclerView = view?.findViewById<RecyclerView>(R.id.recycleViewPublicProfile)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recycleViewPublicProfile)
         recyclerView?.layoutManager = LinearLayoutManager(context)
 
-        ideaArrayList = ArrayList()
-        adapter = context?.let { CardIdeaAdapter(it, ideaArrayList!!) }
-        recyclerView?.adapter = adapter
+        adapter = CardIdeaAdapter(context!!, ideaArrayList!!)
+        recyclerView.adapter = adapter
 
-        follow = view?.findViewById(R.id.buttonFollow)
+        follow = view.findViewById(R.id.buttonFollow)
         follow?.setOnClickListener {
 
             val userToFollow = profile.displayName
@@ -63,19 +66,14 @@ class PublicProfileFragment : Fragment() {
         }
 
 
-        profile = arguments!!.getSerializable("profile") as Profile
-        Log.d("PROFILE", profile.displayName)
-        ideaArrayList = getIdeasFromSerializable(profile)
+
 
         return view
     }
 
     override fun onStart() {
         super.onStart()
-        adapter!!.notifyDataSetChanged()
-
         Log.d("IDEAS", "${ideaArrayList?.size}")
-
     }
 
     fun followUnfollowUsers(userToFollow: String?, whoIsFollow: String?, action: String?) {

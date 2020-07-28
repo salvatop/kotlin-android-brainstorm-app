@@ -36,11 +36,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.util.concurrent.*
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private var firebaseAuth: FirebaseAuth? = null
@@ -49,22 +44,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private var ideaArrayList: ArrayList<Idea>? = null
     private var usersArrayList: ArrayList<Profile>? = null
     private var label: TextView? = null
-
-    fun getAValueFromDB(valueToGet: String, username: String) : String? {
-        var valueToReturn: String? = ""
-        val database = FirebaseDatabase.getInstance()
-        val myRef = database.getReference("users").child(username).child(valueToGet)
-        myRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
-                valueToReturn = dataSnapshot.getValue() as String?
-            }
-            override fun onCancelled(error: DatabaseError) {
-                Log.w("FIREBASE", "Failed to read value.", error.toException())
-            }
-        })
-        return valueToReturn
-    }
 
     @SuppressLint("SetTextI18n")
     private fun initializeButtonsTextEditAndView() {
@@ -83,24 +62,54 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        val mottoDb = getAValueFromDB("motto",user)
-        val occupationDb = getAValueFromDB("occupation",user)
-        val cityDb = getAValueFromDB("city",user)
+        val mottoDB = database.getReference("users").child(user).child("motto")
+        val cityDB = database.getReference("users").child(user).child("city")
+        val occupationDB = database.getReference("users").child(user).child("occupation")
 
-        // Start a coroutine
-//        GlobalScope.launch(Dispatchers.Main)  {
-//            delay(1500)
-//            motto.text = mottoDb
-//            occupation.text = occupationDb
-//            city.text = cityDb
-//            Log.d("USER PROFILE", "profile updated")
-//        }
+        mottoDB.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
+                motto.text = (dataSnapshot.getValue() as String?).toString()
+            } override fun onCancelled(error: DatabaseError) {
+                Log.w("FIREBASE", "Failed to read value.", error.toException())
+            }
+        })
+
+        occupationDB.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
+                occupation.text = (dataSnapshot.getValue() as String?).toString()
+            } override fun onCancelled(error: DatabaseError) {
+                Log.w("FIREBASE", "Failed to read value.", error.toException())
+            }
+        })
+
+        cityDB.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
+                city.text = (dataSnapshot.getValue() as String?).toString()
+            } override fun onCancelled(error: DatabaseError) {
+                Log.w("FIREBASE", "Failed to read value.", error.toException())
+            }
+        })
 
         ideaArrayList = ArrayList()
         adapter = CardIdeaAdapter(this, ideaArrayList!!)
         recyclerView.adapter = adapter
-        ideaArrayList = loadIdeasFromDB(ideaArrayList!!, adapter!!, user)
-        adapter!!.notifyDataSetChanged()
+
+        FirebaseDatabase.getInstance().reference.child("users").child(user).child("ideas")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (snapshot in dataSnapshot.children) {
+                            val idea: Idea? = snapshot.getValue(Idea::class.java)
+                            if (idea != null) {
+                                ideaArrayList!!.add(idea)
+                                adapter!!.notifyDataSetChanged()
+                            }
+                        }
+                    }
+                    override fun onCancelled(databaseError: DatabaseError) {}
+                })
 
         usersArrayList = ArrayList()
         usersArrayList = loadAllUserFromDB()
@@ -343,24 +352,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
         })
         return true
-    }
-
-    private fun loadIdeasFromDB(listOdIdeas: ArrayList<Idea>, dataAdapter: CardIdeaAdapter, username: String) : ArrayList<Idea> {
-        FirebaseDatabase.getInstance().reference.child("users").child(username).child("ideas")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        for (snapshot in dataSnapshot.children) {
-                            val idea: Idea? = snapshot.getValue(Idea::class.java)
-                            if (idea != null) {
-                                listOdIdeas.add(idea)
-                            }
-                        }
-                    }
-                    override fun onCancelled(databaseError: DatabaseError) {}
-                })
-
-        dataAdapter.notifyDataSetChanged()
-        return listOdIdeas
     }
 
     private fun loadAllUserFromDB() : ArrayList<Profile> {
