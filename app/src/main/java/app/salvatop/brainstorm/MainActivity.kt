@@ -27,7 +27,6 @@ import app.salvatop.brainstorm.fragment.CollaborateFragment
 import app.salvatop.brainstorm.fragment.PublicProfileFragment
 import app.salvatop.brainstorm.model.Idea
 import app.salvatop.brainstorm.model.Profile
-import app.salvatop.brainstorm.repository.FirebaseRepository
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -45,6 +44,24 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private var usersArrayList: ArrayList<Profile>? = null
     private var label: TextView? = null
 
+
+    private fun loadAllUserFromDB() : ArrayList<Profile> {
+        val listOUsers: ArrayList<Profile> = ArrayList()
+        FirebaseDatabase.getInstance().reference.child("users")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (snapshot in dataSnapshot.children) {
+                            val profile: Profile? = snapshot.getValue(Profile::class.java)
+                            if (profile != null) {
+                                listOUsers.add(profile)
+                            }
+                        }
+                    }
+                    override fun onCancelled(databaseError: DatabaseError) {}
+                })
+        return listOUsers
+    }
+
     @SuppressLint("SetTextI18n")
     private fun initializeButtonsTextEditAndView() {
         val database = FirebaseDatabase.getInstance()
@@ -59,8 +76,25 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         label = findViewById(R.id.textViewDisplayLabel)
 
-        val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        ///setup user profile info
+
+        /// set the avatar image if exists in the user profile or set the default from drawable
+        val avatar = findViewById<ImageView>(R.id.imagePublicProfileViewAvatar)
+        try {
+            if (firebaseAuth!!.currentUser?.photoUrl != null) {
+                Glide.with(applicationContext)
+                        .load(firebaseAuth!!.currentUser!!.photoUrl)
+                        .into(avatar)
+            } else {
+                avatar.setImageDrawable(getDrawable(R.drawable.avatar))
+            }
+        } catch (e: Exception) {
+            Log.d("FIREBASE", e.message.toString())
+        }
+
+        ///set username
+        val username = findViewById<TextView>(R.id.textViewDisplayName)
+        username.text = firebaseAuth!!.currentUser?.displayName
 
         val mottoDB = database.getReference("users").child(user).child("motto")
         val cityDB = database.getReference("users").child(user).child("city")
@@ -92,11 +126,18 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 Log.w("FIREBASE", "Failed to read value.", error.toException())
             }
         })
+        ///setup user profile info_ END
+
+        //SETUP THE RECYCLE VIEW WITH THE CARD VIEW ADAPTER
+        val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         ideaArrayList = ArrayList()
         adapter = CardIdeaAdapter(this, ideaArrayList!!)
+
         recyclerView.adapter = adapter
 
+        //create local list of my ideas
         FirebaseDatabase.getInstance().reference.child("users").child(user).child("ideas")
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -111,8 +152,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                     override fun onCancelled(databaseError: DatabaseError) {}
                 })
 
-        usersArrayList = ArrayList()
         usersArrayList = loadAllUserFromDB()
+
 
         //button to add idea to the profile
         val addIdea: Button = findViewById(R.id.buttonAddIdea)
@@ -124,7 +165,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             label?.text = "Add an Idea"
             supportFragmentManager.beginTransaction().add(R.id.frameLayout, addIdeaFragment).addToBackStack(null).commit()
         }
-
+        //SETUP TEXT LISTENER FOR UPDATE USER PROFILE
         mottoEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 motto.text = mottoEdit.text
@@ -221,25 +262,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 startActivity(mainActivity)
             }
         }
-
-        /// set the avatar image if exists in the user profile or set the default from drawable
-        val avatar = findViewById<ImageView>(R.id.imagePublicProfileViewAvatar)
-        try {
-            if (firebaseAuth!!.currentUser?.photoUrl != null) {
-                Glide.with(applicationContext)
-                        .load(firebaseAuth!!.currentUser!!.photoUrl)
-                        .into(avatar)
-            } else {
-                avatar.setImageDrawable(getDrawable(R.drawable.avatar))
-            }
-        } catch (e: Exception) {
-            Log.d("FIREBASE", e.message.toString())
-        }
-
-        ///set user profile info in the UI
-        val username = findViewById<TextView>(R.id.textViewDisplayName)
-        username.text = firebaseAuth!!.currentUser?.displayName
-
 
         // Sets the Toolbar to act as the ActionBar for this Activity window.
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
@@ -352,23 +374,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
         })
         return true
-    }
-
-    private fun loadAllUserFromDB() : ArrayList<Profile> {
-        val listOUsers: ArrayList<Profile> = ArrayList()
-        FirebaseDatabase.getInstance().reference.child("users")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        for (snapshot in dataSnapshot.children) {
-                            val profile: Profile? = snapshot.getValue(Profile::class.java)
-                            if (profile != null) {
-                                listOUsers.add(profile)
-                            }
-                        }
-                    }
-                    override fun onCancelled(databaseError: DatabaseError) {}
-                })
-        return listOUsers
     }
 
     private fun signOut(auth: FirebaseAuth?) {

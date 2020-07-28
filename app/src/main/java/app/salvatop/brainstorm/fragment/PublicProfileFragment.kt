@@ -1,6 +1,5 @@
 package app.salvatop.brainstorm.fragment
 
-
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,7 +13,6 @@ import app.salvatop.brainstorm.R
 import app.salvatop.brainstorm.adapter.CardIdeaAdapter
 import app.salvatop.brainstorm.model.Idea
 import app.salvatop.brainstorm.model.Profile
-import app.salvatop.brainstorm.repository.FirebaseRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.GlobalScope
@@ -23,11 +21,7 @@ import kotlinx.coroutines.launch
 
 class PublicProfileFragment : Fragment() {
     private var profile = Profile()
-    private var adapter: CardIdeaAdapter? = null
     private var ideaArrayList: ArrayList<Idea>? = null
-    private var recyclerView: RecyclerView? = null
-    private var follow: Button? = null
-    var firebaseAuth: FirebaseAuth? = null
 
     private fun getIdeasFromSerializable(profile: Profile): ArrayList<Idea> {
         val ideas: ArrayList<Idea> = ArrayList()
@@ -42,20 +36,20 @@ class PublicProfileFragment : Fragment() {
         Log.d("PROFILE", profile.displayName)
         ideaArrayList = getIdeasFromSerializable(profile)
 
-        firebaseAuth = FirebaseAuth.getInstance()
+        val firebaseAuth = FirebaseAuth.getInstance()
         val view = inflater.inflate(R.layout.fragment_public_profile, container,false) as ViewGroup
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycleViewPublicProfile)
         recyclerView?.layoutManager = LinearLayoutManager(context)
 
-        adapter = CardIdeaAdapter(context!!, ideaArrayList!!)
+        val adapter = CardIdeaAdapter(context!!, ideaArrayList!!)
         recyclerView.adapter = adapter
 
-        follow = view.findViewById(R.id.buttonFollow)
-        follow?.setOnClickListener {
+        val follow: Button = view.findViewById(R.id.buttonFollow)
+        follow.setOnClickListener {
 
             val userToFollow = profile.displayName
-            val whoIsFollow = firebaseAuth!!.currentUser?.displayName.toString()
+            val whoIsFollow = firebaseAuth.currentUser?.displayName.toString()
             Log.d("USERS", whoIsFollow + " " + userToFollow)
             // Start a coroutine
             GlobalScope.launch {
@@ -64,10 +58,6 @@ class PublicProfileFragment : Fragment() {
             }
             Log.d("BUTTON", "user followed")
         }
-
-
-
-
         return view
     }
 
