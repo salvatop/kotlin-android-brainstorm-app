@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 
-class RegisterActivity : AppCompatActivity(), View.OnClickListener {
+class RegisterActivity : AppCompatActivity() {
 
     private var firebaseAuth: FirebaseAuth? = null
 
@@ -45,10 +45,6 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         register = findViewById(R.id.buttonRegister)
         done = findViewById(R.id.buttonRegisterDone)
         goToLogin = findViewById(R.id.buttonGoToLogin)
-
-        register!!.setOnClickListener(this)
-        done!!.setOnClickListener(this)
-        goToLogin!!.setOnClickListener(this)
 
         register!!.setOnClickListener {
             val email = rEmail!!.editText?.text.toString()
@@ -133,10 +129,10 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun addProfile() {
-        val followed = ArrayList<String>()
-        followed.add("")
-        val following = ArrayList<String>()
-        following.add("")
+        val followed = HashMap<String, String>()
+        followed.put("add followers here","add followers here")
+        val following = HashMap<String, String>()
+        following.put("if someone follow you it will be here", "if someone follow you it will be here")
         val teams = ArrayList<String>()
         teams.add("")
         val bookmarks = ArrayList<String>()
@@ -195,7 +191,5 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 }
     }
-
-    override fun onClick(p0: View?) {}
 }
 

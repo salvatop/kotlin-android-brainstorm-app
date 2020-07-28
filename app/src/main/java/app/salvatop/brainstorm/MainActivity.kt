@@ -20,6 +20,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+
 import app.salvatop.brainstorm.adapter.CardIdeaAdapter
 import app.salvatop.brainstorm.fragment.AddIdeaFragment
 import app.salvatop.brainstorm.fragment.CollaborateFragment
@@ -35,6 +36,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.concurrent.*
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private var firebaseAuth: FirebaseAuth? = null
@@ -44,6 +50,21 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private var usersArrayList: ArrayList<Profile>? = null
     private var label: TextView? = null
 
+    fun getAValueFromDB(valueToGet: String, username: String) : String? {
+        var valueToReturn: String? = ""
+        val database = FirebaseDatabase.getInstance()
+        val myRef = database.getReference("users").child(username).child(valueToGet)
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
+                valueToReturn = dataSnapshot.getValue() as String?
+            }
+            override fun onCancelled(error: DatabaseError) {
+                Log.w("FIREBASE", "Failed to read value.", error.toException())
+            }
+        })
+        return valueToReturn
+    }
 
     @SuppressLint("SetTextI18n")
     private fun initializeButtonsTextEditAndView() {
@@ -54,7 +75,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val occupationEdit: EditText = findViewById(R.id.EditTextOccupation)
         val cityEdit: EditText = findViewById(R.id.EditTextCity)
         val city: TextView = findViewById(R.id.textViewPublicProfileCity)
-        val motto: TextView = findViewById(R.id.textViewPublicProfileMotto)
+        val motto: TextView  = findViewById(R.id.textViewPublicProfileMotto)
         val occupation: TextView = findViewById(R.id.textViewPublicProfileOccupation)
 
         label = findViewById(R.id.textViewDisplayLabel)
@@ -62,7 +83,18 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        ///fetch ideas for the profile from db TODO write a coroutine
+        val mottoDb = getAValueFromDB("motto",user)
+        val occupationDb = getAValueFromDB("occupation",user)
+        val cityDb = getAValueFromDB("city",user)
+
+        // Start a coroutine
+//        GlobalScope.launch(Dispatchers.Main)  {
+//            delay(1500)
+//            motto.text = mottoDb
+//            occupation.text = occupationDb
+//            city.text = cityDb
+//            Log.d("USER PROFILE", "profile updated")
+//        }
 
         ideaArrayList = ArrayList()
         adapter = CardIdeaAdapter(this, ideaArrayList!!)
@@ -70,10 +102,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         ideaArrayList = loadIdeasFromDB(ideaArrayList!!, adapter!!, user)
         adapter!!.notifyDataSetChanged()
 
-
         usersArrayList = ArrayList()
         usersArrayList = loadAllUserFromDB()
-        print(getUser("Augusto I"))
 
         //button to add idea to the profile
         val addIdea: Button = findViewById(R.id.buttonAddIdea)
@@ -213,39 +243,16 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         bottomNavigationView.setOnNavigationItemSelectedListener(this)
     }
 
-    private fun loadIdeasFromDB(listOdIdeas: ArrayList<Idea>, dataAdapter: CardIdeaAdapter, username: String) : ArrayList<Idea> {
-        FirebaseDatabase.getInstance().reference.child("users").child(username).child("ideas")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        for (snapshot in dataSnapshot.children) {
-                            val idea: Idea? = snapshot.getValue(Idea::class.java)
-                            if (idea != null) {
-                                listOdIdeas.add(idea)
-                            }
-                        }
-                    }
-                    override fun onCancelled(databaseError: DatabaseError) {}
-                })
-
-        dataAdapter.notifyDataSetChanged()
-        return listOdIdeas
+    override fun onStart() {
+        super.onStart()
+        firebaseAuth!!.addAuthStateListener(fireAuthListener!!)
     }
 
-    private fun loadAllUserFromDB() : ArrayList<Profile> {
-        val listOUsers: ArrayList<Profile> = ArrayList()
-        FirebaseDatabase.getInstance().reference.child("users")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        for (snapshot in dataSnapshot.children) {
-                            val profile: Profile? = snapshot.getValue(Profile::class.java)
-                            if (profile != null) {
-                                listOUsers.add(profile)
-                            }
-                        }
-                    }
-                    override fun onCancelled(databaseError: DatabaseError) {}
-                })
-        return listOUsers
+    override fun onStop() {
+        super.onStop()
+        if (fireAuthListener != null) {
+            firebaseAuth!!.removeAuthStateListener(fireAuthListener!!)
+        }
     }
 
     // Handle bottom bar menu item selection
@@ -304,75 +311,77 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val searchView = searchItem.actionView as SearchView
 
         searchView.setOnQueryTextListener(object:  SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    searchView.clearFocus()
-                    searchView.setQuery("",  false)
-                    searchItem.collapseActionView()
-                    val userSearch = "$query"
-                    Log.d("QUERY", "looking for $query")
-                    usersArrayList?.forEach { user ->
-                        //Log.d("USERS LIST", user.displayName)
-                        if (user.displayName == userSearch) {
-                            val publicProfileFragment = PublicProfileFragment()
-                            val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
-                            recyclerView.alpha = 0f
-                            recyclerView.isEnabled = false
-                            label?.text = user.displayName
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                searchView.clearFocus()
+                searchView.setQuery("",  false)
+                searchItem.collapseActionView()
+                val userSearch = "$query"
+                Log.d("QUERY", "looking for $query")
+                usersArrayList?.forEach { user ->
+                    //Log.d("USERS LIST", user.displayName)
+                    if (user.displayName == userSearch) {
+                        val publicProfileFragment = PublicProfileFragment()
+                        val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
+                        recyclerView.alpha = 0f
+                        recyclerView.isEnabled = false
+                        label?.text = user.displayName
 
-                            val bundle = Bundle()
-                            bundle.putSerializable("profile",user)
-                            publicProfileFragment.arguments = bundle
+                        val bundle = Bundle()
+                        bundle.putSerializable("profile",user)
+                        publicProfileFragment.arguments = bundle
 
-                            supportFragmentManager.popBackStack()
-                            supportFragmentManager.beginTransaction().add(R.id.frameLayout, publicProfileFragment).addToBackStack("publicProfileFragment").commit()
-                            return true
-                        }
+                        supportFragmentManager.popBackStack()
+                        supportFragmentManager.beginTransaction().add(R.id.frameLayout, publicProfileFragment).addToBackStack("publicProfileFragment").commit()
+                        return true
                     }
-                    Toast.makeText(this@MainActivity, "This user: $query does not exist", Toast.LENGTH_SHORT).show()
-                    return false
                 }
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    return false
-                }
-            })
+                Toast.makeText(this@MainActivity, "This user: $query does not exist", Toast.LENGTH_SHORT).show()
+                return false
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
         return true
     }
 
-    //feature to get a users by username from the database
-    private fun getUser(username: String?) : Profile? {
-        var profile: Profile? = null
-        val database = FirebaseDatabase.getInstance()
-        val myRef = database.getReference("users").child(username!!)
-        myRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
-                val userProfile: Profile? = dataSnapshot.getValue(Profile::class.java)
-                if (userProfile != null) {
-                    profile = userProfile
-                } else {
-                    profile = null
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {
-                Log.w("FIREBASE", "Failed to read value.", error.toException())
-            }
-        })
-        return profile
+    private fun loadIdeasFromDB(listOdIdeas: ArrayList<Idea>, dataAdapter: CardIdeaAdapter, username: String) : ArrayList<Idea> {
+        FirebaseDatabase.getInstance().reference.child("users").child(username).child("ideas")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (snapshot in dataSnapshot.children) {
+                            val idea: Idea? = snapshot.getValue(Idea::class.java)
+                            if (idea != null) {
+                                listOdIdeas.add(idea)
+                            }
+                        }
+                    }
+                    override fun onCancelled(databaseError: DatabaseError) {}
+                })
+
+        dataAdapter.notifyDataSetChanged()
+        return listOdIdeas
     }
 
-    override fun onStart() {
-        super.onStart()
-        firebaseAuth!!.addAuthStateListener(fireAuthListener!!)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (fireAuthListener != null) {
-            firebaseAuth!!.removeAuthStateListener(fireAuthListener!!)
-        }
+    private fun loadAllUserFromDB() : ArrayList<Profile> {
+        val listOUsers: ArrayList<Profile> = ArrayList()
+        FirebaseDatabase.getInstance().reference.child("users")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (snapshot in dataSnapshot.children) {
+                            val profile: Profile? = snapshot.getValue(Profile::class.java)
+                            if (profile != null) {
+                                listOUsers.add(profile)
+                            }
+                        }
+                    }
+                    override fun onCancelled(databaseError: DatabaseError) {}
+                })
+        return listOUsers
     }
 
     private fun signOut(auth: FirebaseAuth?) {
         auth!!.signOut()
     }
+
 }

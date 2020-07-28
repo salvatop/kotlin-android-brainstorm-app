@@ -1,6 +1,8 @@
 package app.salvatop.brainstorm.adapter
 
 import android.content.Context
+import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +14,16 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
+import app.salvatop.brainstorm.MainActivity
 import app.salvatop.brainstorm.R
 import app.salvatop.brainstorm.adapter.CardIdeaAdapter.IdeaHolder
 import app.salvatop.brainstorm.model.Idea
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.util.*
 
 internal class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList<Idea>) : RecyclerView.Adapter<IdeaHolder>() {
@@ -40,6 +48,9 @@ internal class CardIdeaAdapter(private val context: Context, private val ideas: 
         private val content: TextView = itemView.findViewById(R.id.ideaContents)
         private val forks: TextView = itemView.findViewById(R.id.ideaForks)
         private val cover: ImageView = itemView.findViewById(R.id.ideaCover)
+        private val forksButton: Button = itemView.findViewById(R.id.buttonFork)
+        private val bookmarkButton: Button = itemView.findViewById(R.id.buttonBookmark)
+
 
         private val expandBtn: Button = itemView.findViewById(R.id.buttonShowMore)
         private val expandableLayout: ConstraintLayout = itemView.findViewById(R.id.expandable)
@@ -53,7 +64,35 @@ internal class CardIdeaAdapter(private val context: Context, private val ideas: 
             Glide.with(context.applicationContext)
                     .load(R.drawable.idea)
                     .into(cover)
-            //idea.forks?.size?.let { forks.setText(it) }
+            forks.text = "forks[ " + idea.forks.size.toString() + " ]"
+
+            forksButton.setOnClickListener {
+                val newIdea = idea
+                var newName = ""
+                val titleText = idea.author + idea.title + newName
+                val firebaseAuth: FirebaseAuth? = FirebaseAuth.getInstance()
+                val database = FirebaseDatabase.getInstance()
+                val currentUser = firebaseAuth!!.currentUser?.displayName.toString()
+                val myRef = database.getReference("users").child(currentUser).child("ideas").child(titleText)
+
+                myRef.setValue(newIdea)
+
+                myRef.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        // This method is called once with the initial value and again whenever data at this location is updated.
+                        Log.d("FORK IDEA", "Value is: " + dataSnapshot.value)
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        // Failed to read value
+                        Log.w("ADD IDEA", "Failed to read value.", error.toException())
+                    }
+                })
+            }
+
+            bookmarkButton.setOnClickListener {
+
+            }
         }
 
         init {

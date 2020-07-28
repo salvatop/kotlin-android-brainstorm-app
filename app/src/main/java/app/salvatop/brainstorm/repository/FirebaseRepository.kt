@@ -19,6 +19,9 @@ class FirebaseRepository  {
         firebaseAuth = FirebaseAuth.getInstance()
     }
 
+    public fun getAuth() : FirebaseAuth{
+        return firebaseAuth
+    }
 
      fun getUser(username: String?) : Profile? {
         var profile: Profile? = null
@@ -73,4 +76,19 @@ class FirebaseRepository  {
         return listOdIdeas
     }
 
+
+    fun getAValue(valueToGet: String, username: String) : String? {
+        var valueToReturn: String? = ""
+        val myRef = database.getReference("users").child(username).child(valueToGet)
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
+                valueToReturn = dataSnapshot.getValue() as String?
+            }
+            override fun onCancelled(error: DatabaseError) {
+                Log.w("FIREBASE", "Failed to read value.", error.toException())
+            }
+        })
+        return valueToReturn
+    }
 }

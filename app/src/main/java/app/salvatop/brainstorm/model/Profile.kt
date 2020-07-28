@@ -7,15 +7,15 @@ class Profile : Serializable {
         lateinit var motto: String
         lateinit var occupation: String
         lateinit var displayName: String
-        lateinit var followed: ArrayList<String>
-        lateinit var following: ArrayList<String>
+        lateinit var followed: HashMap<String, String>
+        lateinit var following: HashMap<String, String>
         lateinit var teams: ArrayList<String>
         lateinit var ideas: HashMap<String, Idea>
         lateinit var bookmarks: ArrayList<String>
 
     constructor()
 
-    constructor(city: String, motto: String, occupation: String, displayName: String, followed: ArrayList<String>, following: ArrayList<String>, teams: ArrayList<String>, ideas: HashMap<String, Idea>, bookmarks: ArrayList<String>) {
+    constructor(city: String, motto: String, occupation: String, displayName: String, followed: HashMap<String, String>, following: HashMap<String, String>, teams: ArrayList<String>, ideas: HashMap<String, Idea>, bookmarks: ArrayList<String>) {
         this.city = city
         this.motto = motto
         this.occupation = occupation

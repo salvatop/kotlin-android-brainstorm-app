@@ -11,26 +11,12 @@
         android:id="@+id/textViewFollowed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="followed [1]"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:text="following [1]"
         android:textColor="#2962FF"
-        android:textSize="10sp"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textViewFollowers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:text="followers [12]"
-        android:textColor="#2962FF"
-        android:textSize="10sp"
-        android:layout_marginTop="5dp"
-        app:layout_constraintEnd_toEndOf="@+id/textViewFollowed"
-        app:layout_constraintStart_toStartOf="@+id/textViewFollowed"
-        app:layout_constraintTop_toBottomOf="@+id/textViewFollowed" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
