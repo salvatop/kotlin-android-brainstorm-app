@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.transition.Explode
 import android.util.Log
-import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -55,7 +54,7 @@ class RegisterActivity : AppCompatActivity() {
         }
         done?.setOnClickListener {
             if (validateUsername()) {
-                setupProfile(firebaseAuth!!, rUsername!!.editText?.text.toString(), "upload_your_photo")
+                setupProfile(firebaseAuth!!, rUsername!!.editText?.text.toString())
                 addProfile()
             }
         }
@@ -98,11 +97,11 @@ class RegisterActivity : AppCompatActivity() {
         return valid
     }
 
-    private fun setupProfile(mAuth: FirebaseAuth, displayName: String?, photoUrl: String?) {
+    private fun setupProfile(mAuth: FirebaseAuth, displayName: String?) {
         val user = mAuth.currentUser
         val profileUpdates = UserProfileChangeRequest.Builder()
                 .setDisplayName(displayName)
-                .setPhotoUri(Uri.parse(photoUrl))
+                .setPhotoUri(Uri.parse(""))
                 .build()
         if (BuildConfig.DEBUG && user == null) {
             print("Assertion failed")
@@ -130,16 +129,16 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun addProfile() {
         val followed = HashMap<String, String>()
-        followed.put("Brainstorm Team","Brainstorm Team")
+        followed["Brainstorm Team"] = "Brainstorm Team"
         val following = HashMap<String, String>()
-        following.put("Brainstorm Team", "Brainstorm Team")
+        following["Brainstorm Team"] = "Brainstorm Team"
         val teams = ArrayList<String>()
         teams.add("")
         val bookmarks = HashMap<String, Idea>()
         val ideas = HashMap<String, Idea>()
         val forks = ArrayList<String>()
         forks.add("")
-        bookmarks.put("add bookmarks here", Idea("author", "context", "content", "title", "true", forks))
+        bookmarks["add bookmarks here"] = Idea("author", "context", "content", "title", "true", forks)
 
         val username = rUsername!!.editText?.text.toString()
 

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -66,7 +67,6 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
             forks.text = nbOfforks
 
             forksButton.setOnClickListener {
-                val newIdea = idea
                 var newName = ""
                 val titleText = idea.author + idea.title + newName
                 val firebaseAuth: FirebaseAuth? = FirebaseAuth.getInstance()
@@ -74,7 +74,7 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                 val currentUser = firebaseAuth!!.currentUser?.displayName.toString()
                 val myRef = database.getReference("users").child(currentUser).child("ideas").child(titleText)
 
-                myRef.setValue(newIdea)
+                myRef.setValue(idea)
                 myRef.addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         //TODO update the original idea forks field when implementing delete ideas if not forked
@@ -84,8 +84,13 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                     }
                 })
             }
-
             bookmarkButton.setOnClickListener {
+                val database = FirebaseDatabase.getInstance()
+                val firebaseAuth: FirebaseAuth? = FirebaseAuth.getInstance()
+                val currentUser = firebaseAuth!!.currentUser?.displayName.toString()
+                val myRef = database.getReference("users").child(currentUser).child("bookmarks").child(idea.title)
+                myRef.setValue(idea)
+                Toast.makeText(context, "This idea was added to your bookmarks", Toast.LENGTH_SHORT).show()
             }
         }
     init {

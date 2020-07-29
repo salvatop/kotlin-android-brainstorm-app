@@ -65,7 +65,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         return listOUsers
     }
 
-    @SuppressLint("SetTextI18n")
     private fun initializeButtonsTextEditAndView() {
         val database = FirebaseDatabase.getInstance()
         val user: String = firebaseAuth?.currentUser?.displayName.toString()
@@ -187,7 +186,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             supportFragmentManager.popBackStack()
             recyclerView.alpha = 0f
             recyclerView.isEnabled = false
-            label?.text = "Add an Idea"
+            label?.text = it.resources.getString(R.string.add_an_idea)
             supportFragmentManager.beginTransaction().add(R.id.frameLayout, addIdeaFragment).addToBackStack(null).commit()
         }
         //SETUP TEXT LISTENER FOR UPDATE USER PROFILE
@@ -429,5 +428,4 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
         return  allUsers
     }
-
 }
