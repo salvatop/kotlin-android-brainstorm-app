@@ -82,9 +82,18 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         val layout: CoordinatorLayout = findViewById(R.id.CoordinatorLayout)
         layout.setOnClickListener {
-            layout.isFocusable
-            print("click")
+            //layout.isFocusable
 
+            mottoEdit.visibility = INVISIBLE
+            mottoEdit.isEnabled = false
+            motto.visibility = VISIBLE
+            occupationEdit.visibility = INVISIBLE
+            occupationEdit.isEnabled = false
+            occupation.visibility = VISIBLE
+            motto.visibility = VISIBLE
+            cityEdit.visibility = INVISIBLE
+            cityEdit.isEnabled = false
+            city.visibility = VISIBLE
         }
 
         ///setup user profile info
