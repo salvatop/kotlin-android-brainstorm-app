@@ -32,12 +32,13 @@ class PublicProfileFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_public_profile, container,false) as ViewGroup
+
         profile = arguments!!.getSerializable("profile") as Profile
         Log.d("PROFILE", profile.displayName)
         ideaArrayList = getIdeasFromSerializable(profile)
 
         val firebaseAuth = FirebaseAuth.getInstance()
-        val view = inflater.inflate(R.layout.fragment_public_profile, container,false) as ViewGroup
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycleViewPublicProfile)
         recyclerView?.layoutManager = LinearLayoutManager(context)
@@ -50,7 +51,7 @@ class PublicProfileFragment : Fragment() {
 
             val userToFollow = profile.displayName
             val whoIsFollow = firebaseAuth.currentUser?.displayName.toString()
-            Log.d("USERS", whoIsFollow + " " + userToFollow)
+            Log.d("USERS", "$whoIsFollow $userToFollow")
             // Start a coroutine
             GlobalScope.launch {
                 delay(1500)
@@ -66,7 +67,7 @@ class PublicProfileFragment : Fragment() {
         Log.d("IDEAS", "${ideaArrayList?.size}")
     }
 
-    fun followUnfollowUsers(userToFollow: String?, whoIsFollow: String?, action: String?) {
+    private fun followUnfollowUsers(userToFollow: String?, whoIsFollow: String?, action: String?) {
 
         val database = FirebaseDatabase.getInstance()
 

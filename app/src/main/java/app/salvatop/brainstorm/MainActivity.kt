@@ -18,6 +18,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -35,15 +36,18 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private var firebaseAuth: FirebaseAuth? = null
     private var fireAuthListener: AuthStateListener? = null
     private var adapter: CardIdeaAdapter? = null
     private var ideaArrayList: ArrayList<Idea>? = null
+    private var allUsersIdeasArrayList: ArrayList<Idea>? = null
     private var usersArrayList: ArrayList<Profile>? = null
     private var label: TextView? = null
-
 
     private fun loadAllUserFromDB() : ArrayList<Profile> {
         val listOUsers: ArrayList<Profile> = ArrayList()
@@ -76,6 +80,13 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         label = findViewById(R.id.textViewDisplayLabel)
 
+        val layout: CoordinatorLayout = findViewById(R.id.CoordinatorLayout)
+        layout.setOnClickListener {
+            layout.isFocusable
+            print("click")
+
+        }
+
         ///setup user profile info
 
         /// set the avatar image if exists in the user profile or set the default from drawable
@@ -103,7 +114,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         mottoDB.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
-                motto.text = (dataSnapshot.getValue() as String?).toString()
+                motto.text = (dataSnapshot.value as String?).toString()
+                mottoEdit.setText(dataSnapshot.value as String?).toString()
             } override fun onCancelled(error: DatabaseError) {
                 Log.w("FIREBASE", "Failed to read value.", error.toException())
             }
@@ -112,7 +124,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         occupationDB.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
-                occupation.text = (dataSnapshot.getValue() as String?).toString()
+                occupation.text = (dataSnapshot.value as String?).toString()
+                occupationEdit.setText(dataSnapshot.value as String?).toString()
             } override fun onCancelled(error: DatabaseError) {
                 Log.w("FIREBASE", "Failed to read value.", error.toException())
             }
@@ -121,7 +134,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         cityDB.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
-                city.text = (dataSnapshot.getValue() as String?).toString()
+                city.text = (dataSnapshot.value as String?).toString()
+                cityEdit.setText(dataSnapshot.value as String?).toString()
             } override fun onCancelled(error: DatabaseError) {
                 Log.w("FIREBASE", "Failed to read value.", error.toException())
             }
@@ -153,7 +167,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 })
 
         usersArrayList = loadAllUserFromDB()
-
+        // Start a coroutine
+        GlobalScope.launch {
+            delay(1500)
+            allUsersIdeasArrayList = getAllTheIdeas()
+        }
 
         //button to add idea to the profile
         val addIdea: Button = findViewById(R.id.buttonAddIdea)
@@ -173,10 +191,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 myRef.setValue(mottoEdit.text.toString())
             }
 
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                val myRef = database.getReference("users").child(user).child("motto")
-                motto.text = myRef.toString()
-            }
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
@@ -303,6 +318,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             R.id.bookmarks -> {
                 label?.text = "Bookmark"
 
+                //TODO change adpater to dosplay bopokmarks
                 true
             }
             R.id.settings -> {
@@ -315,6 +331,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
             R.id.idea_feeds -> {
                 label?.text = "Ideas Feed"
+                //TODO change adpater to display feeds
                 true
             }
             else -> false
@@ -336,7 +353,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val inflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
 
-        val manager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        getSystemService(Context.SEARCH_SERVICE) as SearchManager
 
         val searchItem = menu.findItem(R.id.app_bar_search)
         val searchView = searchItem.actionView as SearchView
@@ -378,6 +395,19 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     private fun signOut(auth: FirebaseAuth?) {
         auth!!.signOut()
+    }
+
+    private fun getAllTheIdeas() : ArrayList<Idea>? {
+        val allUsers: ArrayList<Idea>? = null
+        for(profile in this.usersArrayList!!) {
+            for (idea in profile.ideas) {
+                //Log.d("LOAD IDEAS", idea.value.author)
+                val oneIdea = Idea(idea.value.author, idea.value.ideaContext, idea.value.content, idea.value.title, idea.value.isPublic, idea.value.forks)
+                //oneIdea = idea.value
+                allUsers?.add(oneIdea)
+            }
+        }
+        return  allUsers
     }
 
 }
