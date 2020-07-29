@@ -130,20 +130,20 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun addProfile() {
         val followed = HashMap<String, String>()
-        followed.put("add followers here","add followers here")
+        followed.put("Brainstorm Team","Brainstorm Team")
         val following = HashMap<String, String>()
-        following.put("if someone follow you it will be here", "if someone follow you it will be here")
+        following.put("Brainstorm Team", "Brainstorm Team")
         val teams = ArrayList<String>()
         teams.add("")
-        val bookmarks = ArrayList<String>()
-        bookmarks.add("")
+        val bookmarks = HashMap<String, Idea>()
         val ideas = HashMap<String, Idea>()
         val forks = ArrayList<String>()
         forks.add("")
+        bookmarks.put("add bookmarks here", Idea("author", "context", "content", "title", "true", forks))
 
         val username = rUsername!!.editText?.text.toString()
 
-        ideas["title"] = Idea("author", "context", "content", "title", "true", forks)
+        ideas["My first idea template"] = Idea("The Brainstorm Team", "This is the context of your idea", "This is the body of your idea", "My first idea template", "false", forks)
 
         val profile = Profile("add your city","add your motto","add your occupation", username, followed, following, teams, ideas, bookmarks)
 

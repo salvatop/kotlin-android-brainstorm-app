@@ -31,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
 
         /////TODO testing code
-        login("saiwor@hotmail.com", "123456", firebaseAuth!!)
+        //login("saiwor@hotmail.com", "123456", firebaseAuth!!)
         /////TODO end of testing code
         val login = findViewById<MaterialButton>(R.id.buttonLogin)
         val register = findViewById<MaterialButton>(R.id.buttonRegister)

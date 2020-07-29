@@ -64,7 +64,8 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
             Glide.with(context.applicationContext)
                     .load(R.drawable.idea)
                     .into(cover)
-            forks.text = "forks[ " + idea.forks.size.toString() + " ]"
+            var nbOfforks = idea.forks.size - 1
+            forks.text = "forks[ " + nbOfforks.toString() + " ]"
 
             forksButton.setOnClickListener {
                 val newIdea = idea
@@ -95,7 +96,10 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
             }
         }
 
-        init {
+
+
+
+    init {
             expandBtn.setOnClickListener {
                 if (expandableLayout.visibility == View.GONE) {
                     cardView.let { it1 -> TransitionManager.beginDelayedTransition(it1, AutoTransition()) }

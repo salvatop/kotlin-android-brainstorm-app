@@ -11,11 +11,11 @@ class Profile : Serializable {
         lateinit var following: HashMap<String, String>
         lateinit var teams: ArrayList<String>
         lateinit var ideas: HashMap<String, Idea>
-        lateinit var bookmarks: ArrayList<String>
+        lateinit var bookmarks: HashMap<String, Idea>
 
     constructor()
 
-    constructor(city: String, motto: String, occupation: String, displayName: String, followed: HashMap<String, String>, following: HashMap<String, String>, teams: ArrayList<String>, ideas: HashMap<String, Idea>, bookmarks: ArrayList<String>) {
+    constructor(city: String, motto: String, occupation: String, displayName: String, followed: HashMap<String, String>, following: HashMap<String, String>, teams: ArrayList<String>, ideas: HashMap<String, Idea>, bookmarks: HashMap<String, Idea>) {
         this.city = city
         this.motto = motto
         this.occupation = occupation
