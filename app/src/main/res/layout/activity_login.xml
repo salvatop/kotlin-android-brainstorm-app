@@ -23,7 +23,7 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="grow your ideas"
+        android:text="@string/grow_your_ideas"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -38,7 +38,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3"
         android:src="@drawable/logo"
-        android:contentDescription="@string/todo" />
+        android:contentDescription="@string/placeholder" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/editTextTextEmailAddress"

@@ -14,5 +14,27 @@
     <string name="expand">"EXPAND"</string>
     <string name="enter_your_username_to_complete_the_registration">enter your username to complete the registration</string>
     <string name="my_ideas">My ideas</string>
+    <string name="city">city</string>
+    <string name="add_your_city">add your city</string>
+    <string name="add_your_motto">add your motto</string>
+    <string name="add_your_occupation">add your occupation</string>
+    <string name="follow">follow</string>
+    <string name="placeholder">placeholder</string>
+    <string name="title">Title</string>
+    <string name="by_author">by author</string>
+    <string name="forks_0">forks[0]</string>
+    <string name="context">context</string>
+    <string name="expand_card">expand</string>
+    <string name="contents">contents</string>
+    <string name="Contents">Contents</string>
+    <string name="send">send</string>
+    <string name="following_1">following [1]</string>
+    <string name="Title">Title:</string>
+    <string name="Context">Context:</string>
+    <string name="contents_add_idea">Contents:</string>
+    <string name="visibility">Visibility:</string>
+    <string name="save">Save</string>
+    <string name="public_idea_visibility">public</string>
+    <string name="grow_your_ideas">grow your ideas</string>
 
 </resources>

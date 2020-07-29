@@ -72,13 +72,13 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         val mottoEdit: EditText = findViewById(R.id.EditTextMotto)
         val occupationEdit: EditText = findViewById(R.id.EditTextOccupation)
-        var cityEdit: EditText = findViewById(R.id.editTextCity)
+        val cityEdit: EditText = findViewById(R.id.editTextCity)
 
         val city: TextView = findViewById(R.id.textViewCity)
         val motto: TextView  = findViewById(R.id.textViewMotto)
         val occupation: TextView = findViewById(R.id.textViewOccupation)
 
-        allUsersIdeasArrayList = ArrayList<Idea>()
+        allUsersIdeasArrayList = ArrayList()
         label = findViewById(R.id.textViewDisplayLabel)
 
         val layout: CoordinatorLayout = findViewById(R.id.CoordinatorLayout)

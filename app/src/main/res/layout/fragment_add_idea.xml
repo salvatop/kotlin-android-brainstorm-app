@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
-        android:text="Title: "
+        android:text="@string/Title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,14 +25,16 @@
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="@+id/textViewTitleLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textViewTitleLabel" />
+        app:layout_constraintTop_toTopOf="@+id/textViewTitleLabel"
+        android:autofillHints=""
+        tools:ignore="LabelFor" />
 
     <TextView
         android:id="@+id/textViewContextLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Context: "
+        android:text="@string/Context"
         app:layout_constraintStart_toStartOf="@+id/textViewTitleLabel"
         app:layout_constraintTop_toBottomOf="@+id/textViewTitleLabel" />
 
@@ -45,7 +47,9 @@
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="@+id/textViewContextLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textViewContextLabel" />
+        app:layout_constraintTop_toTopOf="@+id/textViewContextLabel"
+        android:autofillHints=""
+        tools:ignore="LabelFor" />
 
     <TextView
         android:id="@+id/textViewContentslabel"
@@ -53,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
-        android:text="Contents: "
+        android:text="@string/contents_add_idea"
         android:lines="3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewContextLabel" />
@@ -67,7 +71,9 @@
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="@+id/textViewContentslabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textViewContentslabel" />
+        app:layout_constraintTop_toTopOf="@+id/textViewContentslabel"
+        android:autofillHints=""
+        tools:ignore="LabelFor" />
 
     <TextView
         android:id="@+id/textViewVisibilityLabel"
@@ -75,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="50dp"
-        android:text="Visibility:  "
+        android:text="@string/visibility"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewContentslabel" />
 
@@ -83,7 +89,7 @@
         android:id="@+id/buttonSaveIdea"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:text="@string/save"
         android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,7 +99,7 @@
         android:id="@+id/chipVisibility"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="public"
+        android:text="@string/public_idea_visibility"
         app:layout_constraintBottom_toBottomOf="@+id/textViewVisibilityLabel"
         app:layout_constraintStart_toStartOf="@+id/editTextContents"
         app:layout_constraintTop_toTopOf="@+id/textViewVisibilityLabel" />

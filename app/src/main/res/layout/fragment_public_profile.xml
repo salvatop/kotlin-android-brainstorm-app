@@ -17,7 +17,7 @@
         android:id="@+id/textViewPublicProfileOccupation"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="add your occupation"
+        android:text="@string/add_your_occupation"
         android:textSize="12sp"
         android:layout_marginStart="10dp"
         app:layout_constraintStart_toEndOf="@+id/imagePublicProfileViewAvatar"
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_marginStart="5dp"
-        android:text="add your motto"
+        android:text="@string/add_your_motto"
         android:textSize="12sp"
         android:textStyle="italic"
         android:visibility="visible"
@@ -42,8 +42,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginStart="10dp"
-        android:hint="city"
-        android:text="add your city"
+        android:hint="@string/city"
+        android:text="@string/add_your_city"
         android:textSize="12sp"
         app:layout_constraintStart_toEndOf="@+id/imagePublicProfileViewAvatar"
         app:layout_constraintTop_toTopOf="parent" />
@@ -61,7 +61,8 @@
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/avatars" />
+        tools:src="@tools:sample/avatars"
+        android:contentDescription="@string/placeholder" />
 
     <Button
         android:id="@+id/buttonFollow"
@@ -69,12 +70,13 @@
         android:layout_width="0dp"
         android:layout_height="33dp"
         android:elevation="6dp"
-        android:text="follow"
+        android:text="@string/follow"
         android:textColor="@android:color/black"
-        android:textSize="10dp"
+        android:textSize="10sp"
         android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewPublicProfileMotto" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewPublicProfileMotto"
+        tools:ignore="SmallSp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
