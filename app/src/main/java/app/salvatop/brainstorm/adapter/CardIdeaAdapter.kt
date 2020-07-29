@@ -1,7 +1,6 @@
 package app.salvatop.brainstorm.adapter
 
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +13,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
-import app.salvatop.brainstorm.MainActivity
 import app.salvatop.brainstorm.R
 import app.salvatop.brainstorm.adapter.CardIdeaAdapter.IdeaHolder
 import app.salvatop.brainstorm.model.Idea
@@ -64,8 +62,8 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
             Glide.with(context.applicationContext)
                     .load(R.drawable.idea)
                     .into(cover)
-            var nbOfforks = idea.forks.size - 1
-            forks.text = "forks[ " + nbOfforks.toString() + " ]"
+            val nbOfforks = "forks[ " + (idea.forks.size - 1) + " ]"
+            forks.text = nbOfforks
 
             forksButton.setOnClickListener {
                 val newIdea = idea
@@ -77,42 +75,34 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                 val myRef = database.getReference("users").child(currentUser).child("ideas").child(titleText)
 
                 myRef.setValue(newIdea)
-
                 myRef.addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        // This method is called once with the initial value and again whenever data at this location is updated.
+                        //TODO update the original idea forks field when implementing delete ideas if not forked
                         Log.d("FORK IDEA", "Value is: " + dataSnapshot.value)
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        // Failed to read value
+                    } override fun onCancelled(error: DatabaseError) {
                         Log.w("ADD IDEA", "Failed to read value.", error.toException())
                     }
                 })
             }
 
             bookmarkButton.setOnClickListener {
-
             }
         }
-
-
-
-
     init {
             expandBtn.setOnClickListener {
                 if (expandableLayout.visibility == View.GONE) {
                     cardView.let { it1 -> TransitionManager.beginDelayedTransition(it1, AutoTransition()) }
                     expandableLayout.visibility = View.VISIBLE
-                    expandBtn.text = "COLLAPSE"
+                    val collapse: String = it.resources.getString(R.string.collapse)
+                    expandBtn.text = collapse
                 } else {
                     cardView.let { it1 -> TransitionManager.beginDelayedTransition(it1, AutoTransition()) }
                     expandableLayout.visibility = View.GONE
-                    expandBtn.text = "EXPAND"
+                    val expand: String = it.resources.getString(R.string.expand)
+                    expandBtn.text = expand
                 }
             }
 
         }
     }
-
 }

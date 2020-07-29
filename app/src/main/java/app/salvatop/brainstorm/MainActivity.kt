@@ -72,10 +72,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         val mottoEdit: EditText = findViewById(R.id.EditTextMotto)
         val occupationEdit: EditText = findViewById(R.id.EditTextOccupation)
-        val cityEdit: EditText = findViewById(R.id.EditTextCity)
-        val city: TextView = findViewById(R.id.textViewPublicProfileCity)
-        val motto: TextView  = findViewById(R.id.textViewPublicProfileMotto)
-        val occupation: TextView = findViewById(R.id.textViewPublicProfileOccupation)
+        var cityEdit: EditText = findViewById(R.id.editTextCity)
+
+        val city: TextView = findViewById(R.id.textViewCity)
+        val motto: TextView  = findViewById(R.id.textViewMotto)
+        val occupation: TextView = findViewById(R.id.textViewOccupation)
 
         allUsersIdeasArrayList = ArrayList<Idea>()
         label = findViewById(R.id.textViewDisplayLabel)
@@ -124,7 +125,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
                 motto.text = (dataSnapshot.value as String?).toString()
-                mottoEdit.setText(dataSnapshot.value as String?).toString()
             } override fun onCancelled(error: DatabaseError) {
                 Log.w("FIREBASE", "Failed to read value.", error.toException())
             }
@@ -134,7 +134,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
                 occupation.text = (dataSnapshot.value as String?).toString()
-                occupationEdit.setText(dataSnapshot.value as String?).toString()
             } override fun onCancelled(error: DatabaseError) {
                 Log.w("FIREBASE", "Failed to read value.", error.toException())
             }
@@ -144,7 +143,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
                 city.text = (dataSnapshot.value as String?).toString()
-                cityEdit.setText(dataSnapshot.value as String?).toString()
             } override fun onCancelled(error: DatabaseError) {
                 Log.w("FIREBASE", "Failed to read value.", error.toException())
             }
@@ -195,13 +193,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         //SETUP TEXT LISTENER FOR UPDATE USER PROFILE
         mottoEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
-                motto.text = mottoEdit.text
                 val myRef = database.getReference("users").child(user).child("motto")
                 myRef.setValue(mottoEdit.text.toString())
+                motto.text = mottoEdit.text
             }
-
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
         motto.setOnLongClickListener {
@@ -220,11 +216,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
         occupationEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
-                occupation.text = occupationEdit.text
                 val myRef = database.getReference("users").child(user).child("occupation")
                 myRef.setValue(occupationEdit.text.toString())
+                occupation.text = occupationEdit.text
             }
-
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
@@ -245,14 +240,15 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
         cityEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
-                city.text = cityEdit.text
                 val myRef = database.getReference("users").child(user).child("city")
                 myRef.setValue(cityEdit.text.toString())
+                city.text = cityEdit.text
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
+
         city.setOnLongClickListener {
             cityEdit.visibility = VISIBLE
             cityEdit.isEnabled = true

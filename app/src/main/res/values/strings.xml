@@ -4,15 +4,15 @@
     <string name="password">password</string>
     <string name="your_email_address">your email address</string>
     <string name="todo">TODO</string>
-    <string name="grown_your_ideas">grown your ideas</string>
     <string name="register">register</string>
     <string name="done">done</string>
     <string name="username">username</string>
     <string name="go_to_login_page">go to login page</string>
     <string name="brainstorm">brainstorm</string>
     <string name="create_an_account_now">create an account now</string>
+    <string name="collapse">"COLLAPSE"</string>
+    <string name="expand">"EXPAND"</string>
     <string name="enter_your_username_to_complete_the_registration">enter your username to complete the registration</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="my_ideas">My ideas</string>
+
 </resources>

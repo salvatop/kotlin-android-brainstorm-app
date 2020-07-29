@@ -37,6 +37,44 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/textViewDisplayName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/username"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/avatarClipsToBound"
+            app:layout_constraintTop_toTopOf="@+id/avatarClipsToBound" />
+
+        <TextView
+            android:id="@+id/textViewCity"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:autofillHints=""
+            android:text=""
+            android:textDirection="ltr"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewDisplayName"
+            app:layout_constraintStart_toEndOf="@+id/textViewDisplayName"
+            app:layout_constraintTop_toTopOf="@+id/textViewDisplayName" />
+
+        <EditText
+            android:id="@+id/editTextCity"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:text=""
+            android:layout_marginTop="10dp"
+            android:textSize="12sp"
+            android:enabled="false"
+            android:visibility="invisible"
+            android:focusableInTouchMode="true"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewDisplayName"
+            app:layout_constraintStart_toEndOf="@+id/textViewDisplayName"
+            app:layout_constraintTop_toTopOf="@+id/textViewDisplayName" />
+
         <EditText
             android:id="@+id/EditTextOccupation"
             android:layout_width="150dp"
@@ -48,79 +86,48 @@
             android:visibility="invisible"
             android:focusableInTouchMode="true"
             app:layout_constraintStart_toStartOf="@+id/textViewDisplayName"
-            app:layout_constraintTop_toBottomOf="@+id/textViewDisplayName" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewDisplayName"
+            android:inputType="text"/>
 
         <TextView
-            android:id="@+id/textViewPublicProfileOccupation"
+            android:id="@+id/textViewOccupation"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text=""
+            android:textDirection="ltr"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="@+id/textViewDisplayName"
             app:layout_constraintTop_toBottomOf="@+id/textViewDisplayName" />
-
-        <TextView
-            android:id="@+id/textViewDisplayName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="@string/username"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/avatarClipsToBound"
-            app:layout_constraintTop_toTopOf="@+id/avatarClipsToBound" />
 
         <EditText
             android:id="@+id/EditTextMotto"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:enabled="false"
+            android:focusableInTouchMode="true"
+            android:inputType="text"
             android:text=""
+            android:textAlignment="textStart"
+            android:textDirection="firstStrongLtr"
             android:textSize="12sp"
             android:textStyle="italic"
-            android:enabled="false"
             android:visibility="invisible"
-            android:focusableInTouchMode="true"
-            app:layout_constraintStart_toStartOf="@+id/textViewPublicProfileOccupation"
-            app:layout_constraintTop_toBottomOf="@+id/textViewPublicProfileOccupation" />
+            app:layout_constraintStart_toStartOf="@+id/textViewOccupation"
+            app:layout_constraintTop_toBottomOf="@+id/textViewOccupation" />
 
         <TextView
-            android:id="@+id/textViewPublicProfileMotto"
+            android:id="@+id/textViewMotto"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text=""
+            android:textDirection="ltr"
             android:textSize="12sp"
             android:textStyle="italic"
-            app:layout_constraintStart_toStartOf="@+id/textViewPublicProfileOccupation"
-            app:layout_constraintTop_toBottomOf="@+id/textViewPublicProfileOccupation" />
-
-        <EditText
-        android:id="@+id/EditTextCity"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:autofillHints=""
-        android:text=""
-        android:textSize="12sp"
-        android:enabled="false"
-        android:visibility="invisible"
-        android:focusableInTouchMode="true"
-        app:layout_constraintBottom_toBottomOf="@+id/textViewDisplayName"
-        app:layout_constraintStart_toEndOf="@+id/textViewDisplayName"
-        app:layout_constraintTop_toTopOf="@+id/textViewDisplayName" />
-
-        <TextView
-            android:id="@+id/textViewPublicProfileCity"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:autofillHints=""
-            android:text=""
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewDisplayName"
-            app:layout_constraintStart_toEndOf="@+id/textViewDisplayName"
-            app:layout_constraintTop_toTopOf="@+id/textViewDisplayName" />
+            app:layout_constraintStart_toStartOf="@+id/textViewOccupation"
+            app:layout_constraintTop_toBottomOf="@+id/textViewOccupation" />
 
 
         <TextView
@@ -131,7 +138,7 @@
             android:layout_marginTop="25dp"
             android:layout_marginBottom="10dp"
             android:fontFamily="cursive"
-            android:text="My ideas"
+            android:text="@string/my_ideas"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
