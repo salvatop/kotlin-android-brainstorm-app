@@ -26,7 +26,7 @@
     </item>
 
     <item
-        android:id="@+id/settings"
+        android:id="@+id/collaborate"
         android:title="collaborate"
         android:icon="@drawable/collaborate"
         app:showAsAction="withText">

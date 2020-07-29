@@ -23,9 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import app.salvatop.brainstorm.adapter.CardIdeaAdapter
-import app.salvatop.brainstorm.fragment.AddIdeaFragment
-import app.salvatop.brainstorm.fragment.CollaborateFragment
-import app.salvatop.brainstorm.fragment.PublicProfileFragment
+import app.salvatop.brainstorm.fragment.*
 import app.salvatop.brainstorm.model.Idea
 import app.salvatop.brainstorm.model.Profile
 import com.bumptech.glide.Glide
@@ -46,6 +44,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private var adapter: CardIdeaAdapter? = null
     private var ideaArrayList: ArrayList<Idea>? = null
     private var allUsersIdeasArrayList: ArrayList<Idea>? = null
+    private var bookmarksArrayList: ArrayList<Idea>? = null
     private var usersArrayList: ArrayList<Profile>? = null
     private var label: TextView? = null
 
@@ -78,6 +77,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val motto: TextView  = findViewById(R.id.textViewPublicProfileMotto)
         val occupation: TextView = findViewById(R.id.textViewPublicProfileOccupation)
 
+        allUsersIdeasArrayList = ArrayList<Idea>()
         label = findViewById(R.id.textViewDisplayLabel)
 
         val layout: CoordinatorLayout = findViewById(R.id.CoordinatorLayout)
@@ -314,7 +314,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     @SuppressLint("SetTextI18n")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
-        val collaborateFragment = CollaborateFragment()
         return when (item.itemId) {
             R.id.home -> {
                 recyclerView.alpha = 1f
@@ -325,12 +324,22 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 true
             }
             R.id.bookmarks -> {
-                label?.text = "Bookmark"
+                val bookmarksFragment = BookmarksFragment()
+                //TODO fill the arrayList
+                bookmarksArrayList = ArrayList()
 
-                //TODO change adpater to dosplay bopokmarks
+                label?.text = "Bookmark"
+                supportFragmentManager.popBackStack()
+                recyclerView.alpha = 0f
+                recyclerView.isEnabled = false
+                val bundle = Bundle()
+                bundle.putSerializable("bookmarks",bookmarksArrayList)
+                bookmarksFragment.arguments = bundle
+                supportFragmentManager.beginTransaction().add(R.id.frameLayout, bookmarksFragment).addToBackStack(null).commit()
                 true
             }
-            R.id.settings -> {
+            R.id.collaborate -> {
+                val collaborateFragment = CollaborateFragment()
                 label?.text = "Collaborate"
                 supportFragmentManager.popBackStack()
                 recyclerView.alpha = 0f
@@ -339,8 +348,15 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 true
             }
             R.id.idea_feeds -> {
+                val ideasFeed = IdeasFeedFragment()
                 label?.text = "Ideas Feed"
-                //TODO change adpater to display feeds
+                supportFragmentManager.popBackStack()
+                recyclerView.alpha = 0f
+                recyclerView.isEnabled = false
+                val bundle = Bundle()
+                bundle.putSerializable("ideas",allUsersIdeasArrayList)
+                ideasFeed.arguments = bundle
+                supportFragmentManager.beginTransaction().add(R.id.frameLayout, ideasFeed).addToBackStack(null).commit()
                 true
             }
             else -> false
@@ -406,14 +422,13 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         auth!!.signOut()
     }
 
-    private fun getAllTheIdeas() : ArrayList<Idea>? {
-        val allUsers: ArrayList<Idea>? = null
+    private fun getAllTheIdeas() : ArrayList<Idea> {
+        val allUsers: ArrayList<Idea> =  ArrayList()
         for(profile in this.usersArrayList!!) {
             for (idea in profile.ideas) {
                 //Log.d("LOAD IDEAS", idea.value.author)
-                val oneIdea = Idea(idea.value.author, idea.value.ideaContext, idea.value.content, idea.value.title, idea.value.isPublic, idea.value.forks)
-                //oneIdea = idea.value
-                allUsers?.add(oneIdea)
+                val oneIdea = idea.value
+                allUsers.add(oneIdea)
             }
         }
         return  allUsers

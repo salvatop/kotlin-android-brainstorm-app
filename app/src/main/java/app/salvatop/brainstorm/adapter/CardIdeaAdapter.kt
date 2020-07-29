@@ -26,7 +26,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.util.*
 
-internal class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList<Idea>) : RecyclerView.Adapter<IdeaHolder>() {
+class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList<Idea>) : RecyclerView.Adapter<IdeaHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, i: Int): IdeaHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.idea_card_layout, parent, false)
         return IdeaHolder(view)
@@ -41,7 +41,7 @@ internal class CardIdeaAdapter(private val context: Context, private val ideas: 
         return ideas.size
     }
 
-    internal inner class IdeaHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class IdeaHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val author: TextView = itemView.findViewById(R.id.ideaAuthor)
         private val title: TextView = itemView.findViewById(R.id.textViewTitle)
         private val ideaContext: TextView = itemView.findViewById(R.id.ideaContext)
