@@ -138,7 +138,7 @@ class RegisterActivity : AppCompatActivity() {
         val ideas = HashMap<String, Idea>()
         val forks = ArrayList<String>()
         forks.add("")
-        bookmarks["add bookmarks here"] = Idea("author", "context", "content", "title", "true", forks)
+        bookmarks["add bookmarks here"] = Idea("author", "context", "content", "title", "false", forks)
 
         val username = rUsername!!.editText?.text.toString()
 
@@ -187,6 +187,33 @@ class RegisterActivity : AppCompatActivity() {
                         Toast.makeText(this@RegisterActivity,
                                 "Failed to send verification email.",
                                 Toast.LENGTH_SHORT).show()
+                    }
+                }
+    }
+
+    fun setupProfile(mAuth: FirebaseAuth, displayName: String?, photoUrl: String?) {
+        val user = mAuth.currentUser
+        val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(displayName)
+                .setPhotoUri(Uri.parse(photoUrl))
+                .build()
+        user!!.updateProfile(profileUpdates)
+                .addOnCompleteListener { task: Task<Void?> ->
+                    if (task.isSuccessful) {
+                        Log.d("USER PROFILE", "User profile updated.")
+                    }
+                }
+    }
+
+    fun removeUser(auth: FirebaseAuth) {
+        val user = auth.currentUser!!
+        user.delete()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(this, "Your profile is deleted:( Create a account now!", Toast.LENGTH_SHORT).show()
+                        this.startActivity(Intent(this, RegisterActivity::class.java))
+                    } else {
+                        Toast.makeText(this, "Failed to delete your account!", Toast.LENGTH_SHORT).show()
                     }
                 }
     }

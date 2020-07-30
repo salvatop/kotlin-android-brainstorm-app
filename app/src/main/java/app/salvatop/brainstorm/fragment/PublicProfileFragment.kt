@@ -59,6 +59,7 @@ class PublicProfileFragment : Fragment() {
             }
             Log.d("BUTTON", "user followed")
         }
+
         return view
     }
 

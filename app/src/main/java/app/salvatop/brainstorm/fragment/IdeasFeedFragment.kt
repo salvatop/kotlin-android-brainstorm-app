@@ -15,7 +15,6 @@ import app.salvatop.brainstorm.model.Idea
 
 
 class IdeasFeedFragment : Fragment() {
-    private var recyclerView: RecyclerView? = null
     private lateinit var fragmentContext: Context
 
     override fun onAttach(context: Context) {
@@ -25,18 +24,18 @@ class IdeasFeedFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_ideas_feed, container,false) as ViewGroup
-
-        var allUsersIdeasArrayList: ArrayList<Idea>
+        val recyclerView: RecyclerView
+        val allUsersIdeasArrayList: ArrayList<Idea>
         allUsersIdeasArrayList = arguments!!.getSerializable("ideas") as ArrayList<Idea>
 
         Log.d("DATA ENCAPSULATION", allUsersIdeasArrayList.size.toString())
 
         recyclerView  = view.findViewById(R.id.recycleViewIdeasFeed)
-        recyclerView!!.layoutManager = LinearLayoutManager(fragmentContext)
+        recyclerView.layoutManager = LinearLayoutManager(fragmentContext)
 
         val adapter = CardIdeaAdapter(context!!,allUsersIdeasArrayList)
 
-        recyclerView!!.adapter = adapter
+        recyclerView.adapter = adapter
 
         adapter.notifyDataSetChanged()
         return view

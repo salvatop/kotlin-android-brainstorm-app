@@ -19,7 +19,7 @@ class FirebaseRepository  {
         firebaseAuth = FirebaseAuth.getInstance()
     }
 
-    public fun getAuth() : FirebaseAuth{
+    fun getAuth() : FirebaseAuth{
         return firebaseAuth
     }
 
@@ -91,4 +91,6 @@ class FirebaseRepository  {
         })
         return valueToReturn
     }
+
+
 }

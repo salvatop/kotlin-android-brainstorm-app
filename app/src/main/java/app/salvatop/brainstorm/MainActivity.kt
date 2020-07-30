@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -27,9 +28,11 @@ import app.salvatop.brainstorm.fragment.*
 import app.salvatop.brainstorm.model.Idea
 import app.salvatop.brainstorm.model.Profile
 import com.bumptech.glide.Glide
+import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuth.AuthStateListener
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -173,10 +176,12 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 })
 
         usersArrayList = loadAllUserFromDB()
+
         // Start a coroutine
         GlobalScope.launch {
             delay(1500)
-            allUsersIdeasArrayList = getAllTheIdeas()
+            allUsersIdeasArrayList = getAllTheIdeas(usersArrayList!!)
+            bookmarksArrayList = getAllTheBookmarks(usersArrayList!!)
         }
 
         //button to add idea to the profile
@@ -320,9 +325,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
             R.id.bookmarks -> {
                 val bookmarksFragment = BookmarksFragment()
-                //TODO fill the arrayList
-                bookmarksArrayList = ArrayList()
-
                 label?.text = "Bookmark"
                 supportFragmentManager.popBackStack()
                 recyclerView.alpha = 0f
@@ -373,8 +375,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val inflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
 
-        getSystemService(Context.SEARCH_SERVICE) as SearchManager
-
         val searchItem = menu.findItem(R.id.app_bar_search)
         val searchView = searchItem.actionView as SearchView
 
@@ -417,15 +417,27 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         auth!!.signOut()
     }
 
-    private fun getAllTheIdeas() : ArrayList<Idea> {
-        val allUsers: ArrayList<Idea> =  ArrayList()
-        for(profile in this.usersArrayList!!) {
+    private fun getAllTheIdeas(users: ArrayList<Profile>) : ArrayList<Idea> {
+        val ideas: ArrayList<Idea> =  ArrayList()
+        for(profile in users) {
             for (idea in profile.ideas) {
-                //Log.d("LOAD IDEAS", idea.value.author)
+                if (idea.value.isPublic != "true") { continue }
+                Log.d("LOAD IDEAS", idea.value.author + "-" + idea.value.title)
                 val oneIdea = idea.value
-                allUsers.add(oneIdea)
+                ideas.add(oneIdea)
             }
         }
-        return  allUsers
+        return  ideas
+    }
+
+    private fun getAllTheBookmarks(users: ArrayList<Profile>) : ArrayList<Idea> {
+        val bookmarks: ArrayList<Idea> =  ArrayList()
+        for(profile in users) {
+            for (idea in profile.bookmarks) {
+                val oneIdea = idea.value
+                bookmarks.add(oneIdea)
+            }
+        }
+        return  bookmarks
     }
 }
