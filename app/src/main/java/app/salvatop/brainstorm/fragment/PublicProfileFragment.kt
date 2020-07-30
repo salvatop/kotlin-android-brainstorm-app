@@ -20,8 +20,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PublicProfileFragment : Fragment() {
-    private var profile = Profile()
-    private var ideaArrayList: ArrayList<Idea>? = null
 
     private fun getIdeasFromSerializable(profile: Profile): ArrayList<Idea> {
         val ideas: ArrayList<Idea> = ArrayList()
@@ -34,16 +32,16 @@ class PublicProfileFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_public_profile, container,false) as ViewGroup
 
-        profile = arguments!!.getSerializable("profile") as Profile
+        val profile: Profile = arguments!!.getSerializable("profile") as Profile
         Log.d("PROFILE", profile.displayName)
-        ideaArrayList = getIdeasFromSerializable(profile)
+        val ideaArrayList: ArrayList<Idea> = getIdeasFromSerializable(profile)
 
         val firebaseAuth = FirebaseAuth.getInstance()
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycleViewPublicProfile)
         recyclerView?.layoutManager = LinearLayoutManager(context)
 
-        val adapter = CardIdeaAdapter(context!!, ideaArrayList!!)
+        val adapter = CardIdeaAdapter(context!!, ideaArrayList)
         recyclerView.adapter = adapter
 
         val follow: Button = view.findViewById(R.id.buttonFollow)
@@ -61,11 +59,6 @@ class PublicProfileFragment : Fragment() {
         }
 
         return view
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d("IDEAS", "${ideaArrayList?.size}")
     }
 
     private fun followUnfollowUsers(userToFollow: String?, whoIsFollow: String?, action: String?) {

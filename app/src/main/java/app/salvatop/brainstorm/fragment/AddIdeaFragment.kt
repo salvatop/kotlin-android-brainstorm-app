@@ -60,7 +60,6 @@ class AddIdeaFragment : Fragment() {
                 }
             }) }
 
-
         return view
     }
 }
