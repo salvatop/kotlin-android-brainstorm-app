@@ -128,10 +128,12 @@
                 android:layout_marginStart="10dp"
                 android:text="@string/contents"
                 android:textSize="14sp"
+                android:inputType="textMultiLine"
+                android:lines="3"
+                android:maxLines="10"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewContentsLabel"
                 android:autofillHints=""
-                android:inputType="text"
                 tools:ignore="LabelFor" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
