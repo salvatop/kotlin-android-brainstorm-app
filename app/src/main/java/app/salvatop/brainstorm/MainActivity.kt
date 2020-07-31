@@ -176,7 +176,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             delay(1500)
             allUsersIdeasArrayList = getAllTheIdeas(usersArrayList!!)
             bookmarksArrayList = getAllTheBookmarks(usersArrayList!!)
-            ideaArrayList = getMyIdeas(usersArrayList!!)
         }
         //button to add idea to the profile
         val addIdea: Button = findViewById(R.id.buttonAddIdea)
@@ -438,21 +437,5 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
         }
         return  bookmarks
-    }
-
-    private fun getMyIdeas(users: ArrayList<Profile>) : ArrayList<Idea> {
-        val myIdeas: ArrayList<Idea> =  ArrayList()
-        for(profile in users) {
-            if(profile.displayName == currentUser) {
-                for (idea in profile.bookmarks) {
-                    if(idea.value.title != "none") {
-                        val oneIdea = idea.value
-                        myIdeas.add(oneIdea)
-                    }
-
-                }
-            }
-        }
-        return  myIdeas
     }
 }
