@@ -36,6 +36,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private var firebaseAuth: FirebaseAuth? = null
+    private var currentUser: String = ""
     private var fireAuthListener: AuthStateListener? = null
     private var adapter: CardIdeaAdapter? = null
     private var ideaArrayList: ArrayList<Idea>? = null
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     private fun initializeButtonsTextEditAndView() {
         val database = FirebaseDatabase.getInstance()
-        val user: String = firebaseAuth?.currentUser?.displayName.toString()
+        currentUser = firebaseAuth?.currentUser?.displayName.toString()
 
         val mottoEdit: EditText = findViewById(R.id.EditTextMotto)
         val occupationEdit: EditText = findViewById(R.id.EditTextOccupation)
@@ -110,11 +111,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         ///set username
         val username = findViewById<TextView>(R.id.textViewDisplayName)
-        username.text = firebaseAuth!!.currentUser?.displayName
+        username.text = currentUser
 
-        val mottoDB = database.getReference("users").child(user).child("motto")
-        val cityDB = database.getReference("users").child(user).child("city")
-        val occupationDB = database.getReference("users").child(user).child("occupation")
+        val mottoDB = database.getReference("users").child(currentUser).child("motto")
+        val cityDB = database.getReference("users").child(currentUser).child("city")
+        val occupationDB = database.getReference("users").child(currentUser).child("occupation")
 
         mottoDB.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -153,13 +154,15 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         recyclerView.adapter = adapter
 
+        usersArrayList = loadAllUserFromDB()
+
         //create local list of my ideas
-        FirebaseDatabase.getInstance().reference.child("users").child(user).child("ideas")
+        FirebaseDatabase.getInstance().reference.child("users").child(currentUser).child("ideas")
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         for (snapshot in dataSnapshot.children) {
                             val idea: Idea? = snapshot.getValue(Idea::class.java)
-                            if (idea != null) {
+                            if (idea!!.title != "none") {
                                 ideaArrayList!!.add(idea)
                                 adapter!!.notifyDataSetChanged()
                             }
@@ -168,15 +171,13 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                     override fun onCancelled(databaseError: DatabaseError) {}
                 })
 
-        usersArrayList = loadAllUserFromDB()
-
         // Start a coroutine
         GlobalScope.launch {
             delay(1500)
             allUsersIdeasArrayList = getAllTheIdeas(usersArrayList!!)
             bookmarksArrayList = getAllTheBookmarks(usersArrayList!!)
+            ideaArrayList = getMyIdeas(usersArrayList!!)
         }
-
         //button to add idea to the profile
         val addIdea: Button = findViewById(R.id.buttonAddIdea)
         addIdea.setOnClickListener {
@@ -190,7 +191,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         //SETUP TEXT LISTENER FOR UPDATE USER PROFILE
         mottoEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
-                val myRef = database.getReference("users").child(user).child("motto")
+                val myRef = database.getReference("users").child(currentUser).child("motto")
                 myRef.setValue(mottoEdit.text.toString())
                 motto.text = mottoEdit.text
             }
@@ -213,7 +214,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
         occupationEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
-                val myRef = database.getReference("users").child(user).child("occupation")
+                val myRef = database.getReference("users").child(currentUser).child("occupation")
                 myRef.setValue(occupationEdit.text.toString())
                 occupation.text = occupationEdit.text
             }
@@ -237,7 +238,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
         cityEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
-                val myRef = database.getReference("users").child(user).child("city")
+                val myRef = database.getReference("users").child(currentUser).child("city")
                 myRef.setValue(cityEdit.text.toString())
                 city.text = cityEdit.text
             }
@@ -414,7 +415,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val ideas: ArrayList<Idea> =  ArrayList()
         for(profile in users) {
             for (idea in profile.ideas) {
-                if (idea.value.isPublic != "true") { continue }
+                if (idea.value.visibility != "true") { continue }
                 Log.d("LOAD IDEAS", idea.value.author + "-" + idea.value.title)
                 val oneIdea = idea.value
                 ideas.add(oneIdea)
@@ -426,11 +427,32 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private fun getAllTheBookmarks(users: ArrayList<Profile>) : ArrayList<Idea> {
         val bookmarks: ArrayList<Idea> =  ArrayList()
         for(profile in users) {
-            for (idea in profile.bookmarks) {
-                val oneIdea = idea.value
-                bookmarks.add(oneIdea)
+            if(profile.displayName == currentUser) {
+                for (idea in profile.bookmarks) {
+                    if(idea.value.title != "none") {
+                        val oneIdea = idea.value
+                        bookmarks.add(oneIdea)
+                    }
+
+                }
             }
         }
         return  bookmarks
+    }
+
+    private fun getMyIdeas(users: ArrayList<Profile>) : ArrayList<Idea> {
+        val myIdeas: ArrayList<Idea> =  ArrayList()
+        for(profile in users) {
+            if(profile.displayName == currentUser) {
+                for (idea in profile.bookmarks) {
+                    if(idea.value.title != "none") {
+                        val oneIdea = idea.value
+                        myIdeas.add(oneIdea)
+                    }
+
+                }
+            }
+        }
+        return  myIdeas
     }
 }

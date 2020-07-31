@@ -23,7 +23,7 @@ class AddIdeaFragment : Fragment() {
     private var title: EditText? = null
     private var ideaContext: EditText? = null
     private var contents: EditText? = null
-    private var forks: ArrayList<String> = ArrayList()
+    private var forks: HashMap<String, String> = HashMap()
     private var save: Button? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -36,7 +36,7 @@ class AddIdeaFragment : Fragment() {
         title = view.findViewById(R.id.editTextIdeaTitle)
         ideaContext = view.findViewById(R.id.editTextContext)
         contents = view.findViewById(R.id.editTextContents)
-        forks.add(authorName + "_" + title?.text.toString() + "_" + "newTitle")
+        forks["none"] = "none"
 
         save = view.findViewById(R.id.buttonSaveIdea)
         save?.setOnClickListener {

@@ -1,5 +1,6 @@
 package app.salvatop.brainstorm.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.text.InputType
@@ -42,10 +43,12 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
     }
 
     inner class IdeaHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val firebaseAuth: FirebaseAuth? = FirebaseAuth.getInstance()
+        private val database = FirebaseDatabase.getInstance()
         private val author: TextView = itemView.findViewById(R.id.ideaAuthor)
         private val title: TextView = itemView.findViewById(R.id.textViewTitle)
-        private val ideaContext: TextView = itemView.findViewById(R.id.ideaContext)
-        private val content: TextView = itemView.findViewById(R.id.ideaContents)
+        private val ideaContext: EditText = itemView.findViewById(R.id.ideaContext)
+        private val content: EditText = itemView.findViewById(R.id.ideaContents)
         private val forks: TextView = itemView.findViewById(R.id.ideaForks)
         private val cover: ImageView = itemView.findViewById(R.id.ideaCover)
         private val forksButton: Button = itemView.findViewById(R.id.buttonFork)
@@ -78,21 +81,30 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
             return exist
         }
 
+        @SuppressLint("ResourceAsColor")
         fun setDetails(idea: Idea) {
+            val currentUser = firebaseAuth?.currentUser?.displayName
             author.text = idea.author
             title.text = idea.title
-            content.text = idea.content
-            ideaContext.text = idea.ideaContext
+            content.setText(idea.content)
+            ideaContext.setText(idea.ideaContext)
             Glide.with(context.applicationContext)
                     .load(R.drawable.idea)
                     .into(cover)
             val nbOfforks = "forks[ " + (idea.forks.size - 1) + " ]"
             forks.text = nbOfforks
 
+            content.setTextColor(R.color.disabled_edit_text)
+            ideaContext.setTextColor(R.color.disabled_edit_text)
+
+            if (currentUser.toString() != idea.author) {
+                ideaContext.isEnabled = false
+                content.isEnabled = false
+            }
+
             forksButton.setOnClickListener {
                 val alertBox = AlertDialog.Builder(it.rootView.context)
                 val input = EditText(context)
-
                 input.inputType = InputType.TYPE_CLASS_TEXT
                 input.hint = "add a new title"
 
@@ -100,39 +112,43 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                 alertBox.setMessage("Do you want you for this idea?")
                 alertBox.setTitle("Fork Idea")
                 alertBox.setPositiveButton("FORK") { _ , _ ->
+                    val forksToAdd: HashMap<String, String> = HashMap()
+                    forksToAdd[idea.author] = idea.title
 
                     val newTitle = input.text.toString()
-                    val titleText = idea.author + "_" + idea.title + "_" + newTitle
-                    val firebaseAuth: FirebaseAuth? = FirebaseAuth.getInstance()
-                    val database = FirebaseDatabase.getInstance()
-                    val currentUser = firebaseAuth!!.currentUser?.displayName.toString()
-                    val myRef = database.getReference("users").child(currentUser).child("ideas").child(titleText)
+                    Log.d("NEW TITLE", newTitle)
+                    val ideaToFork = Idea(currentUser!!, idea.ideaContext, idea.content, newTitle,"true", forksToAdd)
 
-                    myRef.setValue(idea)
-                    myRef.addValueEventListener(object : ValueEventListener {
+                    val currentUserForkIdea = database.getReference("users").child(currentUser).child("ideas").child(newTitle)
+
+                    currentUserForkIdea.setValue(ideaToFork)
+
+                    currentUserForkIdea.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            // This method is called once with the initial value and again whenever data at this location is updated.
                             Log.d("FORK IDEA", "Value is: " + dataSnapshot.value)
-                        } override fun onCancelled(error: DatabaseError) {
-                            Log.w("ADD IDEA", "Failed to read value.", error.toException())
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            // Failed to read value
+                            Log.w("FORK IDEA", "Failed to read value.", error.toException())
                         }
                     })
+
+                    //add a reference to the to idea of the new fork
+                    val originalAuthor = database.getReference("users").child(idea.author).child("ideas").child(idea.title).child("forks")
+                    originalAuthor.child(currentUser).setValue(newTitle)
+
                 }
                 alertBox.setNegativeButton("CANCEL") { dialog: DialogInterface, _: Int -> dialog.cancel() }
                 alertBox.show()
 
             }
             bookmarkButton.setOnClickListener {
-                val database = FirebaseDatabase.getInstance()
-                val firebaseAuth: FirebaseAuth? = FirebaseAuth.getInstance()
-                val currentUser = firebaseAuth!!.currentUser?.displayName.toString()
-                val myRef = database.getReference("users").child(currentUser).child("bookmarks").child(idea.title)
-                if (!isBookmarked(idea)) {
+                val currentUserBookmark = firebaseAuth?.currentUser?.displayName.toString()
+                val myRef = database.getReference("users").child(currentUserBookmark).child("bookmarks").child(idea.title)
                     myRef.setValue(idea)
                     Toast.makeText(context, "The idea was added to your bookmarks", Toast.LENGTH_SHORT).show()
-                } else {
-                    myRef.child(idea.title).removeValue()
-                    Toast.makeText(context, "The idea was removed from your bookmarks", Toast.LENGTH_SHORT).show()
-                }
             }
         }
         init {

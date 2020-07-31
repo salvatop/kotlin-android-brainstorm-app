@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
@@ -58,7 +59,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <EditText
             android:id="@+id/ideaContext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -119,17 +120,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <EditText
                 android:id="@+id/ideaContents"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_marginTop="25dp"
                 android:layout_marginStart="10dp"
                 android:text="@string/contents"
-                android:textAlignment="textStart"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewContentsLabel" />
+                app:layout_constraintTop_toBottomOf="@+id/textViewContentsLabel"
+                android:autofillHints=""
+                android:inputType="text"
+                tools:ignore="LabelFor" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

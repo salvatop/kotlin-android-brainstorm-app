@@ -35,6 +35,8 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        addBogoDatas()
+
         firebaseAuth = FirebaseAuth.getInstance()
 
         rEmail = findViewById(R.id.editTextTextRegisterEmailAddress)
@@ -127,22 +129,55 @@ class RegisterActivity : AppCompatActivity() {
                 }
     }
 
-    private fun addProfile() {
+    private fun addBogoDatas(){
+        val database = FirebaseDatabase.getInstance()
+        val username = "Mario"
+        val username2 = "Magda"
         val followed = HashMap<String, String>()
-        followed["Brainstorm Team"] = "Brainstorm Team"
+        followed["Magda"] = "Magda"
+        val followed2 = HashMap<String, String>()
+        followed2["Mario"] = "Mario"
         val following = HashMap<String, String>()
-        following["Brainstorm Team"] = "Brainstorm Team"
+        following["Magda"] = "Magda"
+        val following2 = HashMap<String, String>()
+        following2["Mario"] = "Mario"
+        val teams = ArrayList<String>()
+        teams.add("")
+        val bookmarks = HashMap<String, Idea>()
+        val forks = HashMap<String, String>()
+        forks["none"] = "none"
+        bookmarks["none"] = Idea(username, "context", "content", "none", "false", forks)
+
+        val ideas = HashMap<String, Idea>()
+        ideas["Increase productivity"] = Idea(username, "Office management", "Find ne strategies to increase productivity while working remotely", "Increase productivity", "true", forks)
+        val profile = Profile("New York, NY","slow byt safe","Team leader", username, followed, following, teams, ideas, bookmarks)
+
+        val ideas2 = HashMap<String, Idea>()
+        ideas2["New hire process"] = Idea(username2, "Human resources", "Redesign the hire process to include screening for remote workers", "New hire process", "true", forks)
+        val profile2 = Profile("Toronto, ON","think fast, act fast","IT Manager", username2, followed2, following2, teams, ideas2, bookmarks)
+
+        val myRef = database.getReference("users")
+
+        myRef.child(username).setValue(profile)
+        myRef.child(username2).setValue(profile2)
+    }
+
+    private fun addProfile() {
+        val username = rUsername!!.editText?.text.toString()
+
+        val followed = HashMap<String, String>()
+        followed["none"] = "none"
+        val following = HashMap<String, String>()
+        following["none"] = "none"
         val teams = ArrayList<String>()
         teams.add("")
         val bookmarks = HashMap<String, Idea>()
         val ideas = HashMap<String, Idea>()
-        val forks = ArrayList<String>()
-        forks.add("")
-        bookmarks["add bookmarks here"] = Idea("author", "context", "content", "title", "false", forks)
+        val forks = HashMap<String, String>()
+        forks["none"] = "none"
+        bookmarks["none"] = Idea(username, "context", "content", "none", "false", forks)
 
-        val username = rUsername!!.editText?.text.toString()
-
-        ideas["My first idea template"] = Idea("The Brainstorm Team", "This is the context of your idea", "This is the body of your idea", "My first idea template", "false", forks)
+        ideas["none"] = Idea(username, "context", "content", "none", "false", forks)
 
         val profile = Profile("add your city","add your motto","add your occupation", username, followed, following, teams, ideas, bookmarks)
 
