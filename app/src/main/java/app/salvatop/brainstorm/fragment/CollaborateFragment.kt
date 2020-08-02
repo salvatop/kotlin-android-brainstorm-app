@@ -32,6 +32,7 @@ class CollaborateFragment : Fragment() {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         for (snapshot in dataSnapshot.children) {
                          iFollowing += snapshot.value
+                            iFollowing += " "
                             if (snapshot.value != "none") {
                                 following?.text = "following[$iFollowing]"
                             }

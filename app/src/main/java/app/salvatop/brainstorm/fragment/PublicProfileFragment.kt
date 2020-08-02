@@ -1,6 +1,8 @@
 package app.salvatop.brainstorm.fragment
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +17,7 @@ import app.salvatop.brainstorm.adapter.CardIdeaAdapter
 import app.salvatop.brainstorm.model.Idea
 import app.salvatop.brainstorm.model.Profile
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,22 +33,25 @@ class PublicProfileFragment : Fragment() {
         return ideas
     }
 
+    private var mottoDB: DatabaseReference? = null
+    private var cityDB: DatabaseReference? = null
+    private var occupationDB: DatabaseReference? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_public_profile, container,false) as ViewGroup
         val database = FirebaseDatabase.getInstance()
         val motto: TextView = view.findViewById(R.id.textViewPublicProfileMotto)
         val occupation: TextView = view.findViewById(R.id.textViewPublicProfileOccupation)
-        val cityEdit: TextView = view.findViewById(R.id.textViewPublicProfileCity)
-
-
+        val city: TextView = view.findViewById(R.id.textViewPublicProfileCity)
 
         val profile: Profile = arguments!!.getSerializable("profile") as Profile
         Log.d("PROFILE", profile.displayName)
         val ideaArrayList: ArrayList<Idea> = getIdeasFromSerializable(profile)
 
-        val mottoDB = database.getReference("users").child(profile.displayName).child("motto")
-        val cityDB = database.getReference("users").child(profile.displayName).child("city")
-        val occupationDB = database.getReference("users").child(profile.displayName).child("occupation")
+
+        mottoDB = database.getReference("users").child(profile.displayName).child("motto")
+        cityDB = database.getReference("users").child(profile.displayName).child("city")
+        occupationDB = database.getReference("users").child(profile.displayName).child("occupation")
 
         val firebaseAuth = FirebaseAuth.getInstance()
 
@@ -55,6 +60,7 @@ class PublicProfileFragment : Fragment() {
 
         val adapter = CardIdeaAdapter(context!!, ideaArrayList)
         recyclerView.adapter = adapter
+        adapter.notifyDataSetChanged()
 
         val follow: Button = view.findViewById(R.id.buttonFollow)
         follow.setOnClickListener {
@@ -63,25 +69,48 @@ class PublicProfileFragment : Fragment() {
             val whoIsFollow = firebaseAuth.currentUser?.displayName.toString()
             Log.d("USERS", "$whoIsFollow $userToFollow")
 
-
             // Start a coroutine
             GlobalScope.launch {
-                delay(1500)
+                //TODO if already follow unfollow else
+                delay(1000)
                 followUnfollowUsers(userToFollow, whoIsFollow, "follow")
             }
-
-
-
-
             Log.d("BUTTON", "user followed")
         }
+        // Start a coroutine in the UI (Main thread)
+        GlobalScope.launch {
+            delay(1000)
+            val handler = Handler(Looper.getMainLooper())
+            handler.post {
+                mottoDB!!.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
+                        motto.text = (dataSnapshot.value as String?).toString()
+                    } override fun onCancelled(error: DatabaseError) {
+                        Log.w("FIREBASE", "Failed to read value.", error.toException())
+                    }
+                })
 
+                occupationDB!!.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
+                        occupation.text = (dataSnapshot.value as String?).toString()
+                    } override fun onCancelled(error: DatabaseError) {
+                        Log.w("FIREBASE", "Failed to read value.", error.toException())
+                    }
+                })
+
+                cityDB!!.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
+                        city.text = (dataSnapshot.value as String?).toString()
+                    } override fun onCancelled(error: DatabaseError) {
+                        Log.w("FIREBASE", "Failed to read value.", error.toException())
+                    }
+                })
+            }
+        }
         return view
-    }
-
-    suspend fun workload() {
-        delay(1000)
-
     }
 
     private fun followUnfollowUsers(userToFollow: String?, whoIsFollow: String?, action: String?) {

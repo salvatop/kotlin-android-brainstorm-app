@@ -12,6 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import app.salvatop.brainstorm.R
 import app.salvatop.brainstorm.adapter.CardIdeaAdapter
 import app.salvatop.brainstorm.model.Idea
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 
 class BookmarksFragment : Fragment() {
@@ -26,11 +30,8 @@ class BookmarksFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_bookmarks, container,false) as ViewGroup
 
-        val bookmarksArrayList: ArrayList<Idea>
-        bookmarksArrayList = arguments!!.getSerializable("bookmarks") as ArrayList<Idea>
-
-        Log.d("DATA ENCAPSULATION", bookmarksArrayList.size.toString())
-
+        val bookmarksArrayList: ArrayList<Idea> = ArrayList()
+        val currentUser = arguments!!.getString("user") as String
         val recyclerView: RecyclerView  = view.findViewById(R.id.recycleViewBookmarks)
         recyclerView.layoutManager = LinearLayoutManager(fragmentContext)
 
@@ -38,10 +39,22 @@ class BookmarksFragment : Fragment() {
 
         recyclerView.adapter = adapter
 
-        adapter.notifyDataSetChanged()
+        //create local list of my bookmarks
+        FirebaseDatabase.getInstance().reference.child("users").child(currentUser).child("bookmarks")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (snapshot in dataSnapshot.children) {
+                            val idea: Idea? = snapshot.getValue(Idea::class.java)
+                            if (idea!!.title != "none") {
+                                bookmarksArrayList.add(idea)
+                                adapter.notifyDataSetChanged()
+                            }
+                        }
+                    }
+                    override fun onCancelled(databaseError: DatabaseError) {}
+                })
+
+        Log.d("BOOKMARK LIST", bookmarksArrayList.size.toString())
         return view
     }
-
-    
-
 }

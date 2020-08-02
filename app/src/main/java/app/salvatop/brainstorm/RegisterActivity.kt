@@ -152,10 +152,12 @@ class RegisterActivity : AppCompatActivity() {
 
         val ideas = HashMap<String, Idea>()
         ideas["Increase productivity"] = Idea(username, "Office management", "Find ne strategies to increase productivity while working remotely", "Increase productivity", "true", forks)
-        val profile = Profile("New York, NY","slow byt safe","Team leader", username, followed, following, teams, ideas, bookmarks)
+        ideas["Christmas dinner"] = Idea(username, "Office management", "Find a nice place where to reunion the whole team for a dinner on Christmas", "Christmas dinner", "true", forks)
+        val profile = Profile("New York, NY","slow but safe","Team leader", username, followed, following, teams, ideas, bookmarks)
 
         val ideas2 = HashMap<String, Idea>()
         ideas2["New hire process"] = Idea(username2, "Human resources", "Redesign the hire process to include screening for remote workers", "New hire process", "true", forks)
+        ideas2["Exit interview process"] = Idea(username2, "Human resources", "Gather input and contents how to format the a survey to add on exit interview", "Exit interview process", "true", forks)
         val profile2 = Profile("Toronto, ON","think fast, act fast","IT Manager", username2, followed2, following2, teams, ideas2, bookmarks2)
 
         val myRef = database.getReference("users")

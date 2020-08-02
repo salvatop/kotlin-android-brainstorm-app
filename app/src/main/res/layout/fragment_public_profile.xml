@@ -6,13 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.PublicProfileFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycleViewPublicProfile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        app:layout_constraintTop_toBottomOf="@+id/buttonFollow" />
-
     <TextView
         android:id="@+id/textViewPublicProfileOccupation"
         android:layout_width="150dp"
@@ -78,5 +71,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewPublicProfileMotto"
         tools:ignore="SmallSp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/buttonFollow">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycleViewPublicProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:scrollbars="vertical" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

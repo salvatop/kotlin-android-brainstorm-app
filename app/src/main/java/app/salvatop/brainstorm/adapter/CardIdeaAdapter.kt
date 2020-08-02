@@ -3,6 +3,8 @@ package app.salvatop.brainstorm.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
+import android.os.Handler
+import android.os.Looper
 import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,6 +26,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -58,36 +63,21 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
         private val expandableLayout: ConstraintLayout = itemView.findViewById(R.id.expandable)
         private val cardView: CardView = itemView.findViewById(R.id.cardView)
 
-        private fun isBookmarked(idea: Idea): Boolean {
-            var exist = false
-            val database = FirebaseDatabase.getInstance()
-            val firebaseAuth: FirebaseAuth? = FirebaseAuth.getInstance()
-            val currentUser = firebaseAuth!!.currentUser?.displayName.toString()
-            val myRef = database.getReference("users").child(currentUser).child("bookmark")
-
-            myRef.addListenerForSingleValueEvent(object :ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                    Log.w("BOOKMARK", "Failed to read value.", error.toException())
+        init {
+            expandBtn.setOnClickListener {
+                if (expandableLayout.visibility == View.GONE) {
+                    cardView.let { it1 -> TransitionManager.beginDelayedTransition(it1, AutoTransition()) }
+                    expandableLayout.visibility = View.VISIBLE
+                    val collapse: String = it.resources.getString(R.string.collapse)
+                    expandBtn.text = collapse
+                } else {
+                    cardView.let { it1 -> TransitionManager.beginDelayedTransition(it1, AutoTransition()) }
+                    expandableLayout.visibility = View.GONE
+                    val expand: String = it.resources.getString(R.string.expand)
+                    expandBtn.text = expand
                 }
-                @Override
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.hasChild(idea.title)) {
-                        exist = true
-                    }
-                }
-            })
-            return exist
-        }
+            }
 
-        private fun getForks(idea: Idea) : String {
-            var forksToReturn = ""
-
-           for (fork in idea.forks) {
-               if (fork.value != "none"){
-                   forksToReturn = fork.key + "-" + fork.value
-               }
-           }
-            return forksToReturn
         }
 
         @SuppressLint("ResourceAsColor")
@@ -101,11 +91,11 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                     .load(R.drawable.idea)
                     .into(cover)
 
-            var fromOrBy = ""
-            if (getForks(idea).contentEquals(currentUser!!)) {
-                fromOrBy = "by"
+            val fromOrBy: String
+            fromOrBy = if (getForks(idea).contentEquals(currentUser!!)) {
+                "by"
             } else {
-                fromOrBy = "from"
+                "from"
             }
             val forked = "forked " + fromOrBy + ": [ " + getForks(idea) + " ]"
             forks.text = forked
@@ -161,26 +151,55 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
             }
             bookmarkButton.setOnClickListener {
                 val currentUserBookmark = firebaseAuth?.currentUser?.displayName.toString()
-                val myRef = database.getReference("users").child(currentUserBookmark).child("bookmarks").child(idea.title)
-                    myRef.setValue(idea)
-                    Toast.makeText(context, "The idea was added to your bookmarks", Toast.LENGTH_SHORT).show()
-            }
-        }
-        init {
-            expandBtn.setOnClickListener {
-                if (expandableLayout.visibility == View.GONE) {
-                    cardView.let { it1 -> TransitionManager.beginDelayedTransition(it1, AutoTransition()) }
-                    expandableLayout.visibility = View.VISIBLE
-                    val collapse: String = it.resources.getString(R.string.collapse)
-                    expandBtn.text = collapse
-                } else {
-                    cardView.let { it1 -> TransitionManager.beginDelayedTransition(it1, AutoTransition()) }
-                    expandableLayout.visibility = View.GONE
-                    val expand: String = it.resources.getString(R.string.expand)
-                    expandBtn.text = expand
+                // Start a coroutine in the UI (Main thread)
+                GlobalScope.launch {
+                    val exist = isBookmarked(idea)
+                    val handler = Handler(Looper.getMainLooper())
+                    delay(1000)
+                    handler.post {
+                        if (!exist) {
+                            val myRef = database.getReference("users").child(currentUserBookmark).child("bookmarks").child(idea.title)
+                            myRef.setValue(idea)
+                            Toast.makeText(context, "The idea was added to your bookmarks", Toast.LENGTH_SHORT).show()
+                        } else {
+                            val myRef = database.getReference("users").child(currentUserBookmark).child("bookmarks")
+                            myRef.child(idea.title).removeValue()
+                            Toast.makeText(context, "The was removed from to your bookmarks", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
+        }
 
+        private fun isBookmarked(idea: Idea): Boolean {
+            var exist = false
+            val currentUser = firebaseAuth!!.currentUser?.displayName.toString()
+            val myRef = database.getReference("users").child(currentUser).child("bookmarks")
+
+            myRef.addListenerForSingleValueEvent(object :ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    Log.w("BOOKMARK", "Failed to read value.", error.toException())
+                }
+                @Override
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.hasChild(idea.title)) {
+                        Log.d("BOOKMARK EXIST", snapshot.hasChild(idea.title).toString())
+                        exist = true
+                    }
+                }
+            })
+            return exist
+        }
+
+        private fun getForks(idea: Idea) : String {
+            var forksToReturn = ""
+
+            for (fork in idea.forks) {
+                if (fork.value != "none"){
+                    forksToReturn = fork.key + "-" + fork.value
+                }
+            }
+            return forksToReturn
         }
     }
 }

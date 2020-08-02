@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private var adapter: CardIdeaAdapter? = null
     private var ideaArrayList: ArrayList<Idea>? = null
     private var allUsersIdeasArrayList: ArrayList<Idea>? = null
-    private var bookmarksArrayList: ArrayList<Idea>? = null
     private var usersArrayList: ArrayList<Profile>? = null
     private var label: TextView? = null
 
@@ -175,7 +174,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         GlobalScope.launch {
             delay(1500)
             allUsersIdeasArrayList = getAllTheIdeas(usersArrayList!!)
-            bookmarksArrayList = getAllTheBookmarks(usersArrayList!!)
         }
         //button to add idea to the profile
         val addIdea: Button = findViewById(R.id.buttonAddIdea)
@@ -323,7 +321,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 recyclerView.alpha = 0f
                 recyclerView.isEnabled = false
                 val bundle = Bundle()
-                bundle.putSerializable("bookmarks",bookmarksArrayList)
+                bundle.putString("user", currentUser)
                 bookmarksFragment.arguments = bundle
                 supportFragmentManager.beginTransaction().add(R.id.frameLayout, bookmarksFragment).addToBackStack(null).commit()
                 true
@@ -421,21 +419,5 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
         }
         return  ideas
-    }
-
-    private fun getAllTheBookmarks(users: ArrayList<Profile>) : ArrayList<Idea> {
-        val bookmarks: ArrayList<Idea> =  ArrayList()
-        for(profile in users) {
-            if(profile.displayName == currentUser) {
-                for (idea in profile.bookmarks) {
-                    if(idea.value.title != "none") {
-                        val oneIdea = idea.value
-                        bookmarks.add(oneIdea)
-                    }
-
-                }
-            }
-        }
-        return  bookmarks
     }
 }
