@@ -31,7 +31,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 
-
 class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList<Idea>) : RecyclerView.Adapter<IdeaHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, i: Int): IdeaHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.idea_card_layout, parent, false)
@@ -47,6 +46,7 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
         return ideas.size
     }
 
+    //region *** VIEW HOLDER ***
     inner class IdeaHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val firebaseAuth: FirebaseAuth? = FirebaseAuth.getInstance()
         private val database = FirebaseDatabase.getInstance()
@@ -82,7 +82,7 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
 
         @SuppressLint("ResourceAsColor")
         fun setDetails(idea: Idea) {
-            val currentUser = firebaseAuth?.currentUser?.displayName
+            val currentUser = firebaseAuth?.currentUser?.displayName.toString()
             author.text = idea.author
             title.text = idea.title
             content.setText(idea.content)
@@ -92,7 +92,8 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                     .into(cover)
 
             val fromOrBy: String
-            fromOrBy = if (getForks(idea).contentEquals(currentUser!!)) {
+            val getFork = getForks(idea)
+            fromOrBy = if (getFork.startsWith(currentUser)) {
                 "by"
             } else {
                 "from"
@@ -103,11 +104,12 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
             content.setTextColor(R.color.disabled_edit_text)
             ideaContext.setTextColor(R.color.disabled_edit_text)
 
-            if (currentUser.toString() != idea.author) {
+            if (currentUser != idea.author) {
                 ideaContext.isEnabled = false
                 content.isEnabled = false
             }
 
+            //region *** FORK ACTIONS ***
             forksButton.setOnClickListener {
                 val alertBox = AlertDialog.Builder(it.rootView.context)
                 val input = EditText(context)
@@ -127,28 +129,26 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
 
                     val currentUserForkIdea = database.getReference("users").child(currentUser).child("ideas").child(newTitle)
 
-                    currentUserForkIdea.setValue(ideaToFork)
-
                     currentUserForkIdea.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            currentUserForkIdea.setValue(ideaToFork)
                             Log.d("FORK IDEA", "Value is: " + dataSnapshot.value)
                         }
-
                         override fun onCancelled(error: DatabaseError) {
                             // Failed to read value
                             Log.w("FORK IDEA", "Failed to read value.", error.toException())
                         }
                     })
-
                     //add a reference to the to idea of the new fork
                     val originalAuthor = database.getReference("users").child(idea.author).child("ideas").child(idea.title).child("forks")
                     originalAuthor.child(currentUser).setValue(newTitle)
-
                 }
                 alertBox.setNegativeButton("CANCEL") { dialog: DialogInterface, _: Int -> dialog.cancel() }
                 alertBox.show()
-
             }
+            //endregion
+
+            //region *** BOOKMARK ACTIONS ***
             bookmarkButton.setOnClickListener {
                 val currentUserBookmark = firebaseAuth?.currentUser?.displayName.toString()
                 // Start a coroutine in the UI (Main thread)
@@ -169,6 +169,7 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                     }
                 }
             }
+            //endregion
         }
 
         private fun isBookmarked(idea: Idea): Boolean {
@@ -202,4 +203,5 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
             return forksToReturn
         }
     }
+    //endregion
 }

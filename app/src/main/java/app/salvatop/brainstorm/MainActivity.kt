@@ -44,24 +44,55 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private var usersArrayList: ArrayList<Profile>? = null
     private var label: TextView? = null
 
-    private fun loadAllUserFromDB() : ArrayList<Profile> {
-        val listOUsers: ArrayList<Profile> = ArrayList()
-        FirebaseDatabase.getInstance().reference.child("users")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        for (snapshot in dataSnapshot.children) {
-                            val profile: Profile? = snapshot.getValue(Profile::class.java)
-                            if (profile != null) {
-                                listOUsers.add(profile)
-                            }
-                        }
-                    }
-                    override fun onCancelled(databaseError: DatabaseError) {}
-                })
-        return listOUsers
+    //region *** APPLICATION STATE ***
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        firebaseAuth = FirebaseAuth.getInstance()
+
+        initializeButtonsTextEditAndView()
+
+        ////Checking user session
+        fireAuthListener = AuthStateListener { firebaseAuth1: FirebaseAuth ->
+            val user1 = firebaseAuth1.currentUser
+            if (user1 == null) {
+                //user not logged in
+                val mainActivity = Intent(this@MainActivity, LoginActivity::class.java)
+                startActivity(mainActivity)
+            }
+        }
+
+        // Sets the Toolbar to act as the ActionBar for this Activity window.
+        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        setSupportActionBar(toolbar)
+
+        ///Tune the menu bottom bar
+        val bottomNavigationView = findViewById<View>(R.id.bottom_navigation) as BottomNavigationView
+        bottomNavigationView.elevation = 1f
+        bottomNavigationView.itemIconSize = 70
+        bottomNavigationView.setOnNavigationItemSelectedListener(this)
     }
 
+    override fun onStart() {
+        super.onStart()
+        adapter!!.notifyDataSetChanged()
+        firebaseAuth!!.addAuthStateListener(fireAuthListener!!)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (fireAuthListener != null) {
+            firebaseAuth!!.removeAuthStateListener(fireAuthListener!!)
+        }
+    }
+    //endregion
+
+    //region *** INITIALIZE UI ELEMENTS
+
     private fun initializeButtonsTextEditAndView() {
+
+        //region  *** VARIABLES ***
         val database = FirebaseDatabase.getInstance()
         currentUser = firebaseAuth?.currentUser?.displayName.toString()
 
@@ -78,8 +109,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         val layout: CoordinatorLayout = findViewById(R.id.CoordinatorLayout)
         layout.setOnClickListener {
-            //layout.isFocusable
-
             mottoEdit.visibility = INVISIBLE
             mottoEdit.isEnabled = false
             motto.visibility = VISIBLE
@@ -91,10 +120,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             cityEdit.isEnabled = false
             city.visibility = VISIBLE
         }
+        //endregion
 
-        ///setup user profile info
-
-        /// set the avatar image if exists in the user profile or set the default from drawable
+        //region *** SETUP USER DETAILS ***
+        // set the avatar image if exists in the user profile or set the default from drawable
         val avatar = findViewById<ImageView>(R.id.imagePublicProfileViewAvatar)
         try {
             if (firebaseAuth!!.currentUser?.photoUrl != null) {
@@ -142,9 +171,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 Log.w("FIREBASE", "Failed to read value.", error.toException())
             }
         })
-        ///setup user profile info_ END
+        //endregion
 
-        //SETUP THE RECYCLE VIEW WITH THE CARD VIEW ADAPTER
+        //region *** SETUP THE RECYCLE VIEW WITH THE CARD VIEW ADAPTER ***
         val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -169,23 +198,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                     }
                     override fun onCancelled(databaseError: DatabaseError) {}
                 })
-
         // Start a coroutine
         GlobalScope.launch {
             delay(1500)
             allUsersIdeasArrayList = getAllTheIdeas(usersArrayList!!)
         }
-        //button to add idea to the profile
-        val addIdea: Button = findViewById(R.id.buttonAddIdea)
-        addIdea.setOnClickListener {
-            val addIdeaFragment = AddIdeaFragment()
-            supportFragmentManager.popBackStack()
-            recyclerView.alpha = 0f
-            recyclerView.isEnabled = false
-            label?.text = it.resources.getString(R.string.add_an_idea)
-            supportFragmentManager.beginTransaction().add(R.id.frameLayout, addIdeaFragment).addToBackStack(null).commit()
-        }
-        //SETUP TEXT LISTENER FOR UPDATE USER PROFILE
+        //endregion
+
+        //region *** SETUP TEXT LISTENER FOR UPDATE USER PROFILE ***
         mottoEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val myRef = database.getReference("users").child(currentUser).child("motto")
@@ -258,49 +278,23 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             occupation.visibility = VISIBLE
             true
         }
-    }
+        //endregion
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        firebaseAuth = FirebaseAuth.getInstance()
-
-        initializeButtonsTextEditAndView()
-
-        ////Checking user session
-        fireAuthListener = AuthStateListener { firebaseAuth1: FirebaseAuth ->
-            val user1 = firebaseAuth1.currentUser
-            if (user1 == null) {
-                //user not logged in
-                val mainActivity = Intent(this@MainActivity, LoginActivity::class.java)
-                startActivity(mainActivity)
-            }
+        //region *** ADD IDEA BUTTON ACTION ***
+        val addIdea: Button = findViewById(R.id.buttonAddIdea)
+        addIdea.setOnClickListener {
+            val addIdeaFragment = AddIdeaFragment()
+            supportFragmentManager.popBackStack()
+            recyclerView.alpha = 0f
+            recyclerView.isEnabled = false
+            label?.text = it.resources.getString(R.string.add_an_idea)
+            supportFragmentManager.beginTransaction().add(R.id.frameLayout, addIdeaFragment).addToBackStack(null).commit()
         }
-
-        // Sets the Toolbar to act as the ActionBar for this Activity window.
-        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-
-        ///Tune the menu bottom bar
-        val bottomNavigationView = findViewById<View>(R.id.bottom_navigation) as BottomNavigationView
-        bottomNavigationView.elevation = 1f
-        bottomNavigationView.itemIconSize = 70
-        bottomNavigationView.setOnNavigationItemSelectedListener(this)
+        //endregion
     }
+    //endregion
 
-    override fun onStart() {
-        super.onStart()
-        firebaseAuth!!.addAuthStateListener(fireAuthListener!!)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (fireAuthListener != null) {
-            firebaseAuth!!.removeAuthStateListener(fireAuthListener!!)
-        }
-    }
-
+    //region *** MENU HANDLER  ***
     // Handle bottom bar menu item selection
     @SuppressLint("SetTextI18n")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -403,6 +397,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         })
         return true
     }
+    //endregion
+
+    //region *** UTIL FUNCTIONS ***
 
     private fun signOut(auth: FirebaseAuth?) {
         auth!!.signOut()
@@ -420,4 +417,21 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
         return  ideas
     }
+    private fun loadAllUserFromDB() : ArrayList<Profile> {
+        val listOUsers: ArrayList<Profile> = ArrayList()
+        FirebaseDatabase.getInstance().reference.child("users")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (snapshot in dataSnapshot.children) {
+                            val profile: Profile? = snapshot.getValue(Profile::class.java)
+                            if (profile != null) {
+                                listOUsers.add(profile)
+                            }
+                        }
+                    }
+                    override fun onCancelled(databaseError: DatabaseError) {}
+                })
+        return listOUsers
+    }
+    //endregion
 }
