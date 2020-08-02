@@ -54,7 +54,6 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
         private val forksButton: Button = itemView.findViewById(R.id.buttonFork)
         private val bookmarkButton: Button = itemView.findViewById(R.id.buttonBookmark)
 
-
         private val expandBtn: Button = itemView.findViewById(R.id.buttonShowMore)
         private val expandableLayout: ConstraintLayout = itemView.findViewById(R.id.expandable)
         private val cardView: CardView = itemView.findViewById(R.id.cardView)
@@ -77,8 +76,18 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                     }
                 }
             })
-
             return exist
+        }
+
+        private fun getForks(idea: Idea) : String {
+            var forksToReturn = ""
+
+           for (fork in idea.forks) {
+               if (fork.value != "none"){
+                   forksToReturn = fork.key + "-" + fork.value
+               }
+           }
+            return forksToReturn
         }
 
         @SuppressLint("ResourceAsColor")
@@ -91,8 +100,15 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
             Glide.with(context.applicationContext)
                     .load(R.drawable.idea)
                     .into(cover)
-            val nbOfforks = "forks[ " + (idea.forks.size - 1) + " ]"
-            forks.text = nbOfforks
+
+            var fromOrBy = ""
+            if (getForks(idea).contentEquals(currentUser!!)) {
+                fromOrBy = "by"
+            } else {
+                fromOrBy = "from"
+            }
+            val forked = "forked " + fromOrBy + ": [ " + getForks(idea) + " ]"
+            forks.text = forked
 
             content.setTextColor(R.color.disabled_edit_text)
             ideaContext.setTextColor(R.color.disabled_edit_text)
@@ -117,7 +133,7 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
 
                     val newTitle = input.text.toString()
                     Log.d("NEW TITLE", newTitle)
-                    val ideaToFork = Idea(currentUser!!, idea.ideaContext, idea.content, newTitle,"true", forksToAdd)
+                    val ideaToFork = Idea(currentUser, idea.ideaContext, idea.content, newTitle,"true", forksToAdd)
 
                     val currentUserForkIdea = database.getReference("users").child(currentUser).child("ideas").child(newTitle)
 
@@ -125,7 +141,6 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
 
                     currentUserForkIdea.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
-                            // This method is called once with the initial value and again whenever data at this location is updated.
                             Log.d("FORK IDEA", "Value is: " + dataSnapshot.value)
                         }
 

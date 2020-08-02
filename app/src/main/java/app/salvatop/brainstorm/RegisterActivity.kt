@@ -143,10 +143,12 @@ class RegisterActivity : AppCompatActivity() {
         following2["Mario"] = "Mario"
         val teams = ArrayList<String>()
         teams.add("")
-        val bookmarks = HashMap<String, Idea>()
         val forks = HashMap<String, String>()
         forks["none"] = "none"
+        val bookmarks = HashMap<String, Idea>()
         bookmarks["none"] = Idea(username, "context", "content", "none", "false", forks)
+        val bookmarks2 = HashMap<String, Idea>()
+        bookmarks["none"] = Idea(username2, "context", "content", "none", "false", forks)
 
         val ideas = HashMap<String, Idea>()
         ideas["Increase productivity"] = Idea(username, "Office management", "Find ne strategies to increase productivity while working remotely", "Increase productivity", "true", forks)
@@ -154,7 +156,7 @@ class RegisterActivity : AppCompatActivity() {
 
         val ideas2 = HashMap<String, Idea>()
         ideas2["New hire process"] = Idea(username2, "Human resources", "Redesign the hire process to include screening for remote workers", "New hire process", "true", forks)
-        val profile2 = Profile("Toronto, ON","think fast, act fast","IT Manager", username2, followed2, following2, teams, ideas2, bookmarks)
+        val profile2 = Profile("Toronto, ON","think fast, act fast","IT Manager", username2, followed2, following2, teams, ideas2, bookmarks2)
 
         val myRef = database.getReference("users")
 

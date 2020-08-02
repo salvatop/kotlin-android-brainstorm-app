@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+
 class PublicProfileFragment : Fragment() {
 
     private fun getIdeasFromSerializable(profile: Profile): ArrayList<Idea> {
@@ -31,10 +33,20 @@ class PublicProfileFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_public_profile, container,false) as ViewGroup
+        val database = FirebaseDatabase.getInstance()
+        val motto: TextView = view.findViewById(R.id.textViewPublicProfileMotto)
+        val occupation: TextView = view.findViewById(R.id.textViewPublicProfileOccupation)
+        val cityEdit: TextView = view.findViewById(R.id.textViewPublicProfileCity)
+
+
 
         val profile: Profile = arguments!!.getSerializable("profile") as Profile
         Log.d("PROFILE", profile.displayName)
         val ideaArrayList: ArrayList<Idea> = getIdeasFromSerializable(profile)
+
+        val mottoDB = database.getReference("users").child(profile.displayName).child("motto")
+        val cityDB = database.getReference("users").child(profile.displayName).child("city")
+        val occupationDB = database.getReference("users").child(profile.displayName).child("occupation")
 
         val firebaseAuth = FirebaseAuth.getInstance()
 
@@ -50,15 +62,26 @@ class PublicProfileFragment : Fragment() {
             val userToFollow = profile.displayName
             val whoIsFollow = firebaseAuth.currentUser?.displayName.toString()
             Log.d("USERS", "$whoIsFollow $userToFollow")
+
+
             // Start a coroutine
             GlobalScope.launch {
                 delay(1500)
                 followUnfollowUsers(userToFollow, whoIsFollow, "follow")
             }
+
+
+
+
             Log.d("BUTTON", "user followed")
         }
 
         return view
+    }
+
+    suspend fun workload() {
+        delay(1000)
+
     }
 
     private fun followUnfollowUsers(userToFollow: String?, whoIsFollow: String?, action: String?) {
