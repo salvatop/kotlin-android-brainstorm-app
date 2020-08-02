@@ -39,7 +39,7 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
 
     override fun onBindViewHolder(holder: IdeaHolder, position: Int) {
         val idea = ideas[position]
-        holder.setDetails(idea)
+        holder.setContents(idea)
     }
 
     override fun getItemCount(): Int {
@@ -81,7 +81,7 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
         }
 
         @SuppressLint("ResourceAsColor")
-        fun setDetails(idea: Idea) {
+        fun setContents(idea: Idea) {
             val currentUser = firebaseAuth?.currentUser?.displayName.toString()
             author.text = idea.author
             title.text = idea.title
@@ -107,6 +107,23 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
             if (currentUser != idea.author) {
                 ideaContext.isEnabled = false
                 content.isEnabled = false
+            } else {
+                cardView.setOnLongClickListener {
+                    Log.d("CARD LONG CLICK", "long click")
+                    if (currentUser == idea.author) {
+                        val alertBox = AlertDialog.Builder(it.rootView.context)
+                        alertBox.setMessage("Do you want remove for this idea?")
+                        alertBox.setTitle("Delete Idea")
+                        alertBox.setPositiveButton("DELETE") { _ , _ ->
+                            val ideaToDelete = database.getReference("users").child(currentUser).child("ideas")
+                            ideaToDelete.child(idea.title).removeValue()
+
+                        }
+                        alertBox.setNegativeButton("CANCEL") { dialog: DialogInterface, _: Int -> dialog.cancel() }
+                        alertBox.show()
+                    }
+                    return@setOnLongClickListener  true
+                }
             }
 
             //region *** FORK ACTIONS ***
@@ -117,7 +134,7 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                 input.hint = "add a new title"
 
                 alertBox.setView(input)
-                alertBox.setMessage("Do you want you for this idea?")
+                alertBox.setMessage("Do you want fork this idea?")
                 alertBox.setTitle("Fork Idea")
                 alertBox.setPositiveButton("FORK") { _ , _ ->
                     val forksToAdd: HashMap<String, String> = HashMap()
@@ -151,12 +168,13 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
             //region *** BOOKMARK ACTIONS ***
             bookmarkButton.setOnClickListener {
                 val currentUserBookmark = firebaseAuth?.currentUser?.displayName.toString()
+                val exist = isBookmarked(idea)
                 // Start a coroutine in the UI (Main thread)
                 GlobalScope.launch {
-                    val exist = isBookmarked(idea)
                     val handler = Handler(Looper.getMainLooper())
                     delay(1000)
                     handler.post {
+                        Log.d("IS BOOKMARKED?", exist.toString())
                         if (!exist) {
                             val myRef = database.getReference("users").child(currentUserBookmark).child("bookmarks").child(idea.title)
                             myRef.setValue(idea)
@@ -178,15 +196,15 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
             val myRef = database.getReference("users").child(currentUser).child("bookmarks")
 
             myRef.addListenerForSingleValueEvent(object :ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                    Log.w("BOOKMARK", "Failed to read value.", error.toException())
-                }
                 @Override
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.hasChild(idea.title)) {
                         Log.d("BOOKMARK EXIST", snapshot.hasChild(idea.title).toString())
                         exist = true
                     }
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    Log.w("BOOKMARK", "Failed to read value.", error.toException())
                 }
             })
             return exist
