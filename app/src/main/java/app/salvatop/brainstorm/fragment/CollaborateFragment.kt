@@ -16,8 +16,7 @@ import com.google.firebase.database.ValueEventListener
 
 class CollaborateFragment : Fragment() {
 
-
-    private var following: TextView? = null
+    private lateinit var following: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_collaborate, container,false) as ViewGroup
@@ -34,7 +33,7 @@ class CollaborateFragment : Fragment() {
                          iFollowing += snapshot.value
                             iFollowing += " "
                             if (snapshot.value != "none") {
-                                following?.text = "following[$iFollowing]"
+                                following.text = "following[$iFollowing]"
                             }
                         }
                     }

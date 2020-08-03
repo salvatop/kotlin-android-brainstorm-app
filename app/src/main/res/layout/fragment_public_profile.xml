@@ -75,14 +75,18 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonFollow">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycleViewPublicProfile"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:scrollbars="vertical" />
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

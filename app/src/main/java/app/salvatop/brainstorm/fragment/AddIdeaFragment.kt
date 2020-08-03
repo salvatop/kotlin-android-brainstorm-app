@@ -19,12 +19,12 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 class AddIdeaFragment : Fragment() {
-    private var authorName: String = ""
-    private var title: EditText? = null
-    private var ideaContext: EditText? = null
-    private var contents: EditText? = null
     private var forks: HashMap<String, String> = HashMap()
-    private var save: Button? = null
+    private lateinit var authorName: String
+    private lateinit var title: EditText
+    private lateinit var ideaContext: EditText
+    private lateinit var contents: EditText
+    private lateinit var save: Button
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val firebaseAuth: FirebaseAuth? = FirebaseAuth.getInstance()
@@ -39,9 +39,9 @@ class AddIdeaFragment : Fragment() {
         forks["none"] = "none"
 
         save = view.findViewById(R.id.buttonSaveIdea)
-        save?.setOnClickListener {
-            val newIdea = Idea(authorName, ideaContext?.text.toString(), contents?.text.toString(), title?.text.toString(),"true", forks)
-            val titleText = title!!.text.toString()
+        save.setOnClickListener {
+            val newIdea = Idea(authorName, ideaContext.text.toString(), contents.text.toString(), title.text.toString(),"true", forks)
+            val titleText = title.text.toString()
             val myRef = database.getReference("users").child(authorName).child("ideas").child(titleText)
 
             myRef.setValue(newIdea)

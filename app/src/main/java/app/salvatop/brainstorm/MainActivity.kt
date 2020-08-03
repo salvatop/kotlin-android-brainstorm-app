@@ -35,14 +35,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
-    private var firebaseAuth: FirebaseAuth? = null
-    private var currentUser: String = ""
-    private var fireAuthListener: AuthStateListener? = null
-    private var adapter: CardIdeaAdapter? = null
-    private var ideaArrayList: ArrayList<Idea>? = null
-    private var allUsersIdeasArrayList: ArrayList<Idea>? = null
-    private var usersArrayList: ArrayList<Profile>? = null
-    private var label: TextView? = null
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var fireAuthListener: AuthStateListener
+    private lateinit var currentUser: String
+    private lateinit var adapter: CardIdeaAdapter
+    private lateinit var ideaArrayList: ArrayList<Idea>
+    private lateinit var allUsersIdeasArrayList: ArrayList<Idea>
+    private lateinit var usersArrayList: ArrayList<Profile>
+    private lateinit var label: TextView
 
     //region *** APPLICATION STATE ***
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,25 +76,23 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     override fun onStart() {
         super.onStart()
-        adapter!!.notifyDataSetChanged()
-        firebaseAuth!!.addAuthStateListener(fireAuthListener!!)
+        adapter.notifyDataSetChanged()
+        firebaseAuth.addAuthStateListener(fireAuthListener)
     }
 
     override fun onStop() {
         super.onStop()
-        if (fireAuthListener != null) {
-            firebaseAuth!!.removeAuthStateListener(fireAuthListener!!)
-        }
+        firebaseAuth.removeAuthStateListener(fireAuthListener)
     }
     //endregion
 
-    //region *** INITIALIZE UI ELEMENTS
+    //region *** INITIALIZE UI ELEMENTS ***
 
     private fun initializeButtonsTextEditAndView() {
 
         //region  *** VARIABLES ***
         val database = FirebaseDatabase.getInstance()
-        currentUser = firebaseAuth?.currentUser?.displayName.toString()
+        currentUser = firebaseAuth.currentUser?.displayName.toString()
 
         val mottoEdit: EditText = findViewById(R.id.EditTextMotto)
         val occupationEdit: EditText = findViewById(R.id.EditTextOccupation)
@@ -126,9 +124,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         // set the avatar image if exists in the user profile or set the default from drawable
         val avatar = findViewById<ImageView>(R.id.imagePublicProfileViewAvatar)
         try {
-            if (firebaseAuth!!.currentUser?.photoUrl != null) {
+            if (firebaseAuth.currentUser?.photoUrl != null) {
                 Glide.with(applicationContext)
-                        .load(firebaseAuth!!.currentUser!!.photoUrl)
+                        .load(firebaseAuth.currentUser!!.photoUrl)
                         .into(avatar)
             } else {
                 avatar.setImageDrawable(getDrawable(R.drawable.avatar))
@@ -178,7 +176,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         ideaArrayList = ArrayList()
-        adapter = CardIdeaAdapter(this, ideaArrayList!!)
+        adapter = CardIdeaAdapter(this, ideaArrayList)
 
         recyclerView.adapter = adapter
 
@@ -191,8 +189,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                         for (snapshot in dataSnapshot.children) {
                             val idea: Idea? = snapshot.getValue(Idea::class.java)
                             if (idea!!.title != "none") {
-                                ideaArrayList!!.add(idea)
-                                adapter!!.notifyDataSetChanged()
+                                ideaArrayList.add(idea)
+                                adapter.notifyDataSetChanged()
                             }
                         }
                     }
@@ -201,7 +199,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         // Start a coroutine
         GlobalScope.launch {
             delay(1500)
-            allUsersIdeasArrayList = getAllTheIdeas(usersArrayList!!)
+            allUsersIdeasArrayList = getAllTheIdeas(usersArrayList)
         }
         //endregion
 
@@ -287,30 +285,37 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             supportFragmentManager.popBackStack()
             recyclerView.alpha = 0f
             recyclerView.isEnabled = false
-            label?.text = it.resources.getString(R.string.add_an_idea)
+            label.text = it.resources.getString(R.string.add_an_idea)
             supportFragmentManager.beginTransaction().add(R.id.frameLayout, addIdeaFragment).addToBackStack(null).commit()
         }
         //endregion
     }
     //endregion
 
-    //region *** MENU HANDLER  ***
+    //region *** MENU HANDLER ***
     // Handle bottom bar menu item selection
     @SuppressLint("SetTextI18n")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
         return when (item.itemId) {
             R.id.home -> {
+                supportFragmentManager.popBackStack()
+                label.text = "My Ideas"
+                val mainActivity = Intent(this, MainActivity::class.java)
+                mainActivity.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                mainActivity.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                mainActivity.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                overridePendingTransition(0, 0)
+                startActivity(mainActivity)
+                overridePendingTransition(0, 0)
                 recyclerView.alpha = 1f
                 recyclerView.isEnabled = true
-                adapter!!.notifyDataSetChanged()
-                supportFragmentManager.popBackStack()
-                label?.text = "My Ideas"
+                adapter.notifyDataSetChanged()
                 true
             }
             R.id.bookmarks -> {
                 val bookmarksFragment = BookmarksFragment()
-                label?.text = "Bookmark"
+                label.text = "Bookmark"
                 supportFragmentManager.popBackStack()
                 recyclerView.alpha = 0f
                 recyclerView.isEnabled = false
@@ -322,7 +327,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
             R.id.collaborate -> {
                 val collaborateFragment = CollaborateFragment()
-                label?.text = "Collaborate"
+                label.text = "Collaborate"
                 supportFragmentManager.popBackStack()
                 recyclerView.alpha = 0f
                 recyclerView.isEnabled = false
@@ -331,7 +336,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
             R.id.idea_feeds -> {
                 val ideasFeed = IdeasFeedFragment()
-                label?.text = "Ideas Feed"
+                label.text = "Ideas Feed"
                 supportFragmentManager.popBackStack()
                 recyclerView.alpha = 0f
                 recyclerView.isEnabled = false
@@ -370,14 +375,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 searchItem.collapseActionView()
                 val userSearch = "$query"
                 Log.d("QUERY", "looking for $query")
-                usersArrayList?.forEach { user ->
+                usersArrayList.forEach { user ->
                     //Log.d("USERS LIST", user.displayName)
                     if (user.displayName == userSearch) {
                         val publicProfileFragment = PublicProfileFragment()
                         val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
                         recyclerView.alpha = 0f
                         recyclerView.isEnabled = false
-                        label?.text = user.displayName
+                        label.text = user.displayName
 
                         val bundle = Bundle()
                         bundle.putSerializable("profile",user)

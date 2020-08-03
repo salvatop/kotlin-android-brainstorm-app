@@ -117,7 +117,6 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                         alertBox.setPositiveButton("DELETE") { _ , _ ->
                             val ideaToDelete = database.getReference("users").child(currentUser).child("ideas")
                             ideaToDelete.child(idea.title).removeValue()
-
                         }
                         alertBox.setNegativeButton("CANCEL") { dialog: DialogInterface, _: Int -> dialog.cancel() }
                         alertBox.show()

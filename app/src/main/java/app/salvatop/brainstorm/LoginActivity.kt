@@ -19,10 +19,11 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
-    private var firebaseAuth: FirebaseAuth? = null
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var email: TextInputLayout
+    private lateinit var password: TextInputLayout
+
     private var loginAttempts = 0
-    private var email: TextInputLayout? = null
-    private var password: TextInputLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +32,7 @@ class LoginActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
 
         /////TODO testing code
-        login("salvatop78@gmail.com", "123456", firebaseAuth!!)
+        login("salvatop78@gmail.com", "123456", firebaseAuth)
         /////TODO end of testing code
         val login = findViewById<MaterialButton>(R.id.buttonLogin)
         val register = findViewById<MaterialButton>(R.id.buttonRegister)
@@ -59,15 +60,15 @@ class LoginActivity : AppCompatActivity() {
                 send.setOnClickListener {
                     val emailToReset = emailResetPassword.text.toString()
                     if (validateEmailPasswordResetFields(emailResetPassword)) {
-                        passwordChange(firebaseAuth!!, emailToReset)
+                        passwordChange(firebaseAuth, emailToReset)
                         dialog.dismiss()
                     }
                 }
                 dialog.show()
             } else if (validateEmailPasswordFields()) {
-                val email = email!!.editText?.text.toString()
-                val password = password!!.editText?.text.toString()
-                login(email, password, firebaseAuth!!)
+                val email = email.editText?.text.toString()
+                val password = password.editText?.text.toString()
+                login(email, password, firebaseAuth)
             }
         }
         register.setOnClickListener {
@@ -101,19 +102,19 @@ class LoginActivity : AppCompatActivity() {
 
     private fun validateEmailPasswordFields(): Boolean {
         var valid = true
-        val emailToVerify = email!!.editText?.text.toString()
+        val emailToVerify = email.editText?.text.toString()
         if (TextUtils.isEmpty(emailToVerify)) {
-            email!!.error = "Required."
+            email.error = "Required."
             valid = false
         } else {
-            email!!.error = null
+            email.error = null
         }
-        val passwordToVerify = password!!.editText?.text.toString()
+        val passwordToVerify = password.editText?.text.toString()
         if (TextUtils.isEmpty(passwordToVerify)) {
-            password!!.error = "Required."
+            password.error = "Required."
             valid = false
         } else {
-            password!!.error = null
+            password.error = null
         }
         return valid
     }

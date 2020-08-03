@@ -25,17 +25,9 @@ import kotlinx.coroutines.launch
 
 class PublicProfileFragment : Fragment() {
 
-    private fun getIdeasFromSerializable(profile: Profile): ArrayList<Idea> {
-        val ideas: ArrayList<Idea> = ArrayList()
-        for (idea in profile.ideas) {
-            ideas.add(idea.value)
-        }
-        return ideas
-    }
-
-    private var mottoDB: DatabaseReference? = null
-    private var cityDB: DatabaseReference? = null
-    private var occupationDB: DatabaseReference? = null
+    private lateinit var mottoDB: DatabaseReference
+    private lateinit var cityDB: DatabaseReference
+    private lateinit var occupationDB: DatabaseReference
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_public_profile, container,false) as ViewGroup
@@ -82,7 +74,7 @@ class PublicProfileFragment : Fragment() {
             delay(1000)
             val handler = Handler(Looper.getMainLooper())
             handler.post {
-                mottoDB!!.addValueEventListener(object : ValueEventListener {
+                mottoDB.addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
                         motto.text = (dataSnapshot.value as String?).toString()
@@ -91,7 +83,7 @@ class PublicProfileFragment : Fragment() {
                     }
                 })
 
-                occupationDB!!.addValueEventListener(object : ValueEventListener {
+                occupationDB.addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
                         occupation.text = (dataSnapshot.value as String?).toString()
@@ -100,7 +92,7 @@ class PublicProfileFragment : Fragment() {
                     }
                 })
 
-                cityDB!!.addValueEventListener(object : ValueEventListener {
+                cityDB.addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
                         city.text = (dataSnapshot.value as String?).toString()
@@ -113,6 +105,13 @@ class PublicProfileFragment : Fragment() {
         return view
     }
 
+    private fun getIdeasFromSerializable(profile: Profile): ArrayList<Idea> {
+        val ideas: ArrayList<Idea> = ArrayList()
+        for (idea in profile.ideas) {
+            ideas.add(idea.value)
+        }
+        return ideas
+    }
     private fun followUnfollowUsers(userToFollow: String?, whoIsFollow: String?, action: String?) {
 
         val database = FirebaseDatabase.getInstance()

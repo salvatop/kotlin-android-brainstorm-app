@@ -21,15 +21,14 @@ import com.google.firebase.database.FirebaseDatabase
 
 class RegisterActivity : AppCompatActivity() {
 
-    private var firebaseAuth: FirebaseAuth? = null
-
-    private var rEmail: TextInputLayout? = null
-    private var rPassword: TextInputLayout? = null
-    private var rUsername: TextInputLayout? = null
-    private var register: MaterialButton? = null
-    private var done: MaterialButton? = null
-    private var goToLogin: MaterialButton? = null
-    private var messageLbl: TextView? = null
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var rEmail: TextInputLayout
+    private lateinit var rPassword: TextInputLayout
+    private lateinit var rUsername: TextInputLayout
+    private lateinit  var register: MaterialButton
+    private lateinit  var done: MaterialButton
+    private lateinit  var goToLogin: MaterialButton
+    private lateinit  var messageLbl: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,20 +46,20 @@ class RegisterActivity : AppCompatActivity() {
         done = findViewById(R.id.buttonRegisterDone)
         goToLogin = findViewById(R.id.buttonGoToLogin)
 
-        register!!.setOnClickListener {
-            val email = rEmail!!.editText?.text.toString()
-            val pass = rPassword!!.editText?.text.toString()
+        register.setOnClickListener {
+            val email = rEmail.editText?.text.toString()
+            val pass = rPassword.editText?.text.toString()
             if (validateEmailPassword()) {
-                createAccount(firebaseAuth!!, email, pass)
+                createAccount(firebaseAuth, email, pass)
             }
         }
-        done?.setOnClickListener {
+        done.setOnClickListener {
             if (validateUsername()) {
-                setupProfile(firebaseAuth!!, rUsername!!.editText?.text.toString())
+                setupProfile(firebaseAuth, rUsername.editText?.text.toString())
                 addProfile()
             }
         }
-        goToLogin!!.setOnClickListener {
+        goToLogin.setOnClickListener {
             // set an exit transition
             window.exitTransition = Explode()
             val mainActivity = Intent(this@RegisterActivity, LoginActivity::class.java)
@@ -70,31 +69,31 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun validateEmailPassword(): Boolean {
         var valid = true
-        val email = rEmail!!.editText?.text.toString()
+        val email = rEmail.editText?.text.toString()
         if (TextUtils.isEmpty(email)) {
-            rEmail!!.error = "Required."
+            rEmail.error = "Required."
             valid = false
         } else {
-            rEmail!!.error = null
+            rEmail.error = null
         }
-        val password = rPassword!!.editText?.text.toString()
+        val password = rPassword.editText?.text.toString()
         if (TextUtils.isEmpty(password)) {
-            rPassword!!.error = "Required."
+            rPassword.error = "Required."
             valid = false
         } else {
-            rPassword!!.error = null
+            rPassword.error = null
         }
         return valid
     }
 
     private fun validateUsername(): Boolean {
         var valid = true
-        val username = rUsername!!.editText?.text.toString()
+        val username = rUsername.editText?.text.toString()
         if (TextUtils.isEmpty(username)) {
-            rUsername!!.error = "Required."
+            rUsername.error = "Required."
             valid = false
         } else {
-            rUsername!!.error = null
+            rUsername.error = null
         }
         return valid
     }
@@ -167,7 +166,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun addProfile() {
-        val username = rUsername!!.editText?.text.toString()
+        val username = rUsername.editText?.text.toString()
 
         val followed = HashMap<String, String>()
         followed["none"] = "none"
@@ -192,31 +191,31 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun hideAndDisplayUIElements() {
-        goToLogin!!.alpha = 0f
-        goToLogin!!.isEnabled = false
-        rEmail!!.alpha = 0f
-        rEmail!!.isEnabled = false
-        rEmail!!.isFocusable = false
-        rPassword!!.alpha = 0f
-        rPassword!!.isEnabled = false
-        rPassword!!.isFocusable = false
-        done!!.alpha = 1f
-        rUsername!!.alpha = 1f
-        messageLbl!!.alpha = 1f
-        register!!.alpha = 0f
-        register!!.isEnabled = false
+        goToLogin.alpha = 0f
+        goToLogin.isEnabled = false
+        rEmail.alpha = 0f
+        rEmail.isEnabled = false
+        rEmail.isFocusable = false
+        rPassword.alpha = 0f
+        rPassword.isEnabled = false
+        rPassword.isFocusable = false
+        done.alpha = 1f
+        rUsername.alpha = 1f
+        messageLbl.alpha = 1f
+        register.alpha = 0f
+        register.isEnabled = false
     }
 
     private fun sendEmailVerification() {
         // Disable buttons
-        done!!.alpha = 0f
-        rUsername!!.alpha = 0f
-        messageLbl!!.alpha = 0f
-        val user = firebaseAuth!!.currentUser!!
+        done.alpha = 0f
+        rUsername.alpha = 0f
+        messageLbl.alpha = 0f
+        val user = firebaseAuth.currentUser!!
         user.sendEmailVerification()
                 .addOnCompleteListener(this) { task: Task<Void?> ->
-                    goToLogin!!.alpha = 1f
-                    goToLogin!!.isEnabled = true
+                    goToLogin.alpha = 1f
+                    goToLogin.isEnabled = true
                     if (task.isSuccessful) {
                         Toast.makeText(this@RegisterActivity,
                                 "Verification email sent to " + user.email,
