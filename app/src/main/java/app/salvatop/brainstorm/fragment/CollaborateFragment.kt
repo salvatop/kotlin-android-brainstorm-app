@@ -1,5 +1,6 @@
 package app.salvatop.brainstorm.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,9 +26,10 @@ class CollaborateFragment : Fragment() {
         val currentUser = firebaseAuth.currentUser?.displayName.toString()
         following = view.findViewById(R.id.textViewFollowing)
         var iFollowing = ""
-        //create local list of my ideas
+
         FirebaseDatabase.getInstance().reference.child("users").child(currentUser).child("following")
                 .addListenerForSingleValueEvent(object : ValueEventListener {
+                    @SuppressLint("SetTextI18n")
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         for (snapshot in dataSnapshot.children) {
                          iFollowing += snapshot.value

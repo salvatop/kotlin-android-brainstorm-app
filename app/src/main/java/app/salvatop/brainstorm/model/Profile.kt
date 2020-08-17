@@ -3,6 +3,7 @@ package app.salvatop.brainstorm.model
 import java.io.Serializable
 
 class Profile : Serializable {
+        lateinit var uid: String
         lateinit var city: String
         lateinit var motto: String
         lateinit var occupation: String
@@ -14,8 +15,8 @@ class Profile : Serializable {
         lateinit var bookmarks: HashMap<String, Idea>
 
     constructor()
-
-    constructor(city: String, motto: String, occupation: String, displayName: String, followed: HashMap<String, String>, following: HashMap<String, String>, teams: ArrayList<String>, ideas: HashMap<String, Idea>, bookmarks: HashMap<String, Idea>) {
+    constructor(uid: String, city: String, motto: String, occupation: String, displayName: String, followed: HashMap<String, String>, following: HashMap<String, String>, teams: ArrayList<String>, ideas: HashMap<String, Idea>, bookmarks: HashMap<String, Idea>) {
+        this.uid = uid
         this.city = city
         this.motto = motto
         this.occupation = occupation
@@ -26,4 +27,6 @@ class Profile : Serializable {
         this.ideas = ideas
         this.bookmarks = bookmarks
     }
+
+
 }

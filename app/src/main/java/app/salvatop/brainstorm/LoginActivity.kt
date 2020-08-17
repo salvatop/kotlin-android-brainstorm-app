@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.transition.Explode
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -17,6 +16,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import timber.log.Timber
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
@@ -85,7 +85,7 @@ class LoginActivity : AppCompatActivity() {
                 .addOnCompleteListener(this) { task: Task<AuthResult?> ->
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
-                        Log.d("SIGNIN", "signInWithEmail:success")
+                        Timber.i("signInWithEmail:success")
                         val user = mAuth.currentUser!!
                         if (user.isEmailVerified) {
                             val mainActivity = Intent(this@LoginActivity, MainActivity::class.java)
@@ -94,7 +94,7 @@ class LoginActivity : AppCompatActivity() {
                             Toast.makeText(this@LoginActivity, "Verify your email.", Toast.LENGTH_SHORT).show()
                         }
                     } else {
-                        Log.w("SIGNIN", "signInWithEmail:failure", task.exception)
+                        Timber.tag("SIGNING").w(task.exception, "signInWithEmail:failure")
                         Toast.makeText(this@LoginActivity, "Authentication failed." + task.exception?.message, Toast.LENGTH_SHORT).show()
                     }
                 }

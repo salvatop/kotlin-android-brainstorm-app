@@ -1,239 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:focusableInTouchMode="true"
-    android:focusable="true"
-    android:id="@+id/CoordinatorLayout"
-    tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <data>
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme"
-            android:titleTextColor="@android:color/white"
-            app:logo="@drawable/logo_toolbar"
-            app:subtitle="grow your ideas"
-            app:subtitleTextColor="@android:color/white"
-            app:title="@string/brainstorm"
-            app:titleMarginStart="20dp"
-            app:titleMargins="8dp"
-            app:titleTextColor="@android:color/white" />
+    </data>
 
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/textViewDisplayName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="@string/username"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/avatarClipsToBound"
-            app:layout_constraintTop_toTopOf="@+id/avatarClipsToBound" />
-
-        <TextView
-            android:id="@+id/textViewCity"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:autofillHints=""
-            android:text=""
-            android:textDirection="ltr"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewDisplayName"
-            app:layout_constraintStart_toEndOf="@+id/textViewDisplayName"
-            app:layout_constraintTop_toTopOf="@+id/textViewDisplayName" />
-
-        <EditText
-            android:id="@+id/editTextCity"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:text=""
-            android:layout_marginTop="10dp"
-            android:textSize="12sp"
-            android:enabled="false"
-            android:visibility="invisible"
-            android:focusableInTouchMode="true"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewDisplayName"
-            app:layout_constraintStart_toEndOf="@+id/textViewDisplayName"
-            app:layout_constraintTop_toTopOf="@+id/textViewDisplayName"
-            android:autofillHints=""
-            tools:ignore="LabelFor" />
-
-        <EditText
-            android:id="@+id/EditTextOccupation"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text=""
-            android:textSize="12sp"
-            android:enabled="false"
-            android:visibility="invisible"
-            android:focusableInTouchMode="true"
-            app:layout_constraintStart_toStartOf="@+id/textViewDisplayName"
-            app:layout_constraintTop_toBottomOf="@+id/textViewDisplayName"
-            android:inputType="text"
-            android:autofillHints=""
-            tools:ignore="LabelFor" />
-
-        <TextView
-            android:id="@+id/textViewOccupation"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text=""
-            android:textDirection="ltr"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@+id/textViewDisplayName"
-            app:layout_constraintTop_toBottomOf="@+id/textViewDisplayName" />
-
-        <EditText
-            android:id="@+id/EditTextMotto"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:enabled="false"
-            android:focusableInTouchMode="true"
-            android:inputType="text"
-            android:text=""
-            android:textAlignment="textStart"
-            android:textDirection="firstStrongLtr"
-            android:textSize="12sp"
-            android:textStyle="italic"
-            android:visibility="invisible"
-            app:layout_constraintStart_toStartOf="@+id/textViewOccupation"
-            app:layout_constraintTop_toBottomOf="@+id/textViewOccupation"
-            android:autofillHints=""
-            tools:ignore="LabelFor" />
-
-        <TextView
-            android:id="@+id/textViewMotto"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text=""
-            android:textDirection="ltr"
-            android:textSize="12sp"
-            android:textStyle="italic"
-            app:layout_constraintStart_toStartOf="@+id/textViewOccupation"
-            app:layout_constraintTop_toBottomOf="@+id/textViewOccupation" />
-
-
-        <TextView
-            android:id="@+id/textViewDisplayLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginBottom="10dp"
-            android:fontFamily="cursive"
-            android:text="@string/my_ideas"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/avatarClipsToBound" />
-
-        <Button
-            android:id="@+id/buttonAddIdea"
-            style="@style/Widget.AppCompat.Button.Small"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:alpha=".6"
-            android:elevation="4dp"
-            android:textColor="#000000"
-            android:textStyle="bold"
-            app:cornerRadius="14dp"
-            app:icon="@android:drawable/ic_input_add"
-            app:iconPadding="0dp"
-            app:iconTint="#FFFFFF"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewDisplayLabel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textViewDisplayLabel" />
-
-        <FrameLayout
-            android:id="@+id/avatarClipsToBound"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="80dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/imagePublicProfileViewAvatar"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="bottom"
-                android:layout_marginTop="67dp"
-                android:background="@drawable/avatar"
-                android:elevation="4dp"
-                android:scaleType="fitXY"
-                tools:src="@tools:sample/avatars"
-                android:contentDescription="@string/placeholder" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/frameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="80dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewDisplayLabel">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycleView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="15dp">
-
-            </androidx.recyclerview.widget.RecyclerView>
-
-        </FrameLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_anchor="@+id/constraintLayout"
-        android:focusable="true"
         android:focusableInTouchMode="true"
-        app:layout_anchorGravity="center">
+        android:focusable="true"
+        android:id="@+id/CoordinatorLayout"
+        tools:context=".MainActivity">
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation"
-            style="@style/Widget.MaterialComponents.BottomNavigationView"
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/windowBackground"
-            app:itemIconTint="@android:color/black"
-            app:itemTextColor="@android:color/black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/bottom_navigation_menu" />
+            android:layout_height="wrap_content">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                style="@style/Widget.MaterialComponents.Toolbar.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:background="?attr/colorPrimary"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="?attr/actionBarTheme"
+                android:titleTextColor="@android:color/white"
+                app:logo="@drawable/logo_toolbar"
+                app:subtitle="grow your ideas"
+                app:subtitleTextColor="@android:color/white"
+                app:title="@string/brainstorm"
+                app:titleMarginStart="20dp"
+                app:titleMargins="8dp"
+                app:titleTextColor="@android:color/white"
+                tools:targetApi="m" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textViewDisplayName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="@string/username"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/avatarClipsToBound"
+                app:layout_constraintTop_toTopOf="@+id/avatarClipsToBound" />
+
+            <TextView
+                android:id="@+id/textViewCity"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:autofillHints=""
+                android:text=""
+                android:textDirection="ltr"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewDisplayName"
+                app:layout_constraintStart_toEndOf="@+id/textViewDisplayName"
+                app:layout_constraintTop_toTopOf="@+id/textViewDisplayName" />
+
+            <EditText
+                android:id="@+id/editTextCity"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:text=""
+                android:layout_marginTop="10dp"
+                android:textSize="12sp"
+                android:enabled="false"
+                android:visibility="invisible"
+                android:focusableInTouchMode="true"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewDisplayName"
+                app:layout_constraintStart_toEndOf="@+id/textViewDisplayName"
+                app:layout_constraintTop_toTopOf="@+id/textViewDisplayName"
+                android:autofillHints=""
+                tools:ignore="LabelFor" />
+
+            <EditText
+                android:id="@+id/EditTextOccupation"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text=""
+                android:textSize="12sp"
+                android:enabled="false"
+                android:visibility="invisible"
+                android:focusableInTouchMode="true"
+                app:layout_constraintStart_toStartOf="@+id/textViewDisplayName"
+                app:layout_constraintTop_toBottomOf="@+id/textViewDisplayName"
+                android:inputType="text"
+                android:autofillHints=""
+                tools:ignore="LabelFor" />
+
+            <TextView
+                android:id="@+id/textViewOccupation"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text=""
+                android:textDirection="ltr"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/textViewDisplayName"
+                app:layout_constraintTop_toBottomOf="@+id/textViewDisplayName" />
+
+            <EditText
+                android:id="@+id/EditTextMotto"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:enabled="false"
+                android:focusableInTouchMode="true"
+                android:inputType="text"
+                android:text=""
+                android:textAlignment="textStart"
+                android:textDirection="firstStrongLtr"
+                android:textSize="12sp"
+                android:textStyle="italic"
+                android:visibility="invisible"
+                app:layout_constraintStart_toStartOf="@+id/textViewOccupation"
+                app:layout_constraintTop_toBottomOf="@+id/textViewOccupation"
+                android:autofillHints=""
+                tools:ignore="LabelFor" />
+
+            <TextView
+                android:id="@+id/textViewMotto"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text=""
+                android:textDirection="ltr"
+                android:textSize="12sp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toStartOf="@+id/textViewOccupation"
+                app:layout_constraintTop_toBottomOf="@+id/textViewOccupation" />
+
+
+            <TextView
+                android:id="@+id/textViewDisplayLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="cursive"
+                android:text="@string/my_ideas"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/avatarClipsToBound" />
+
+            <Button
+                android:id="@+id/buttonAddIdea"
+                style="@style/Widget.AppCompat.Button.Small"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:alpha=".6"
+                android:elevation="4dp"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                app:cornerRadius="14dp"
+                app:icon="@android:drawable/ic_input_add"
+                app:iconPadding="0dp"
+                app:iconTint="#FFFFFF"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewDisplayLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textViewDisplayLabel" />
+
+            <FrameLayout
+                android:id="@+id/avatarClipsToBound"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="80dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/imagePublicProfileViewAvatar"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="67dp"
+                    android:background="@drawable/avatar"
+                    android:elevation="4dp"
+                    android:scaleType="fitXY"
+                    tools:src="@tools:sample/avatars"
+                    android:contentDescription="@string/placeholder" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/frameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="80dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewDisplayLabel">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycleView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="15dp">
+
+                </androidx.recyclerview.widget.RecyclerView>
+
+            </FrameLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_anchor="@+id/constraintLayout"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            app:layout_anchorGravity="center">
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottom_navigation"
+                style="@style/Widget.MaterialComponents.BottomNavigationView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/windowBackground"
+                app:itemIconTint="@android:color/black"
+                app:itemTextColor="@android:color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:menu="@menu/bottom_navigation_menu" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

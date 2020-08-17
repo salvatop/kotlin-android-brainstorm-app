@@ -11,16 +11,15 @@ import com.google.firebase.database.ValueEventListener
 
 class FirebaseRepository  {
 
-    var firebaseAuth: FirebaseAuth
-    var database: FirebaseDatabase
-
-    init {
-        database = FirebaseDatabase.getInstance()
-        firebaseAuth = FirebaseAuth.getInstance()
-    }
+    var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    var database: FirebaseDatabase = FirebaseDatabase.getInstance()
 
     fun getAuth() : FirebaseAuth{
         return firebaseAuth
+    }
+
+    fun getDB() :  FirebaseDatabase {
+        return this.database
     }
 
      fun getUser(username: String?) : Profile? {
@@ -83,7 +82,7 @@ class FirebaseRepository  {
         myRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
-                valueToReturn = dataSnapshot.getValue() as String?
+                valueToReturn = dataSnapshot.value as String?
             }
             override fun onCancelled(error: DatabaseError) {
                 Log.w("FIREBASE", "Failed to read value.", error.toException())

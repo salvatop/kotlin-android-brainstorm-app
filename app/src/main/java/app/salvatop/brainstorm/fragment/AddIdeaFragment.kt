@@ -2,7 +2,6 @@ package app.salvatop.brainstorm.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +16,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import timber.log.Timber
 
 class AddIdeaFragment : Fragment() {
     private var forks: HashMap<String, String> = HashMap()
@@ -49,14 +49,14 @@ class AddIdeaFragment : Fragment() {
             myRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     // This method is called once with the initial value and again whenever data at this location is updated.
-                    Log.d("ADD IDEA", "Value is: " + dataSnapshot.value)
+                    Timber.d("Value is: %s", dataSnapshot.value)
                     val mainActivity = Intent(context, MainActivity::class.java)
                     startActivity(mainActivity)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
                     // Failed to read value
-                    Log.w("ADD IDEA", "Failed to read value.", error.toException())
+                    Timber.tag("ADD IDEA").w(error.toException(), "Failed to read value.")
                 }
             }) }
 

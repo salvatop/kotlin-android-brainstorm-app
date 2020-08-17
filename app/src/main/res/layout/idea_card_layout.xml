@@ -1,142 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clickable="true"
-    android:foreground="?android:attr/selectableItemBackground"
-    android:layout_margin="8dp"
-    android:orientation="vertical"
-    app:cardCornerRadius="6dp"
-    app:cardElevation="6dp"
-    android:focusable="true"
-    android:id="@+id/cardView">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/ideaCover"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:background="#8E24AA"
-            android:contentDescription="@string/placeholder"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ideaForks" />
-
-        <TextView
-            android:id="@+id/textViewTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/title"
-            android:textSize="20sp"
-            android:layout_marginStart="5dp"
-            app:layout_constraintStart_toEndOf="@+id/ideaCover"
-            app:layout_constraintTop_toBottomOf="@+id/ideaAuthor" />
-
-        <TextView
-            android:id="@+id/ideaAuthor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/by_author"
-            android:textSize="12sp"
-            android:layout_marginStart="5dp"
-            app:layout_constraintStart_toEndOf="@+id/ideaCover"
-            app:layout_constraintTop_toTopOf="@+id/ideaCover" />
-
-        <TextView
-            android:id="@+id/ideaForks"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/forks_0"
-            android:textSize="12sp"
-            android:layout_marginEnd="5dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/ideaContext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:text="@string/context"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/ideaCover"
-            app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
-
-        <Button
-            android:id="@+id/buttonShowMore"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:text="@string/expand_card"
-            android:textSize="12sp"
-            android:textColor="#000000"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ideaContext" />
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:layout_margin="8dp"
+        android:orientation="vertical"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="6dp"
+        android:focusable="true"
+        android:id="@+id/cardView">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/expandable"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:orientation="vertical"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/buttonShowMore">
+            android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/buttonBookmark"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:background="@drawable/bookmark"
-                android:elevation="4dp"
+            <ImageView
+                android:id="@+id/ideaCover"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:background="#8E24AA"
+                android:contentDescription="@string/placeholder"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ideaForks" />
+
+            <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title"
+                android:textSize="20sp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintStart_toEndOf="@+id/ideaCover"
+                app:layout_constraintTop_toBottomOf="@+id/ideaAuthor" />
+
+            <TextView
+                android:id="@+id/ideaAuthor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/by_author"
+                android:textSize="12sp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintStart_toEndOf="@+id/ideaCover"
+                app:layout_constraintTop_toTopOf="@+id/ideaCover" />
+
+            <TextView
+                android:id="@+id/ideaForks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/forks_0"
+                android:textSize="12sp"
+                android:layout_marginEnd="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/buttonFork"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:elevation="4dp"
-                android:background="@drawable/fork"
-                app:layout_constraintEnd_toStartOf="@+id/buttonBookmark"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/textViewContentsLabel"
+            <EditText
+                android:id="@+id/ideaContext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/Contents"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginStart="5dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <EditText
-                android:id="@+id/ideaContents"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginStart="10dp"
-                android:text="@string/contents"
+                android:layout_marginStart="15dp"
+                android:text="@string/context"
                 android:textSize="14sp"
-                android:inputType="textMultiLine"
-                android:lines="3"
-                android:maxLines="10"
+                app:layout_constraintStart_toEndOf="@+id/ideaCover"
+                app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
+
+            <Button
+                android:id="@+id/buttonShowMore"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="@string/expand_card"
+                android:textSize="12sp"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewContentsLabel"
-                android:autofillHints=""
-                tools:ignore="LabelFor" />
+                app:layout_constraintTop_toBottomOf="@+id/ideaContext" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/expandable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/buttonShowMore">
+
+                <Button
+                    android:id="@+id/buttonBookmark"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/bookmark"
+                    android:elevation="4dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/buttonFork"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:elevation="4dp"
+                    android:background="@drawable/fork"
+                    app:layout_constraintEnd_toStartOf="@+id/buttonBookmark"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textViewContentsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Contents"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="5dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/ideaContents"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/contents"
+                    android:textSize="14sp"
+                    android:inputType="textMultiLine"
+                    android:lines="3"
+                    android:maxLines="10"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewContentsLabel"
+                    android:autofillHints=""
+                    tools:ignore="LabelFor" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

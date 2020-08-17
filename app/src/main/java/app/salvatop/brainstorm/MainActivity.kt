@@ -8,17 +8,16 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.widget.*
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.Toolbar
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import app.salvatop.brainstorm.adapter.CardIdeaAdapter
+import app.salvatop.brainstorm.databinding.ActivityMainBinding
 import app.salvatop.brainstorm.fragment.*
 import app.salvatop.brainstorm.model.Idea
 import app.salvatop.brainstorm.model.Profile
@@ -33,21 +32,25 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var fireAuthListener: AuthStateListener
     private lateinit var currentUser: String
+
     private lateinit var adapter: CardIdeaAdapter
+
     private lateinit var ideaArrayList: ArrayList<Idea>
     private lateinit var allUsersIdeasArrayList: ArrayList<Idea>
     private lateinit var usersArrayList: ArrayList<Profile>
-    private lateinit var label: TextView
+
+    private lateinit var binding: ActivityMainBinding
 
     //region *** APPLICATION STATE ***
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         firebaseAuth = FirebaseAuth.getInstance()
 
@@ -64,19 +67,16 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
 
         // Sets the Toolbar to act as the ActionBar for this Activity window.
-        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
 
         ///Tune the menu bottom bar
-        val bottomNavigationView = findViewById<View>(R.id.bottom_navigation) as BottomNavigationView
-        bottomNavigationView.elevation = 1f
-        bottomNavigationView.itemIconSize = 70
-        bottomNavigationView.setOnNavigationItemSelectedListener(this)
+        binding.bottomNavigation.elevation = 1f
+        binding.bottomNavigation.itemIconSize = 70
+        binding.bottomNavigation.setOnNavigationItemSelectedListener(this)
     }
 
     override fun onStart() {
         super.onStart()
-        adapter.notifyDataSetChanged()
         firebaseAuth.addAuthStateListener(fireAuthListener)
     }
 
@@ -94,45 +94,34 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val database = FirebaseDatabase.getInstance()
         currentUser = firebaseAuth.currentUser?.displayName.toString()
 
-        val mottoEdit: EditText = findViewById(R.id.EditTextMotto)
-        val occupationEdit: EditText = findViewById(R.id.EditTextOccupation)
-        val cityEdit: EditText = findViewById(R.id.editTextCity)
-
-        val city: TextView = findViewById(R.id.textViewCity)
-        val motto: TextView  = findViewById(R.id.textViewMotto)
-        val occupation: TextView = findViewById(R.id.textViewOccupation)
-
         allUsersIdeasArrayList = ArrayList()
-        label = findViewById(R.id.textViewDisplayLabel)
 
-        val layout: CoordinatorLayout = findViewById(R.id.CoordinatorLayout)
-        layout.setOnClickListener {
-            mottoEdit.visibility = INVISIBLE
-            mottoEdit.isEnabled = false
-            motto.visibility = VISIBLE
-            occupationEdit.visibility = INVISIBLE
-            occupationEdit.isEnabled = false
-            occupation.visibility = VISIBLE
-            motto.visibility = VISIBLE
-            cityEdit.visibility = INVISIBLE
-            cityEdit.isEnabled = false
-            city.visibility = VISIBLE
+        binding.CoordinatorLayout.setOnClickListener {
+            binding.EditTextMotto.visibility = INVISIBLE
+            binding.EditTextMotto.isEnabled = false
+            binding.textViewMotto.visibility = VISIBLE
+            binding.EditTextOccupation.visibility = INVISIBLE
+            binding.EditTextOccupation.isEnabled = false
+            binding.textViewOccupation.visibility = VISIBLE
+            binding.textViewMotto.visibility = VISIBLE
+            binding.editTextCity.visibility = INVISIBLE
+            binding.editTextCity.isEnabled = false
+            binding.textViewCity.visibility = VISIBLE
         }
         //endregion
 
         //region *** SETUP USER DETAILS ***
         // set the avatar image if exists in the user profile or set the default from drawable
-        val avatar = findViewById<ImageView>(R.id.imagePublicProfileViewAvatar)
         try {
             if (firebaseAuth.currentUser?.photoUrl != null) {
                 Glide.with(applicationContext)
                         .load(firebaseAuth.currentUser!!.photoUrl)
-                        .into(avatar)
+                        .into(binding.imagePublicProfileViewAvatar)
             } else {
-                avatar.setImageDrawable(getDrawable(R.drawable.avatar))
+                binding.imagePublicProfileViewAvatar.setImageDrawable(getDrawable(R.drawable.avatar))
             }
         } catch (e: Exception) {
-            Log.d("FIREBASE", e.message.toString())
+           Timber.d(e.message.toString())
         }
 
         ///set username
@@ -145,40 +134,39 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         mottoDB.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
-                motto.text = (dataSnapshot.value as String?).toString()
+                Timber.i("Value is: %s", dataSnapshot.value)
+                binding.textViewMotto.text = (dataSnapshot.value as String?).toString()
             } override fun onCancelled(error: DatabaseError) {
-                Log.w("FIREBASE", "Failed to read value.", error.toException())
+                Timber.tag("FIREBASE").w(error.toException(), "Failed to read value.")
             }
         })
 
         occupationDB.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
-                occupation.text = (dataSnapshot.value as String?).toString()
+                Timber.i("Value is: %s", dataSnapshot.value)
+                binding.textViewOccupation.text = (dataSnapshot.value as String?).toString()
             } override fun onCancelled(error: DatabaseError) {
-                Log.w("FIREBASE", "Failed to read value.", error.toException())
+                Timber.tag("FIREBASE").w(error.toException(), "Failed to read value.")
             }
         })
 
         cityDB.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
-                city.text = (dataSnapshot.value as String?).toString()
+                Timber.d("Value is: %s", dataSnapshot.value)
+                binding.textViewCity.text = (dataSnapshot.value as String?).toString()
             } override fun onCancelled(error: DatabaseError) {
-                Log.w("FIREBASE", "Failed to read value.", error.toException())
+                Timber.tag("FIREBASE").w(error.toException(), "Failed to read value.")
             }
         })
         //endregion
 
         //region *** SETUP THE RECYCLE VIEW WITH THE CARD VIEW ADAPTER ***
-        val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recycleView.layoutManager = LinearLayoutManager(this)
 
         ideaArrayList = ArrayList()
         adapter = CardIdeaAdapter(this, ideaArrayList)
 
-        recyclerView.adapter = adapter
+        binding.recycleView.adapter = adapter
 
         usersArrayList = loadAllUserFromDB()
 
@@ -204,88 +192,87 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         //endregion
 
         //region *** SETUP TEXT LISTENER FOR UPDATE USER PROFILE ***
-        mottoEdit.addTextChangedListener(object : TextWatcher {
+        binding.EditTextMotto.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val myRef = database.getReference("users").child(currentUser).child("motto")
-                myRef.setValue(mottoEdit.text.toString())
-                motto.text = mottoEdit.text
+                myRef.setValue(binding.EditTextMotto.text.toString())
+                binding.textViewMotto.text = binding.EditTextMotto.text
             }
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
-        motto.setOnLongClickListener {
-            mottoEdit.visibility = VISIBLE
-            mottoEdit.isEnabled = true
-            occupationEdit.visibility = INVISIBLE
-            occupationEdit.isEnabled = false
-            cityEdit.visibility = INVISIBLE
-            cityEdit.isEnabled = false
+        binding.textViewMotto.setOnLongClickListener {
+            binding.EditTextMotto.visibility = VISIBLE
+            binding.EditTextMotto.isEnabled = true
+            binding.EditTextOccupation.visibility = INVISIBLE
+            binding.EditTextOccupation.isEnabled = false
+            binding.editTextCity.visibility = INVISIBLE
+            binding.editTextCity.isEnabled = false
 
-            mottoEdit.requestFocus()
-            motto.visibility = INVISIBLE
-            city.visibility = VISIBLE
-            occupation.visibility = VISIBLE
+            binding.EditTextMotto.requestFocus()
+            binding.textViewMotto.visibility = INVISIBLE
+            binding.textViewCity.visibility = VISIBLE
+            binding.textViewOccupation.visibility = VISIBLE
             true
         }
-        occupationEdit.addTextChangedListener(object : TextWatcher {
+        binding.EditTextOccupation.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val myRef = database.getReference("users").child(currentUser).child("occupation")
-                myRef.setValue(occupationEdit.text.toString())
-                occupation.text = occupationEdit.text
+                myRef.setValue(binding.EditTextOccupation.text.toString())
+                binding.textViewOccupation.text = binding.EditTextOccupation.text
             }
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
-        occupation.setOnLongClickListener {
-            occupationEdit.visibility = VISIBLE
-            occupationEdit.isEnabled = true
-            cityEdit.visibility = INVISIBLE
-            cityEdit.isEnabled = false
-            mottoEdit.visibility = INVISIBLE
-            mottoEdit.isEnabled = false
+        binding.textViewOccupation.setOnLongClickListener {
+            binding.EditTextOccupation.visibility = VISIBLE
+            binding.EditTextOccupation.isEnabled = true
+            binding.editTextCity.visibility = INVISIBLE
+            binding.editTextCity.isEnabled = false
+            binding.EditTextMotto.visibility = INVISIBLE
+            binding.EditTextMotto.isEnabled = false
 
-            occupationEdit.requestFocus()
-            occupation.visibility = INVISIBLE
-            motto.visibility = VISIBLE
-            city.visibility = VISIBLE
+            binding.EditTextOccupation.requestFocus()
+            binding.textViewOccupation.visibility = INVISIBLE
+            binding.textViewMotto.visibility = VISIBLE
+            binding.textViewCity.visibility = VISIBLE
             true
 
         }
-        cityEdit.addTextChangedListener(object : TextWatcher {
+        binding.editTextCity.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val myRef = database.getReference("users").child(currentUser).child("city")
-                myRef.setValue(cityEdit.text.toString())
-                city.text = cityEdit.text
+                myRef.setValue(binding.editTextCity.text.toString())
+                binding.textViewCity.text = binding.editTextCity.text
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
 
-        city.setOnLongClickListener {
-            cityEdit.visibility = VISIBLE
-            cityEdit.isEnabled = true
-            mottoEdit.visibility = INVISIBLE
-            mottoEdit.isEnabled = false
-            occupationEdit.visibility = INVISIBLE
-            occupationEdit.isEnabled = false
+        binding.textViewCity.setOnLongClickListener {
+            binding.editTextCity.visibility = VISIBLE
+            binding.editTextCity.isEnabled = true
+            binding.EditTextMotto.visibility = INVISIBLE
+            binding.EditTextMotto.isEnabled = false
+            binding.EditTextOccupation.visibility = INVISIBLE
+            binding.EditTextOccupation.isEnabled = false
 
-            cityEdit.requestFocus()
-            city.visibility = INVISIBLE
-            motto.visibility = VISIBLE
-            occupation.visibility = VISIBLE
+            binding.editTextCity.requestFocus()
+            binding.textViewCity.visibility = INVISIBLE
+            binding.textViewMotto.visibility = VISIBLE
+            binding.textViewOccupation.visibility = VISIBLE
             true
         }
         //endregion
 
         //region *** ADD IDEA BUTTON ACTION ***
-        val addIdea: Button = findViewById(R.id.buttonAddIdea)
-        addIdea.setOnClickListener {
+        binding.buttonAddIdea.setOnClickListener {
             val addIdeaFragment = AddIdeaFragment()
             supportFragmentManager.popBackStack()
-            recyclerView.alpha = 0f
-            recyclerView.isEnabled = false
-            label.text = it.resources.getString(R.string.add_an_idea)
+            binding.recycleView.alpha = 0f
+            binding.recycleView.isEnabled = false
+            binding.textViewDisplayLabel.text = it.resources.getString(R.string.add_an_idea)
             supportFragmentManager.beginTransaction().add(R.id.frameLayout, addIdeaFragment).addToBackStack(null).commit()
         }
         //endregion
@@ -296,11 +283,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     // Handle bottom bar menu item selection
     @SuppressLint("SetTextI18n")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
         return when (item.itemId) {
             R.id.home -> {
                 supportFragmentManager.popBackStack()
-                label.text = "My Ideas"
+                binding.textViewDisplayLabel.text = "My Ideas"
                 val mainActivity = Intent(this, MainActivity::class.java)
                 mainActivity.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 mainActivity.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -308,17 +294,16 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 overridePendingTransition(0, 0)
                 startActivity(mainActivity)
                 overridePendingTransition(0, 0)
-                recyclerView.alpha = 1f
-                recyclerView.isEnabled = true
-                adapter.notifyDataSetChanged()
+                binding.recycleView.alpha = 1f
+                binding.recycleView.isEnabled = true
                 true
             }
             R.id.bookmarks -> {
                 val bookmarksFragment = BookmarksFragment()
-                label.text = "Bookmark"
+                binding.textViewDisplayLabel.text = "Bookmark"
                 supportFragmentManager.popBackStack()
-                recyclerView.alpha = 0f
-                recyclerView.isEnabled = false
+                binding.recycleView.alpha = 0f
+                binding.recycleView.isEnabled = false
                 val bundle = Bundle()
                 bundle.putString("user", currentUser)
                 bookmarksFragment.arguments = bundle
@@ -327,19 +312,19 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
             R.id.collaborate -> {
                 val collaborateFragment = CollaborateFragment()
-                label.text = "Collaborate"
+                binding.textViewDisplayLabel.text = "Collaborate"
                 supportFragmentManager.popBackStack()
-                recyclerView.alpha = 0f
-                recyclerView.isEnabled = false
+                binding.recycleView.alpha = 0f
+                binding.recycleView.isEnabled = false
                 supportFragmentManager.beginTransaction().add(R.id.frameLayout, collaborateFragment).addToBackStack(null).commit()
                 true
             }
             R.id.idea_feeds -> {
                 val ideasFeed = IdeasFeedFragment()
-                label.text = "Ideas Feed"
+                binding.textViewDisplayLabel.text = "Ideas Feed"
                 supportFragmentManager.popBackStack()
-                recyclerView.alpha = 0f
-                recyclerView.isEnabled = false
+                binding.recycleView.alpha = 0f
+                binding.recycleView.isEnabled = false
                 val bundle = Bundle()
                 bundle.putSerializable("ideas",allUsersIdeasArrayList)
                 ideasFeed.arguments = bundle
@@ -369,20 +354,20 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val searchView = searchItem.actionView as SearchView
 
         searchView.setOnQueryTextListener(object:  SearchView.OnQueryTextListener {
+            @SuppressLint("LogNotTimber")
             override fun onQueryTextSubmit(query: String?): Boolean {
                 searchView.clearFocus()
                 searchView.setQuery("",  false)
                 searchItem.collapseActionView()
                 val userSearch = "$query"
-                Log.d("QUERY", "looking for $query")
+                Log.i("QUERY", "looking for $query")
                 usersArrayList.forEach { user ->
                     //Log.d("USERS LIST", user.displayName)
                     if (user.displayName == userSearch) {
                         val publicProfileFragment = PublicProfileFragment()
-                        val recyclerView = findViewById<RecyclerView>(R.id.recycleView)
-                        recyclerView.alpha = 0f
-                        recyclerView.isEnabled = false
-                        label.text = user.displayName
+                        binding.recycleView.alpha = 0f
+                        binding.recycleView.isEnabled = false
+                        binding.textViewDisplayLabel.text = user.displayName
 
                         val bundle = Bundle()
                         bundle.putSerializable("profile",user)
@@ -415,7 +400,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         for(profile in users) {
             for (idea in profile.ideas) {
                 if (idea.value.visibility != "true") { continue }
-                Log.d("LOAD IDEAS", idea.value.author + "-" + idea.value.title)
+                Timber.i(idea.value.author + "-" + idea.value.title)
                 val oneIdea = idea.value
                 ideas.add(oneIdea)
             }

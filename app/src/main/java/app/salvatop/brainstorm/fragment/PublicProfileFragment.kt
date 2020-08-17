@@ -1,5 +1,6 @@
 package app.salvatop.brainstorm.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -21,6 +22,7 @@ import com.google.firebase.database.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 class PublicProfileFragment : Fragment() {
@@ -29,15 +31,16 @@ class PublicProfileFragment : Fragment() {
     private lateinit var cityDB: DatabaseReference
     private lateinit var occupationDB: DatabaseReference
 
+    @SuppressLint("LogNotTimber")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_public_profile, container,false) as ViewGroup
+        val view = inflater.inflate(R.layout.fragment_public_profile, container, false) as ViewGroup
         val database = FirebaseDatabase.getInstance()
         val motto: TextView = view.findViewById(R.id.textViewPublicProfileMotto)
         val occupation: TextView = view.findViewById(R.id.textViewPublicProfileOccupation)
         val city: TextView = view.findViewById(R.id.textViewPublicProfileCity)
 
         val profile: Profile = arguments!!.getSerializable("profile") as Profile
-        Log.d("PROFILE", profile.displayName)
+        Timber.d(profile.displayName)
         val ideaArrayList: ArrayList<Idea> = getIdeasFromSerializable(profile)
 
 
@@ -48,7 +51,7 @@ class PublicProfileFragment : Fragment() {
         val firebaseAuth = FirebaseAuth.getInstance()
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycleViewPublicProfile)
-        recyclerView?.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
         val adapter = CardIdeaAdapter(context!!, ideaArrayList)
         recyclerView.adapter = adapter
@@ -63,7 +66,7 @@ class PublicProfileFragment : Fragment() {
 
             // Start a coroutine
             GlobalScope.launch {
-                //TODO if already follow unfollow else
+                //TODO if already followed un-follow else
                 delay(1000)
                 followUnfollowUsers(userToFollow, whoIsFollow, "follow")
             }
@@ -78,7 +81,9 @@ class PublicProfileFragment : Fragment() {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
                         motto.text = (dataSnapshot.value as String?).toString()
-                    } override fun onCancelled(error: DatabaseError) {
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
                         Log.w("FIREBASE", "Failed to read value.", error.toException())
                     }
                 })
@@ -87,7 +92,9 @@ class PublicProfileFragment : Fragment() {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
                         occupation.text = (dataSnapshot.value as String?).toString()
-                    } override fun onCancelled(error: DatabaseError) {
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
                         Log.w("FIREBASE", "Failed to read value.", error.toException())
                     }
                 })
@@ -96,7 +103,9 @@ class PublicProfileFragment : Fragment() {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         Log.d("FIREBASE", "Value is: " + dataSnapshot.value)
                         city.text = (dataSnapshot.value as String?).toString()
-                    } override fun onCancelled(error: DatabaseError) {
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
                         Log.w("FIREBASE", "Failed to read value.", error.toException())
                     }
                 })

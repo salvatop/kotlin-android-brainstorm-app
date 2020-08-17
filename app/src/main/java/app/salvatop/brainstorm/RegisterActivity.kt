@@ -1,5 +1,6 @@
 package app.salvatop.brainstorm
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -18,6 +19,10 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -110,17 +115,18 @@ class RegisterActivity : AppCompatActivity() {
         user!!.updateProfile(profileUpdates)
                 .addOnCompleteListener { task: Task<Void?> ->
                     if (task.isSuccessful) {
-                        Log.d("USER PROFILE", "User profile updated.")
+                        Timber.i("User profile updated.")
                     }
                 }
     }
 
+    @SuppressLint("LogNotTimber")
     private fun createAccount(auth: FirebaseAuth, email: String, password: String) {
         Log.d("ACCOUNT CREATION", "createAccount:$email")
         //register user
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this@RegisterActivity) { task: Task<AuthResult?> ->
-                    Log.d("ACCOUNT CREATION", "New user registration: " + task.isSuccessful)
+                   Timber.d("New user registration: %s", task.isSuccessful)
                     hideAndDisplayUIElements()
                     if (!task.isSuccessful) {
                         print("Authentication failed. " + task.exception)
@@ -152,12 +158,12 @@ class RegisterActivity : AppCompatActivity() {
         val ideas = HashMap<String, Idea>()
         ideas["Increase productivity"] = Idea(username, "Office management", "Find ne strategies to increase productivity while working remotely", "Increase productivity", "true", forks)
         ideas["Christmas dinner"] = Idea(username, "Office management", "Find a nice place where to reunion the whole team for a dinner on Christmas", "Christmas dinner", "true", forks)
-        val profile = Profile("New York, NY","slow but safe","Team leader", username, followed, following, teams, ideas, bookmarks)
+        val profile = Profile("b1a0d174-d5be-11ea-87d0-0242ac130003","New York, NY","slow but safe","Team leader", username, followed, following, teams, ideas, bookmarks)
 
         val ideas2 = HashMap<String, Idea>()
         ideas2["New hire process"] = Idea(username2, "Human resources", "Redesign the hire process to include screening for remote workers", "New hire process", "true", forks)
         ideas2["Exit interview process"] = Idea(username2, "Human resources", "Gather input and contents how to format the a survey to add on exit interview", "Exit interview process", "true", forks)
-        val profile2 = Profile("Toronto, ON","think fast, act fast","IT Manager", username2, followed2, following2, teams, ideas2, bookmarks2)
+        val profile2 = Profile("c1845f16-d5be-11ea-87d0-0242ac130003","Toronto, ON","think fast, act fast","IT Manager", username2, followed2, following2, teams, ideas2, bookmarks2)
 
         val myRef = database.getReference("users")
 
@@ -166,8 +172,11 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun addProfile() {
+        val database = FirebaseDatabase.getInstance()
+        val myRef = database.getReference("users")
         val username = rUsername.editText?.text.toString()
-
+        //val username = firebaseAuth.currentUser.toString()
+        val userUid = firebaseAuth.currentUser!!.uid
         val followed = HashMap<String, String>()
         followed["none"] = "none"
         val following = HashMap<String, String>()
@@ -178,16 +187,19 @@ class RegisterActivity : AppCompatActivity() {
         val ideas = HashMap<String, Idea>()
         val forks = HashMap<String, String>()
         forks["none"] = "none"
-        bookmarks["none"] = Idea(username, "context", "content", "none", "false", forks)
 
-        ideas["none"] = Idea(username, "context", "content", "none", "false", forks)
+        GlobalScope.launch {
+            delay(1000)
 
-        val profile = Profile("add your city","add your motto","add your occupation", username, followed, following, teams, ideas, bookmarks)
+            bookmarks["none"] = Idea(username, "context", "content", "none", "false", forks)
 
-        val database = FirebaseDatabase.getInstance()
-        val myRef = database.getReference("users")
-        myRef.child(username).setValue(profile)
-        sendEmailVerification()
+            ideas["none"] = Idea(username, "context", "content", "none", "false", forks)
+
+            val profile = Profile(userUid,"add your city","add your motto","add your occupation", username, followed, following, teams, ideas, bookmarks)
+
+            myRef.child(username).setValue(profile)
+            sendEmailVerification()
+        }
     }
 
     private fun hideAndDisplayUIElements() {
@@ -221,7 +233,7 @@ class RegisterActivity : AppCompatActivity() {
                                 "Verification email sent to " + user.email,
                                 Toast.LENGTH_SHORT).show()
                     } else {
-                        Log.e("EMAIL VERIFICATION", "sendEmailVerification", task.exception)
+                        Timber.e(task.exception, "sendEmailVerification")
                         Toast.makeText(this@RegisterActivity,
                                 "Failed to send verification email.",
                                 Toast.LENGTH_SHORT).show()
@@ -238,7 +250,7 @@ class RegisterActivity : AppCompatActivity() {
         user!!.updateProfile(profileUpdates)
                 .addOnCompleteListener { task: Task<Void?> ->
                     if (task.isSuccessful) {
-                        Log.d("USER PROFILE", "User profile updated.")
+                        Timber.i("User profile updated.")
                     }
                 }
     }

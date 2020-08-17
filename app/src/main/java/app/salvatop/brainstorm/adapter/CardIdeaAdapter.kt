@@ -6,7 +6,6 @@ import android.content.DialogInterface
 import android.os.Handler
 import android.os.Looper
 import android.text.InputType
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,25 +28,27 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
+import kotlin.collections.set
 
-class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList<Idea>) : RecyclerView.Adapter<IdeaHolder>() {
+class CardIdeaAdapter(private val context: Context, private val data: ArrayList<Idea>) : RecyclerView.Adapter<IdeaHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, i: Int): IdeaHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.idea_card_layout, parent, false)
-        return IdeaHolder(view)
+        return ideaHolder(this, parent)
     }
 
     override fun onBindViewHolder(holder: IdeaHolder, position: Int) {
-        val idea = ideas[position]
+        val idea = data[position]
         holder.setContents(idea)
     }
 
     override fun getItemCount(): Int {
-        return ideas.size
+        return data.size
     }
 
     //region *** VIEW HOLDER ***
-    inner class IdeaHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class IdeaHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val firebaseAuth: FirebaseAuth? = FirebaseAuth.getInstance()
         private val database = FirebaseDatabase.getInstance()
         private val author: TextView = itemView.findViewById(R.id.ideaAuthor)
@@ -109,19 +110,19 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                 content.isEnabled = false
             } else {
                 cardView.setOnLongClickListener {
-                    Log.d("CARD LONG CLICK", "long click")
+                    Timber.d("long click")
                     if (currentUser == idea.author) {
                         val alertBox = AlertDialog.Builder(it.rootView.context)
                         alertBox.setMessage("Do you want remove for this idea?")
                         alertBox.setTitle("Delete Idea")
-                        alertBox.setPositiveButton("DELETE") { _ , _ ->
+                        alertBox.setPositiveButton("DELETE") { _, _ ->
                             val ideaToDelete = database.getReference("users").child(currentUser).child("ideas")
                             ideaToDelete.child(idea.title).removeValue()
                         }
                         alertBox.setNegativeButton("CANCEL") { dialog: DialogInterface, _: Int -> dialog.cancel() }
                         alertBox.show()
                     }
-                    return@setOnLongClickListener  true
+                    return@setOnLongClickListener true
                 }
             }
 
@@ -140,19 +141,20 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                     forksToAdd[idea.author] = idea.title
 
                     val newTitle = input.text.toString()
-                    Log.d("NEW TITLE", newTitle)
-                    val ideaToFork = Idea(currentUser, idea.ideaContext, idea.content, newTitle,"true", forksToAdd)
+                    Timber.i(newTitle)
+                    val ideaToFork = Idea(currentUser, idea.ideaContext, idea.content, newTitle, "true", forksToAdd)
 
                     val currentUserForkIdea = database.getReference("users").child(currentUser).child("ideas").child(newTitle)
 
                     currentUserForkIdea.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             currentUserForkIdea.setValue(ideaToFork)
-                            Log.d("FORK IDEA", "Value is: " + dataSnapshot.value)
+                            Timber.d("Value is: %s", dataSnapshot.value)
                         }
+
                         override fun onCancelled(error: DatabaseError) {
                             // Failed to read value
-                            Log.w("FORK IDEA", "Failed to read value.", error.toException())
+                            Timber.tag("FORK IDEA").w(error.toException(), "Failed to read value.")
                         }
                     })
                     //add a reference to the to idea of the new fork
@@ -173,7 +175,7 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                     val handler = Handler(Looper.getMainLooper())
                     delay(1000)
                     handler.post {
-                        Log.d("IS BOOKMARKED?", exist.toString())
+                       Timber.d(exist.toString())
                         if (!exist) {
                             val myRef = database.getReference("users").child(currentUserBookmark).child("bookmarks").child(idea.title)
                             myRef.setValue(idea)
@@ -198,12 +200,12 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                 @Override
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.hasChild(idea.title)) {
-                        Log.d("BOOKMARK EXIST", snapshot.hasChild(idea.title).toString())
+                        Timber.d(snapshot.hasChild(idea.title).toString())
                         exist = true
                     }
                 }
                 override fun onCancelled(error: DatabaseError) {
-                    Log.w("BOOKMARK", "Failed to read value.", error.toException())
+                    Timber.tag("BOOKMARK").w(error.toException(), "Failed to read value.")
                 }
             })
             return exist
@@ -218,6 +220,13 @@ class CardIdeaAdapter(private val context: Context, private val ideas: ArrayList
                 }
             }
             return forksToReturn
+        }
+    }
+        //inflate the layout for ideaHolder
+        companion object {
+            private fun ideaHolder(cardIdeaAdapter: CardIdeaAdapter, parent: ViewGroup): IdeaHolder {
+                val view = LayoutInflater.from(cardIdeaAdapter.context).inflate(R.layout.idea_card_layout, parent, false)
+                return cardIdeaAdapter.IdeaHolder(view)
         }
     }
     //endregion
