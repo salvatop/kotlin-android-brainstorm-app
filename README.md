@@ -7,8 +7,6 @@ it's a platform for brainstorm ideas. Yuo got an idea tha you would like develop
 
 **Screenshot**
 
-![screenshoot1](images/screenshot1.png)
-
 ![screenshoot2](images/screenshot2.png)
 
 
