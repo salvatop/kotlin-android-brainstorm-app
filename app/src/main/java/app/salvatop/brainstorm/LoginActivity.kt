@@ -31,9 +31,6 @@ class LoginActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
 
-        /////TODO testing code
-        login("salvatop78@gmail.com", "123456", firebaseAuth)
-        /////TODO end of testing code
         val login = findViewById<MaterialButton>(R.id.buttonLogin)
         val register = findViewById<MaterialButton>(R.id.buttonRegister)
         email = findViewById(R.id.editTextTextEmailAddress)
